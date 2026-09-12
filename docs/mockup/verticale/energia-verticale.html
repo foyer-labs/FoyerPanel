@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Energia · quattro proposte · 800×1280</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1500px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 20px;max-width:88ch;line-height:1.6}
+.riga{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:14px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--ink:#0d1014;--off:#232b35;
+  --r:16px;--pad:18px;--gap:14px;--bar:112px;--head:72px;
+  --f-ti:26px;--f-nm:17px;--f-val:38px;--f-s:14px;--f-lb:12px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+
+/* testata */
+.head{height:var(--head);flex:none;padding:0 var(--pad);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.head .t{font-size:var(--f-ti);font-weight:600}
+.head .s{font-size:var(--f-s);color:var(--dim)}
+/* corpo */
+.body{flex:1;padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+.card{background:var(--card);border-radius:var(--r);padding:var(--pad)}
+.lb{font:500 var(--f-lb)/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.val{font-size:var(--f-val);font-weight:300;line-height:1}
+.val .u{font-size:var(--f-s);color:var(--dim);font-weight:400;margin-left:4px}
+.nm{font-size:var(--f-nm)}
+.sm{font-size:var(--f-s);color:var(--dim)}
+/* fascia dei 4 numeri */
+.fascia{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.fascia .card{padding:14px 12px;text-align:center}
+.fascia .val{font-size:30px}
+/* barra di navigazione */
+.nav{height:var(--bar);flex:none;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);align-items:center}
+.nav div{text-align:center;font:500 11px/1.5 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.nav div.on{color:var(--acc)}
+.nav .ic{display:block;font-size:22px;margin-bottom:5px;color:inherit}
+/* elenco dispositivi */
+.dev{display:flex;flex-direction:column;gap:10px}
+.drow{display:flex;align-items:center;gap:12px}
+.drow .n{font-size:var(--f-nm);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow .w{font-size:var(--f-nm);font-variant-numeric:tabular-nums}
+.track{height:10px;border-radius:5px;background:var(--off);overflow:hidden}
+.fill{height:100%;border-radius:5px}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:var(--f-lb);border:1px solid var(--line);color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="shell">
+<h1 class="tt">Sezione Energia — quattro proposte per <code>p4-800x1280</code></h1>
+<p class="sub">
+<b>La D è quella scelta</b>, composta prendendo un pezzo da ciascuna delle prime tre. Dati d'esempio con la casa di oggi: due stringhe fotovoltaiche, otto dispositivi monitorati.
+Quello che <b>già esiste</b>: le due stringhe con tensione e corrente sono nello schema
+(<code>energia.stringhe[]</code>) e si configurano dalla pagina web. Quello che <b>è finto oggi</b>:
+la curva della produzione — <code>STORICO[]</code> è un array costante nel codice.
+Quello che <b>è nuovo</b>: l'elenco dei dispositivi ordinato per consumo, e lo storico vero.
+</p>
+
+<div class="riga">
+
+<!-- ══════════════════ A ══════════════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Energia</div><div class="s">3,24 kW dal sole</div></div>
+  <div class="body">
+    <div class="fascia">
+      <div class="card"><div class="lb">Sole</div><div class="val" style="color:var(--ok)">3,2<span class="u">kW</span></div></div>
+      <div class="card"><div class="lb">Casa</div><div class="val">1,9<span class="u">kW</span></div></div>
+      <div class="card"><div class="lb">Rete</div><div class="val" style="color:var(--cool)">−1,1<span class="u">kW</span></div></div>
+      <div class="card"><div class="lb">Batt.</div><div class="val" style="color:var(--acc)">84<span class="u">%</span></div></div>
+    </div>
+
+    <div class="card" style="flex:none">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lb">Produzione di oggi</div><div class="sm">18,4 kWh</div>
+      </div>
+      <svg viewBox="0 0 728 200" style="width:100%;height:200px;margin-top:12px;display:block">
+        <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4fc39a" stop-opacity=".45"/><stop offset="1" stop-color="#4fc39a" stop-opacity="0"/>
+        </linearGradient></defs>
+        <line x1="0" y1="60" x2="728" y2="60" stroke="#1e242d"/>
+        <line x1="0" y1="130" x2="728" y2="130" stroke="#1e242d"/>
+        <path d="M0,196 C90,196 130,150 190,96 C250,42 300,20 364,18 C430,16 470,44 520,80 C570,116 620,168 728,192 L728,200 L0,200 Z" fill="url(#ga)"/>
+        <path d="M0,196 C90,196 130,150 190,96 C250,42 300,20 364,18 C430,16 470,44 520,80 C570,116 620,168 728,192" fill="none" stroke="#4fc39a" stroke-width="3"/>
+        <line x1="470" y1="0" x2="470" y2="200" stroke="#f0a835" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="470" cy="58" r="5" fill="#f0a835"/>
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:8px" class="sm">
+        <span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div class="nm">Stringa 1</div><div class="val" style="font-size:26px">1,74<span class="u">kW</span></div>
+        </div>
+        <svg viewBox="0 0 320 54" style="width:100%;height:54px;margin:10px 0 8px;display:block">
+          <path d="M0,52 C50,52 70,20 110,10 C150,2 190,4 230,14 C270,24 300,48 320,52" fill="none" stroke="#57b6e0" stroke-width="2.5"/>
+        </svg>
+        <div style="display:flex;gap:10px"><span class="pill">382,4 V</span><span class="pill">4,55 A</span></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div class="nm">Stringa 2</div><div class="val" style="font-size:26px">1,50<span class="u">kW</span></div>
+        </div>
+        <svg viewBox="0 0 320 54" style="width:100%;height:54px;margin:10px 0 8px;display:block">
+          <path d="M0,52 C50,52 68,26 108,16 C148,8 188,12 228,22 C268,32 300,50 320,52" fill="none" stroke="#57b6e0" stroke-width="2.5"/>
+        </svg>
+        <div style="display:flex;gap:10px"><span class="pill">377,1 V</span><span class="pill">3,98 A</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1;min-height:0">
+      <div class="lb" style="margin-bottom:14px">Chi sta consumando</div>
+      <div class="dev">
+        <div><div class="drow"><span class="n">Pompa di calore</span><span class="w">820 W</span></div><div class="track" style="margin-top:6px"><div class="fill" style="width:100%;background:var(--warn)"></div></div></div>
+        <div><div class="drow"><span class="n">Forno</span><span class="w">540 W</span></div><div class="track" style="margin-top:6px"><div class="fill" style="width:66%;background:var(--acc)"></div></div></div>
+        <div><div class="drow"><span class="n">Lavastoviglie</span><span class="w">310 W</span></div><div class="track" style="margin-top:6px"><div class="fill" style="width:38%;background:var(--acc)"></div></div></div>
+        <div><div class="drow"><span class="n">Frigorifero</span><span class="w">115 W</span></div><div class="track" style="margin-top:6px"><div class="fill" style="width:14%;background:var(--ok)"></div></div></div>
+        <div><div class="drow"><span class="n">Lavatrice</span><span class="w">62 W</span></div><div class="track" style="margin-top:6px"><div class="fill" style="width:8%;background:var(--ok)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div><span class="ic">☀</span>Home</div><div><span class="ic">💡</span>Luci</div><div><span class="ic">🌡</span>Clima</div>
+    <div class="on"><span class="ic">⚡</span>Energia</div><div><span class="ic">🎥</span>Cam</div><div><span class="ic">🧹</span>Robot</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>A · La giornata</h3>
+  La curva della produzione fa da protagonista, grande e con il <b>segnaposto dell'ora attuale</b>,
+  così si legge «a che punto siamo» e non solo «quanto sto facendo». Sotto, le due stringhe
+  affiancate con la loro curva breve; in fondo i dispositivi ordinati dal più affamato.
+  <ul>
+    <li>È l'evoluzione naturale di quello che c'è: nessuna riorganizzazione, solo spazio vero.</li>
+    <li>I dispositivi restano in fondo: se ne vedono <b>cinque</b>, gli altri no.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════ B ══════════════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Energia</div><div class="s">1,9 kW in casa · 8 dispositivi</div></div>
+  <div class="body">
+    <div class="card" style="flex:none;display:flex;align-items:center;gap:var(--gap)">
+      <div style="flex:1">
+        <div class="lb">Dal sole</div>
+        <div class="val" style="color:var(--ok);margin-top:6px">3,2<span class="u">kW</span></div>
+      </div>
+      <svg viewBox="0 0 300 92" style="width:300px;height:92px;flex:none;display:block">
+        <defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4fc39a" stop-opacity=".4"/><stop offset="1" stop-color="#4fc39a" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path d="M0,90 C40,90 56,64 80,38 C104,14 126,8 150,7 C176,6 194,20 214,36 C238,56 266,82 300,88 L300,92 L0,92 Z" fill="url(#gb)"/>
+        <path d="M0,90 C40,90 56,64 80,38 C104,14 126,8 150,7 C176,6 194,20 214,36 C238,56 266,82 300,88" fill="none" stroke="#4fc39a" stroke-width="2.5"/>
+        <line x1="196" y1="0" x2="196" y2="92" stroke="#f0a835" stroke-width="1.5" stroke-dasharray="3 3"/>
+      </svg>
+      <div style="flex:none;text-align:right">
+        <div class="lb">Rete</div>
+        <div class="val" style="font-size:26px;color:var(--cool);margin-top:6px">−1,1<span class="u">kW</span></div>
+        <div class="lb" style="margin-top:12px">Batteria</div>
+        <div class="val" style="font-size:26px;color:var(--acc);margin-top:6px">84<span class="u">%</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lb">Chi sta consumando</div><div class="sm">1,9 kW in totale</div>
+      </div>
+      <div class="dev" style="margin-top:16px;gap:14px;flex:1">
+        <div><div class="drow"><span class="n" style="font-size:20px">Pompa di calore</span><span class="w" style="font-size:22px;color:var(--warn)">820 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:100%;background:linear-gradient(90deg,#e2664f,#f0a835)"></div></div>
+          <div class="sm" style="margin-top:5px">43% del consumo · acceso da 2 h</div></div>
+        <div><div class="drow"><span class="n" style="font-size:20px">Forno</span><span class="w" style="font-size:22px;color:var(--acc)">540 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:66%;background:linear-gradient(90deg,#f0a835,#f0a835)"></div></div>
+          <div class="sm" style="margin-top:5px">28% del consumo · acceso da 25 min</div></div>
+        <div><div class="drow"><span class="n" style="font-size:20px">Lavastoviglie</span><span class="w" style="font-size:22px">310 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:38%;background:#7d8899"></div></div>
+          <div class="sm" style="margin-top:5px">16% del consumo</div></div>
+        <div><div class="drow"><span class="n" style="font-size:20px">Frigorifero</span><span class="w" style="font-size:22px">115 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:14%;background:#5c6675"></div></div></div>
+        <div><div class="drow"><span class="n" style="font-size:20px">Lavatrice</span><span class="w" style="font-size:22px">62 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:8%;background:#48505c"></div></div></div>
+        <div><div class="drow"><span class="n" style="font-size:20px;color:var(--dim)">Asciugatrice</span><span class="w" style="font-size:22px;color:var(--dim)">0 W</span></div>
+          <div class="track" style="margin-top:8px;height:14px"><div class="fill" style="width:2%;background:#333c48"></div></div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none">
+      <div class="card" style="padding:14px"><div class="nm">Stringa 1 <span class="sm">1,74 kW</span></div>
+        <div class="sm" style="margin-top:6px">382,4 V &nbsp;·&nbsp; 4,55 A</div></div>
+      <div class="card" style="padding:14px"><div class="nm">Stringa 2 <span class="sm">1,50 kW</span></div>
+        <div class="sm" style="margin-top:6px">377,1 V &nbsp;·&nbsp; 3,98 A</div></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div><span class="ic">☀</span>Home</div><div><span class="ic">💡</span>Luci</div><div><span class="ic">🌡</span>Clima</div>
+    <div class="on"><span class="ic">⚡</span>Energia</div><div><span class="ic">🎥</span>Cam</div><div><span class="ic">🧹</span>Robot</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>B · I consumi</h3>
+  Ribalta la priorità: <b>i dispositivi sono il protagonista</b>, con barre alte, la percentuale sul
+  totale e da quanto sono accesi. La produzione si riduce a una fascia con la curva piccola,
+  le stringhe a due righe in fondo.
+  <ul>
+    <li>Risponde alla domanda «chi mi sta mangiando la corrente», che è quella che si fa davanti a un pannello.</li>
+    <li>Si vedono <b>sei</b> dispositivi, e il colore va dal caldo al freddo con il consumo.</li>
+    <li class="no">La curva della giornata diventa marginale, e le stringhe perdono il loro andamento.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════ C ══════════════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Energia</div><div class="s">3,24 kW dal sole · 18,4 kWh oggi</div></div>
+  <div class="body">
+    <div class="card" style="flex:none">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lb">Produzione FV · 24 h</div>
+        <div class="val" style="font-size:30px;color:var(--ok)">3,24<span class="u">kW</span></div>
+      </div>
+      <svg viewBox="0 0 728 150" style="width:100%;height:150px;margin-top:10px;display:block">
+        <defs><linearGradient id="gc" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#57b6e0" stop-opacity=".38"/><stop offset="1" stop-color="#57b6e0" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path d="M0,146 C90,146 130,110 190,68 C250,26 300,12 364,11 C430,10 470,32 520,58 C570,86 620,124 728,142 L728,150 L0,150 Z" fill="url(#gc)"/>
+        <path d="M0,146 C90,146 130,110 190,68 C250,26 300,12 364,11 C430,10 470,32 520,58 C570,86 620,124 728,142" fill="none" stroke="#57b6e0" stroke-width="3"/>
+      </svg>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none">
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between"><div class="lb">V. Stringa 1</div><div class="sm">👁</div></div>
+        <div class="val" style="font-size:26px;margin-top:6px">382,4<span class="u">V</span></div>
+        <svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-top:6px;display:block"><path d="M0,38 L60,38 C68,38 70,10 78,9 L220,7 C228,7 230,36 238,38 L300,38" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between"><div class="lb">A. Stringa 1</div><div class="sm">👁</div></div>
+        <div class="val" style="font-size:26px;margin-top:6px">4,55<span class="u">A</span></div>
+        <svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-top:6px;display:block"><path d="M0,38 C70,38 100,20 150,10 C200,20 230,38 300,38" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between"><div class="lb">V. Stringa 2</div><div class="sm">👁</div></div>
+        <div class="val" style="font-size:26px;margin-top:6px">377,1<span class="u">V</span></div>
+        <svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-top:6px;display:block"><path d="M0,38 L58,38 C66,38 68,14 76,12 L110,13 L118,22 L126,12 L220,10 C228,10 230,36 238,38 L300,38" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between"><div class="lb">A. Stringa 2</div><div class="sm">👁</div></div>
+        <div class="val" style="font-size:26px;margin-top:6px">3,98<span class="u">A</span></div>
+        <svg viewBox="0 0 300 40" style="width:100%;height:40px;margin-top:6px;display:block"><path d="M0,38 C70,38 96,24 148,14 C200,24 232,38 300,38" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lb">Consumi · dal più al meno</div><div class="sm">1,9 kW</div>
+      </div>
+      <div style="display:flex;gap:3px;margin-top:12px;height:16px;border-radius:8px;overflow:hidden;flex:none">
+        <div style="width:43%;background:var(--warn)"></div><div style="width:28%;background:var(--acc)"></div>
+        <div style="width:16%;background:#7d8899"></div><div style="width:7%;background:#5c6675"></div><div style="flex:1;background:#39424f"></div>
+      </div>
+      <div class="dev" style="margin-top:14px;gap:11px">
+        <div class="drow"><span style="width:12px;height:12px;border-radius:3px;background:var(--warn);flex:none"></span><span class="n">Pompa di calore</span><span class="w">820 W</span></div>
+        <div class="drow"><span style="width:12px;height:12px;border-radius:3px;background:var(--acc);flex:none"></span><span class="n">Forno</span><span class="w">540 W</span></div>
+        <div class="drow"><span style="width:12px;height:12px;border-radius:3px;background:#7d8899;flex:none"></span><span class="n">Lavastoviglie</span><span class="w">310 W</span></div>
+        <div class="drow"><span style="width:12px;height:12px;border-radius:3px;background:#5c6675;flex:none"></span><span class="n">Frigorifero</span><span class="w">115 W</span></div>
+        <div class="drow"><span style="width:12px;height:12px;border-radius:3px;background:#39424f;flex:none"></span><span class="n">Altri 4</span><span class="w">115 W</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div><span class="ic">☀</span>Home</div><div><span class="ic">💡</span>Luci</div><div><span class="ic">🌡</span>Clima</div>
+    <div class="on"><span class="ic">⚡</span>Energia</div><div><span class="ic">🎥</span>Cam</div><div><span class="ic">🧹</span>Robot</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>C · Come su Home Assistant</h3>
+  Ricalca la scheda che usi già: produzione in alto, poi <b>i quattro riquadri V/A delle due
+  stringhe</b> con la loro curva delle 24 ore. I consumi stanno in una barra unica proporzionale
+  — un colpo d'occhio su chi occupa quanto — con la legenda sotto e gli ultimi raggruppati.
+  <ul>
+    <li>Zero apprendimento: è la stessa lettura che fai oggi sul telefono.</li>
+    <li>La barra proporzionale mostra <b>tutti</b> i dispositivi anche quando sono otto.</li>
+    <li class="no">Quattro riquadri per due stringhe costano molto spazio verticale.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════ D ══════════════════ -->
+<div class="col" style="width:392px">
+<div class="frame" style="width:392px;height:627px"><div class="stage" style="transform:scale(.49)"><div class="screen">
+  <div class="head"><div class="t">Energia</div><div class="s">3,24 kW dal sole</div></div>
+  <div class="body" style="gap:12px">
+
+    <!-- 1 · i quattro valori di adesso (da A) -->
+    <div class="fascia" style="flex:none">
+      <div class="card" style="padding:12px 8px"><div class="lb">Sole</div><div class="val" style="font-size:27px;color:var(--ok)">3,2<span class="u">kW</span></div></div>
+      <div class="card" style="padding:12px 8px"><div class="lb">Casa</div><div class="val" style="font-size:27px">1,9<span class="u">kW</span></div></div>
+      <div class="card" style="padding:12px 8px"><div class="lb">Rete</div><div class="val" style="font-size:27px;color:var(--cool)">−1,1<span class="u">kW</span></div></div>
+      <div class="card" style="padding:12px 8px"><div class="lb">Batt.</div><div class="val" style="font-size:27px;color:var(--acc)">84<span class="u">%</span></div></div>
+    </div>
+
+    <!-- 2 · la fascia del sole con la curva accanto (da B) -->
+    <div class="card" style="flex:none;display:flex;align-items:center;gap:14px;padding:14px var(--pad)">
+      <div style="flex:none">
+        <div class="lb">Impianto</div>
+        <div class="val" style="color:var(--ok);margin-top:5px;font-size:32px">3,24<span class="u">kW</span></div>
+      </div>
+      <svg viewBox="0 0 420 96" style="flex:1;height:96px;display:block">
+        <defs><linearGradient id="gd1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4fc39a" stop-opacity=".42"/><stop offset="1" stop-color="#4fc39a" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path d="M0,94 C56,94 78,66 112,38 C146,12 176,7 210,6 C246,5 272,20 300,38 C334,60 372,86 420,92 L420,96 L0,96 Z" fill="url(#gd1)"/>
+        <path d="M0,94 C56,94 78,66 112,38 C146,12 176,7 210,6 C246,5 272,20 300,38 C334,60 372,86 420,92" fill="none" stroke="#4fc39a" stroke-width="2.5"/>
+        <line x1="276" y1="0" x2="276" y2="96" stroke="#f0a835" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <circle cx="276" cy="28" r="4" fill="#f0a835"/>
+      </svg>
+    </div>
+
+    <!-- 3 · i quattro riquadri delle stringhe (da C) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:none">
+      <div class="card" style="padding:12px 14px">
+        <div class="lb">V. Stringa 1</div>
+        <div class="val" style="font-size:24px;margin-top:4px">382,4<span class="u">V</span></div>
+        <svg viewBox="0 0 300 34" style="width:100%;height:34px;margin-top:4px;display:block"><path d="M0,32 L60,32 C68,32 70,9 78,8 L220,6 C228,6 230,30 238,32 L300,32" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:12px 14px">
+        <div class="lb">A. Stringa 1</div>
+        <div class="val" style="font-size:24px;margin-top:4px">4,55<span class="u">A</span></div>
+        <svg viewBox="0 0 300 34" style="width:100%;height:34px;margin-top:4px;display:block"><path d="M0,32 C70,32 100,17 150,8 C200,17 230,32 300,32" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:12px 14px">
+        <div class="lb">V. Stringa 2</div>
+        <div class="val" style="font-size:24px;margin-top:4px">377,1<span class="u">V</span></div>
+        <svg viewBox="0 0 300 34" style="width:100%;height:34px;margin-top:4px;display:block"><path d="M0,32 L58,32 C66,32 68,12 76,10 L108,11 L116,19 L124,10 L220,8 C228,8 230,30 238,32 L300,32" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+      <div class="card" style="padding:12px 14px">
+        <div class="lb">A. Stringa 2</div>
+        <div class="val" style="font-size:24px;margin-top:4px">3,98<span class="u">A</span></div>
+        <svg viewBox="0 0 300 34" style="width:100%;height:34px;margin-top:4px;display:block"><path d="M0,32 C70,32 96,20 148,11 C200,20 232,32 300,32" fill="none" stroke="#57b6e0" stroke-width="2"/></svg>
+      </div>
+    </div>
+
+    <!-- 4 · chi sta consumando (da B) -->
+    <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lb">Chi sta consumando</div><div class="sm">1,9 kW in totale</div>
+      </div>
+      <div class="dev" style="margin-top:12px;gap:12px;flex:1">
+        <div><div class="drow"><span class="n" style="font-size:19px">Pompa di calore</span><span class="w" style="font-size:21px;color:var(--warn)">820 W</span></div>
+          <div class="track" style="margin-top:6px;height:13px"><div class="fill" style="width:100%;background:linear-gradient(90deg,#e2664f,#f0a835)"></div></div>
+          <div class="sm" style="margin-top:4px">43% · accesa da 2 h</div></div>
+        <div><div class="drow"><span class="n" style="font-size:19px">Forno</span><span class="w" style="font-size:21px;color:var(--acc)">540 W</span></div>
+          <div class="track" style="margin-top:6px;height:13px"><div class="fill" style="width:66%;background:#f0a835"></div></div>
+          <div class="sm" style="margin-top:4px">28% · acceso da 25 min</div></div>
+        <div><div class="drow"><span class="n" style="font-size:19px">Lavastoviglie</span><span class="w" style="font-size:21px">310 W</span></div>
+          <div class="track" style="margin-top:6px;height:13px"><div class="fill" style="width:38%;background:#7d8899"></div></div>
+          <div class="sm" style="margin-top:4px">16%</div></div>
+        <div><div class="drow"><span class="n" style="font-size:19px">Frigorifero</span><span class="w" style="font-size:21px">115 W</span></div>
+          <div class="track" style="margin-top:6px;height:13px"><div class="fill" style="width:14%;background:#5c6675"></div></div></div>
+        <div><div class="drow"><span class="n" style="font-size:19px">Lavatrice</span><span class="w" style="font-size:21px">62 W</span></div>
+          <div class="track" style="margin-top:6px;height:13px"><div class="fill" style="width:8%;background:#48505c"></div></div></div>
+      </div>
+    </div>
+
+    <!-- 5 · i quattro totali della giornata -->
+    <div class="fascia" style="flex:none">
+      <div class="card" style="padding:12px 8px;text-align:center">
+        <div class="lb">Prodotto</div><div class="val" style="font-size:25px;color:var(--ok)">18,4<span class="u">kWh</span></div></div>
+      <div class="card" style="padding:12px 8px;text-align:center">
+        <div class="lb">Consumato</div><div class="val" style="font-size:25px">12,1<span class="u">kWh</span></div></div>
+      <div class="card" style="padding:12px 8px;text-align:center">
+        <div class="lb">Prelevato</div><div class="val" style="font-size:25px;color:var(--warn)">3,2<span class="u">kWh</span></div></div>
+      <div class="card" style="padding:12px 8px;text-align:center">
+        <div class="lb">Immesso</div><div class="val" style="font-size:25px;color:var(--cool)">9,5<span class="u">kWh</span></div></div>
+    </div>
+
+  </div>
+  <div class="nav">
+    <div><span class="ic">☀</span>Home</div><div><span class="ic">💡</span>Luci</div><div><span class="ic">🌡</span>Clima</div>
+    <div class="on"><span class="ic">⚡</span>Energia</div><div><span class="ic">🎥</span>Cam</div><div><span class="ic">🧹</span>Robot</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3 style="color:#f0a835">D · La composta — <b>questa</b></h3>
+  I quattro valori di <b>adesso</b> in cima, la fascia dell'impianto con la curva accanto,
+  i quattro riquadri V/A delle stringhe, i consumi ordinati, e in fondo i quattro
+  <b>totali della giornata</b>: prodotto, consumato, prelevato, immesso.
+  <ul>
+    <li>Sopra c'è la potenza istantanea, sotto l'energia della giornata: due domande diverse,
+      due posti diversi, e nessun numero che significhi due cose.</li>
+    <li>Cinque blocchi in 1280 px stanno, ma stretti: i consumi mostrano <b>cinque</b>
+      dispositivi e sono il blocco che cede spazio agli altri.</li>
+    <li>Serve <b>configurazione nuova</b>: i dispositivi monitorati, e i quattro contatori
+      giornalieri di prelievo e immissione.</li>
+  </ul>
+</div>
+</div>
+
+</div>
+</div>
+</body>
+</html>

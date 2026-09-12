@@ -1,0 +1,170 @@
+# ---------------------------------------------------------------------------
+# Configurazione ESP-IDF — quello che non dipende dal silicio.
+#
+# ESP-IDF legge questo file e poi `sdkconfig.defaults.<bersaglio>`: cosi
+# quello che e comune si scrive una volta sola, e quello che dipende dal
+# silicio sta accanto al silicio a cui appartiene.
+#
+#     idf.py -B build-p4   set-target esp32p4
+#
+# Il bersaglio e uno solo. La divisione fra questo file e quello del
+# bersaglio resta lo stesso: sarebbe da rifare il giorno che si aggiunge un
+# altro silicio.
+#
+# La cartella di compilazione porta il nome del bersaglio di proposito:
+# `set-target` riscrive sdkconfig da zero, e riusarne una vorrebbe dire
+# perdere per strada le regolazioni tarate sul vetro.
+#
+# Questo file e versionato; `sdkconfig` no. Cosi la configurazione che conta
+# e scritta e commentata, e quella generata resta un prodotto della
+# compilazione come tutti gli altri.
+# ---------------------------------------------------------------------------
+
+# --- il cifrato verso Home Assistant ----------------------------------------
+# mbedTLS prende i suoi buffer dalla RAM **interna**, e ne vuole due da 16 kB
+# piu il contesto. Dopo che Wi-Fi, LVGL e LittleFS si sono serviti, li dentro
+# non resta un blocco abbastanza grande: il primo tentativo di collegarsi a
+# un Home Assistant in HTTPS falliva con MBEDTLS_ERR_SSL_ALLOC_FAILED, che
+# nel registro si presenta come un innocuo "-0x7F00".
+#
+# Non e la RAM interna il posto giusto per quei buffer. La PSRAM ce l'ha
+# libera a megabyte, e mbedTLS non ci fa DMA sopra: li tocca a raffiche
+# brevi, durante la stretta di mano e a ogni record. Rispetto ai 36 MB/s che
+# lo schermo legge di continuo dallo stesso banco, e rumore di fondo.
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
+# E di conseguenza **AES in software**, che sembra un passo indietro e non lo
+# e. L'acceleratore in silicio lavora via DMA, e il DMA non arriva alla
+# PSRAM: trovandoci sopra i dati, il driver si copia ogni blocco in un
+# buffer interno — e a quel punto la RAM interna, che qui e la risorsa
+# scarsa, deve avere sedici kilobyte liberi e contigui **ogni volta**. Sul
+# pannello ne restavano dodici, e il collegamento a Home Assistant cadeva
+# con "esp-aes: Failed to allocate memory" a ogni record.
+#
+# Rimetterli in RAM interna non si puo: li mbedTLS non ci stava proprio, ed
+# e la ragione per cui erano stati spostati. Quindi la scelta e fra copiare
+# ogni blocco o cifrarlo dove si trova, e la seconda costa solo CPU — su un
+# flusso di eventi JSON da qualche kilobyte al secondo, niente che si veda.
+#
+# **Da rileggere se un giorno passera del video su TLS**: li il conto
+# cambia, e converrebbe piuttosto trovare il modo di tenere i buffer
+# in RAM interna.
+CONFIG_MBEDTLS_HARDWARE_AES=n
+
+# --- sistema ----------------------------------------------------------------
+# Mille tick al secondo: le temporizzazioni dell'interfaccia sono in
+# millisecondi e con 100 Hz avrebbero una granularita di dieci.
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# Il compito che disegna ha bisogno di respiro: LVGL costruisce le schermate
+# ricorsivamente e una pila stretta si manifesta come un riavvio senza
+# spiegazione.
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+
+# --- LVGL -------------------------------------------------------------------
+# Qui LVGL si configura da Kconfig e non da lv_conf.h: il simulatore ha il
+# suo file, l'apparecchio ha queste righe, e le due liste vanno tenute
+# d'accordo a mano. E il posto in cui i due bersagli possono allontanarsi
+# senza che nessuno se ne accorga finche una schermata non resta vuota.
+CONFIG_LV_COLOR_DEPTH_16=y
+
+# I quattro widget che il progetto usa davvero. Non sono comodita: senza
+# QRCODE la condivisione Wi-Fi non ha niente da mostrare, senza CANVAS il
+# deflettore non si disegna, senza CHART la giornata dell'energia e un
+# riquadro vuoto, senza ARC l'anello della pressione prolungata non c'e.
+# LVGL parla quando qualcosa non va. Costa qualche kilobyte di flash e
+# vale ogni byte: con i messaggi spenti, un blocco di memoria esaurito si
+# presentava come un panico dentro lv_obj_create con un puntatore nullo, e
+# capire che mancava la memoria ha richiesto il dump dei registri. Con i
+# messaggi accesi lo dice, e lo dice prima di morire.
+#
+# Solo gli errori: LVGL a livello informativo scrive a ogni oggetto creato,
+# e su una seriale a 115200 sarebbe piu lento del disegno.
+CONFIG_LV_USE_LOG=y
+CONFIG_LV_LOG_LEVEL_ERROR=y
+CONFIG_LV_LOG_PRINTF=y
+
+CONFIG_LV_USE_QRCODE=y
+CONFIG_LV_USE_CANVAS=y
+CONFIG_LV_USE_CHART=y
+CONFIG_LV_USE_ARC=y
+
+# TJpgDec resta acceso anche se il P4 ha il decodificatore in hardware: e la
+# strada di ripiego quando quello non e disponibile, e nel simulatore e
+# l'unica che c'e. Costa poco e toglie un ramo che potrebbe non funzionare
+# proprio il giorno che serve.
+CONFIG_LV_USE_TJPGD=y
+CONFIG_LV_USE_FS_MEMFS=y
+CONFIG_LV_FS_MEMFS_LETTER=77
+
+# I contatori a schermo restano spenti: su un pannello a muro sono roba da
+# sviluppo, e la diagnostica passa da /api/status.
+CONFIG_LV_USE_PERF_MONITOR=n
+CONFIG_LV_USE_MEM_MONITOR=n
+
+# --- la firma delle immagini ------------------------------------------------
+#
+# "Require signed app images" **senza** secure boot. La differenza rispetto al
+# secure boot vero e tutta qui: quello brucia gli eFuse e blocca anche il
+# bootloader, e non si torna indietro; questo verifica la firma
+# dell'applicazione al momento dell'aggiornamento e a ogni avvio, e si puo
+# spegnere. In cambio protegge da un'immagine che arriva dalla **rete**, non
+# da chi ha il pannello in mano.
+#
+# Per un pannello di casa e il taglio giusto: chi ha accesso fisico
+# all'apparecchio ha gia vinto — puo staccarlo e riflasharlo da USB — mentre
+# quello che si vuole davvero impedire e che un'immagine sbagliata, corrotta
+# o di qualcun altro arrivi da http://pannello.local e diventi il firmware.
+#
+# **La chiave e in firmware/chiave_firma.pem e non e versionata.** Perderla
+# vuol dire non poter piu aggiornare via rete quel pannello: le immagini
+# firmate con una chiave nuova verrebbero rifiutate da quello che ci gira
+# sopra. Non e un vicolo cieco — si riflasha da USB e riparte tutto — ma e
+# un pomeriggio, e conviene tenerne una copia dove si tengono le cose che
+# non si vogliono rifare.
+CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT=y
+CONFIG_SECURE_SIGNED_APPS_RSA_SCHEME=y
+CONFIG_SECURE_BOOT_SIGNING_KEY="chiave_firma.pem"
+
+# --- OTA --------------------------------------------------------------------
+# Il firmware si dichiara valido solo dopo aver verificato che schermo, rete
+# e collegamento funzionano: senza questa riga si dichiarerebbe valido da
+# solo all'avvio, e il rollback non servirebbe a niente.
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# --- registro ---------------------------------------------------------------
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# --- il watchdog deve mordere ------------------------------------------
+#
+# Era acceso e non faceva niente: senza PANIC, un compito che si pianta
+# produce un avviso sulla seriale e lascia il pannello appeso. Su un
+# apparecchio a muro questo si traduce in «l'unica soluzione era staccarlo
+# dalla corrente», che e esattamente il sintomo che e stato riferito.
+#
+# Con il panic acceso, un blocco diventa: trappola, stack di chi l'ha
+# causato sulla seriale, riavvio in cinque secondi, e
+# motivo_ultimo_riavvio che dice «watchdog di compito» in /api/status. Un
+# guasto che si racconta invece di uno che si subisce.
+#
+# I cinque secondi di soglia sono generosi per quello che facciamo: il
+# salvataggio della configurazione, che ricostruisce l'interfaccia intera e
+# riavvia le telecamere, e stato misurato in 0,4 s.
+CONFIG_ESP_TASK_WDT_PANIC=y
+
+# --- come si fa dire a un crash chi l'ha causato ------------------------
+#
+# Non c'e nessuna riga qui sotto, e la nota resta lo stesso: il giorno che
+# il pannello torna a cadere dentro LVGL — con la pila che comincia gia
+# dentro la libreria e non dice chi le ha passato il puntatore marcio —
+# la riga da aggiungere e
+#
+#     CONFIG_LV_USE_ASSERT_OBJ=y
+#
+# Fa validare ogni oggetto all'ingresso di ogni funzione di LVGL, quindi
+# il fermo avviene nel **chiamante**: e cosi che e venuta fuori la doppia
+# cancellazione di ui_vai_a(). Costa velocita — LVGL avvisa che rallenta
+# parecchio — e per questo non resta accesa: il difetto che l'aveva
+# richiesta e chiuso, e venti salvataggi di fila non hanno prodotto un
+# riavvio.

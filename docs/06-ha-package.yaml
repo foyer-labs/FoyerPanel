@@ -1,0 +1,348 @@
+# =============================================================
+# Home Assistant package for Foyer Panel
+#
+# MIND THE FILE NAME
+# Copy it as  /config/packages/foyer_panel.yaml
+# NOT as 06-ha-package.yaml: with !include_dir_named the file
+# name becomes the package name and must be a valid slug, so no
+# hyphens and no leading digits. Otherwise:
+#   Invalid package definition ... invalid slug
+#
+# If you do not use packages yet, add to configuration.yaml:
+#   homeassistant:
+#     packages: !include_dir_named packages
+#
+# IT IS AN EXAMPLE: the energy entity_ids are made up, for a
+# system with solar panels, a home battery and a grid meter.
+# Their names depend on your integration: replace them with
+# yours, and the people with your person entities.
+#
+# The attribute names are English since schema 11 (people, list,
+# house_w, grid_w...). A package installed earlier, with the
+# Italian names (persone, elenco, casa, rete_w...), keeps working:
+# the panel reads the English name first and then the Italian one.
+# =============================================================
+
+template:
+
+  - sensor:
+
+      # -------------------------------------------------------
+      # OPENINGS — doors and windows with a contact sensor
+      # Contact sensors usually have device_class "door" or
+      # "window". A garage door has device_class "garage_door"
+      # and is left out: it has its own row in the Access screen.
+      # -------------------------------------------------------
+      - name: "Panel openings"
+        unique_id: panel_openings
+        state: >
+          {{ states.binary_sensor
+             | selectattr('attributes.device_class', 'defined')
+             | selectattr('attributes.device_class', 'in', ['door', 'window'])
+             | selectattr('state', 'eq', 'on') | list | count }}
+        attributes:
+          list: >
+            {{ states.binary_sensor
+               | selectattr('attributes.device_class', 'defined')
+               | selectattr('attributes.device_class', 'in', ['door', 'window'])
+               | selectattr('state', 'eq', 'on')
+               | map(attribute='name') | list }}
+
+      # -------------------------------------------------------
+      # LIGHTS ON — the light domain only.
+      # Many lights also exist as a switch (smart relays often
+      # create both entities): counting only light avoids
+      # counting them twice.
+      # -------------------------------------------------------
+      - name: "Panel lights on"
+        unique_id: panel_lights_on
+        state: >
+          {{ states.light | selectattr('state', 'eq', 'on') | list | count }}
+        attributes:
+          list: >
+            {{ states.light | selectattr('state', 'eq', 'on')
+               | map(attribute='name') | list }}
+
+      # -------------------------------------------------------
+      # PRESENCE
+      # An explicit list and not every person entity: that way a
+      # duplicated person or a guest does not end up on the panel.
+      # -------------------------------------------------------
+      - name: "Panel presence"
+        unique_id: panel_presence
+        state: >
+          {% set p = ['person.person_1', 'person.person_2', 'person.person_3'] %}
+          {{ p | select('is_state', 'home') | list | count }}
+        attributes:
+          people: >
+            {% set p = ['person.person_1', 'person.person_2', 'person.person_3'] %}
+            {% set ns = namespace(v=[]) %}
+            {% for e in p %}
+              {% set ns.v = ns.v + [{
+                   'name': state_attr(e, 'friendly_name'),
+                   'home': is_state(e, 'home'),
+                   'since': states[e].last_changed | as_timestamp
+                         | timestamp_custom('%H:%M') }] %}
+            {% endfor %}
+            {{ ns.v }}
+
+      # -------------------------------------------------------
+      # ENERGY — an example with solar panels and a battery
+      # Replace the entity_ids with yours; check the signs on your
+      # own system instead of taking them for granted.
+      #
+      # SIGN CONVENTION, as the system declares it:
+      #   grid    > 0  drawing from the grid
+      #   grid    < 0  feeding into the grid
+      #   battery > 0  the battery is charging
+      #   battery < 0  the battery is discharging
+      #
+      # Hence:  house = production + grid - battery
+      #   daytime:     3420 + (-2200) -  900  =  320 W
+      #   night:          0 + ( 1200) -    0  = 1200 W
+      #   discharging:    0 + (  700) - (-500) = 1200 W
+      # -------------------------------------------------------
+      - name: "Panel energy"
+        unique_id: panel_energy
+        unit_of_measurement: "W"
+        state: >
+          {{ states('sensor.pv_power') | float(0) | round(0) }}
+        attributes:
+          house_w: >
+            {{ (states('sensor.pv_power') | float(0)
+                + states('sensor.grid_power') | float(0)
+                - states('sensor.battery_power') | float(0))
+               | round(0) }}
+          battery_pct: >
+            {{ states('sensor.battery_level') | float(0) | round(0) }}
+          battery_w: >
+            {{ states('sensor.battery_power') | float(0) | round(0) }}
+          grid_w: >
+            {{ states('sensor.grid_power') | float(0) | round(0) }}
+          today_kwh: >
+            {{ states('sensor.pv_energy_today') | float(0) | round(1) }}
+
+      # --- the house's power, as an entity of its own -------------
+      #
+      # The house's consumption is not a sensor: it is computed, with
+      # the same formula as the `house_w` attribute above. But an
+      # attribute cannot be integrated — the integration wants an
+      # entity with a state — so the same computation also becomes a
+      # sensor of its own. It sits next to the original on purpose: if
+      # one day it changes, it is plain to see that there are two and
+      # they must change together.
+      - name: "House power"
+        unique_id: house_power
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        state: >
+          {{ (states('sensor.pv_power') | float(0)
+              + states('sensor.grid_power') | float(0)
+              - states('sensor.battery_power') | float(0))
+             | round(0) }}
+# =============================================================
+# CALENDAR — OPTIONAL
+#
+# It needs at least one calendar entity. Until you add one
+# (Google Calendar, CalDAV, or a local calendar from Settings ->
+# Devices & services), the Calendar section stays hidden and the
+# "Today" card of the home screen is not shown.
+#
+# When you have the calendars, uncomment this and replace the
+# entity_ids in the list.
+# =============================================================
+#
+# template:
+#   - trigger:
+#       - trigger: time_pattern
+#         minutes: "/5"
+#       - trigger: homeassistant
+#         event: start
+#     action:
+#       - action: calendar.get_events
+#         target:
+#           entity_id:
+#             - calendar.CHANGE_ME_1
+#         data:
+#           start_date_time: "{{ today_at('00:00') }}"
+#           duration:
+#             hours: 48
+#         response_variable: agenda
+#     sensor:
+#       - name: "Panel calendar"
+#         unique_id: panel_calendar
+#         state: >
+#           {{ agenda.values() | map(attribute='events') | sum(start=[]) | count }}
+#         attributes:
+#           events: >
+#             {% set ns = namespace(v=[]) %}
+#             {% for cal, data in agenda.items() %}
+#               {% for e in data.events %}
+#                 {% set ns.v = ns.v + [{'start': e.start,
+#                      'title': e.summary, 'calendar': cal}] %}
+#               {% endfor %}
+#             {% endfor %}
+#             {{ ns.v | sort(attribute='start') }}
+
+
+# =============================================================
+# NOTES
+# - Check the expressions in Developer tools -> Template before
+#   restarting.
+# - Token: Profile -> Security -> Long-lived access tokens.
+#   Create one per panel, so you can revoke them separately.
+# =============================================================
+
+
+# =============================================================
+# PANEL DIAGNOSTICS
+#
+# Makes each panel's state visible from the phone. Uncomment and
+# replace the addresses once the panels are on the network. See
+# 10-diagnostica.md.
+# =============================================================
+#
+# rest:
+#   - resource: http://PANEL_1_ADDRESS/api/status
+#     scan_interval: 60
+#     timeout: 5
+#     sensor:
+#       - name: "Hallway panel status"
+#         unique_id: hallway_panel_status
+#         value_template: "{{ value_json.ha_state }}"
+#         json_attributes:
+#           - firmware
+#           - uptime_s
+#           - restarts
+#           - last_restart_reason
+#           - heap_free
+#           - heap_min
+#           - fps
+#           - wifi_rssi
+#           - commands_failed
+#           - recent_errors
+#
+#   - resource: http://PANEL_2_ADDRESS/api/status
+#     scan_interval: 60
+#     timeout: 5
+#     sensor:
+#       - name: "Living room panel status"
+#         unique_id: living_room_panel_status
+#         value_template: "{{ value_json.ha_state }}"
+#         json_attributes:
+#           - firmware
+#           - uptime_s
+#           - restarts
+#           - last_restart_reason
+#           - heap_free
+#           - heap_min
+#           - fps
+#           - wifi_rssi
+#           - commands_failed
+#           - recent_errors
+#
+# Two alerts worth adding:
+#   - sensor unavailable for more than 10 minutes  -> panel down
+#   - heap_min below 40960                         -> a possible
+#     memory leak, visible days before the restart
+
+# =============================================================
+# THE DAY'S FOUR TOTALS — the panel's Energy section
+#
+# At the bottom the panel shows four numbers: produced, consumed,
+# drawn from the grid, fed into the grid. They are **energy**
+# (kWh), not power, and they answer a different question from the
+# numbers at the top: not "how much now" but "how much today".
+#
+# One you probably have already — `sensor.pv_energy_today` for
+# what was produced. The other three are built here; the "House
+# power" sensor the first one needs is further up, next to the
+# aggregate it copies the formula from.
+#
+# -------------------------------------------------------------
+# BEFORE PASTING, two things to check in
+# Developer tools -> States:
+#
+#   1. `sensor.grid_import_total` and `sensor.grid_export_total`
+#      must be **cumulative counters in kWh** (state_class:
+#      total_increasing), not instantaneous power. Most meter
+#      integrations provide them; checking takes ten seconds, and
+#      getting it wrong costs a day of absurd numbers.
+#
+#   2. `sensor.grid_power` must be in W, positive when you
+#      **draw** from the grid. That is the convention the panel
+#      has in its configuration (`energy.signs.grid_positive:
+#      import`).
+# -------------------------------------------------------------
+
+# --- 1. from power to energy ----------------------------------
+#
+# A Riemann sum: watts are accumulated over time and give
+# watt-hours. `unit_prefix: k` turns them into kWh, the unit the
+# panel expects the totals in.
+#
+# `max_sub_interval` is not a detail: without it the integration
+# adds a piece **only when the source changes**, and a power that
+# stays still for twenty minutes — it happens at night — counts
+# zero instead of twenty minutes of steady consumption. With a
+# one-minute maximum step, the count goes on even when the sensor
+# does not move.
+#
+# `method: left` instead of the trapezoid: on a power that changes
+# in steps the trapezoid cuts the corners and rounds up on the
+# peaks. Left is slightly conservative, which on a counter is the
+# right way to be wrong.
+
+sensor:
+  - platform: integration
+    source: sensor.house_power
+    name: "House energy"
+    unique_id: house_energy
+    unit_prefix: k
+    unit_time: h
+    method: left
+    max_sub_interval: "00:01:00"
+
+# --- 2. the three counters that reset at midnight -------------
+#
+# `cycle: daily` resets at local time, the same midnight the panel
+# asks the day's curve from.
+#
+# Grid import and export start from the meter's counters, which
+# are already cumulative: nothing is integrated here, the
+# difference from the start of the day is taken. It is the most
+# precise count there is, because it goes through no
+# approximation.
+utility_meter:
+  house_consumption_today:
+    source: sensor.house_energy
+    name: "House consumption today"
+    cycle: daily
+
+  grid_import_today:
+    source: sensor.grid_import_total
+    name: "Grid import today"
+    cycle: daily
+
+  grid_export_today:
+    source: sensor.grid_export_total
+    name: "Grid export today"
+    cycle: daily
+
+# --- 3. and then, on the panel's page -------------------------
+#
+# Energy -> The day's totals:
+#
+#   Produced today       sensor.pv_energy_today           (already there)
+#   Consumed today       sensor.house_consumption_today
+#   Drawn from the grid  sensor.grid_import_today
+#   Fed into the grid    sensor.grid_export_today
+#
+# Home Assistant derives the ids from the names: check them in
+# Developer tools after the restart, because if a similar name
+# already exists the new one ends up with a `_2` at the end.
+#
+# The first numbers appear as the day goes by: a daily counter
+# that has just been created starts from zero and knows nothing of
+# the hours already gone. Tomorrow morning they will be full.

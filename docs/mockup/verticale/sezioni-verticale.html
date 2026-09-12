@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · pannelli in verticale · 800×1280</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1400px;margin:0 auto;padding:18px 14px 60px}
+h1.tt{font-size:15px;font-weight:600;margin:0 0 2px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 14px}
+.grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.grp .lb{font:500 11px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6d747f;margin-right:4px}
+.grp button{appearance:none;border:1px solid #2c3038;background:#1c1f25;color:#aeb5c0;font:500 12.5px/1 Inter,sans-serif;padding:9px 12px;border-radius:8px;cursor:pointer}
+.grp button:hover{border-color:#3d434e;color:#e6e9ee}
+.grp button[aria-pressed="true"]{background:#e6e9ee;color:#15171b;border-color:#e6e9ee}
+.wrap{display:flex;gap:26px;align-items:flex-start}
+.frame{position:relative;background:#000;border:12px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;flex:none}
+.stage{transform-origin:top left;position:relative;overflow:hidden}
+.caption{font-size:12.5px;color:#9aa1ad;line-height:1.65;flex:1;min-width:260px;padding-top:6px}
+.caption b{color:#e6e9ee;font-weight:600}
+.caption h3{font:600 13px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--ink:#0d1014;--off:#232b35;
+  /* profilo p4-800x1280 */
+  --r:16px;--pad:18px;--gap:14px;--bar:112px;--head:72px;--homehead:116px;
+  --f-ti:26px;--f-nm:17px;--f-val:38px;--f-s:14px;--f-lb:12px;--f-clock:64px;
+  background:var(--bg);color:var(--txt)}
+
+/* ---------- barra di navigazione in basso ---------- */
+.navbar{height:var(--bar);flex:none;display:flex;background:var(--card2);border-top:1px solid var(--line)}
+.nb{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#6f7b8c;border-right:1px solid rgba(255,255,255,.03)}
+.nb:last-child{border-right:none}
+.nb svg{width:23px;height:23px;flex:none}
+.nb span{font:500 10.5px/1 Inter,sans-serif;white-space:nowrap}
+.nb.home{color:var(--acc);background:var(--card)}
+.nb.sel{background:#221c0e;color:var(--acc);box-shadow:inset 0 2px 0 var(--acc)}
+
+/* ---------- testate ---------- */
+.hh{height:var(--homehead);flex:none;display:flex;align-items:center;gap:16px;padding:0 var(--pad);border-bottom:1px solid var(--line)}
+.hh .t{font:600 var(--f-clock)/1 Inter,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hh .d{font:400 var(--f-s)/1.35 Inter,sans-serif;color:var(--dim)}
+.hh .wx{margin-left:auto;display:flex;align-items:center;gap:11px}
+.hh .wx svg{width:26px;height:26px;color:var(--acc)}
+.hh .wx .deg{font:500 30px/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.hh .wx .meta{font:400 12px/1.4 Inter,sans-serif;color:var(--dim)}
+.hh .gear{width:46px;height:46px;flex:none;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--dim);background:var(--card2)}
+.hh .gear svg{width:20px;height:20px}
+.sh{height:var(--head);flex:none;display:flex;align-items:center;padding:0 var(--pad);gap:14px;border-bottom:1px solid var(--line)}
+.sh .ti{font:600 var(--f-ti)/1 Inter,sans-serif}
+.sh .cr{font:400 var(--f-s)/1 Inter,sans-serif;color:var(--dim)}
+.sh .clock{margin-left:auto;font:400 20px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--dim)}
+.sh .pager{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sh .ar{width:46px;height:42px;border:1px solid var(--line);background:var(--card2);border-radius:11px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
+.sh .ar svg{width:19px;height:19px}
+.sh .ar.off{opacity:.3}
+.sh .n{font:500 13px/1 Inter,sans-serif;color:var(--dim);min-width:36px;text-align:center}
+
+.content{flex:1;min-height:0;padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap)}
+.k{font:600 var(--f-lb)/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;display:flex;flex-direction:column;min-width:0}
+.due{display:flex;gap:var(--gap);min-height:0}
+.due>*{flex:1;min-width:0}
+
+/* ---------- home ---------- */
+.en-top{display:flex;align-items:flex-end;gap:12px;margin-top:12px}
+.en-top .v{font:600 52px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--ok)}
+.en-top .u{font:500 14px/1.3 Inter,sans-serif;color:var(--dim);padding-bottom:6px}
+.en-grid{display:flex;gap:10px;margin-top:14px}
+.en-cell{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.en-cell .kk{font:400 11.5px/1 Inter,sans-serif;color:var(--dim)}
+.en-cell .vv{font:500 var(--f-nm)/1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:8px}
+.bar2{height:9px;border-radius:6px;background:var(--off);overflow:hidden;position:relative;margin-top:12px}
+.bar2 i{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--ok)}
+.plist{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.prow{display:flex;align-items:center;gap:12px;padding:6px 0}
+.av{width:38px;height:38px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 16px/1 Inter,sans-serif;background:#232b35;color:#8f9aa9}
+.av.in{background:var(--acc);color:var(--ink)}
+.prow .nm{font:500 var(--f-nm)/1 Inter,sans-serif}
+.prow .st{font:400 12px/1.3 Inter,sans-serif;color:var(--dim);margin-top:4px}
+.prow.out .nm{color:var(--dim)}
+.op-big{display:flex;align-items:baseline;gap:9px;margin-top:12px}
+.op-big .v{font:600 44px/1 Inter,sans-serif;color:var(--acc);font-variant-numeric:tabular-nums}
+.op-big .u{font:500 13px/1.3 Inter,sans-serif;color:var(--dim)}
+.op-l{margin-top:10px;display:flex;flex-direction:column;gap:7px;font:400 13px/1.35 Inter,sans-serif;color:#b6bfcd}
+.op-f{margin-top:auto;padding-top:11px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.op-f .f{display:flex;align-items:center;gap:9px;font:400 12.5px/1 Inter,sans-serif;color:var(--dim)}
+.op-f .f svg{width:15px;height:15px;color:#5d6878}
+.op-f .f b{color:var(--txt);font-weight:500}
+.ag-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.ev{display:flex;gap:12px;align-items:flex-start}
+.ev .tm{font:600 13.5px/1.25 Inter,sans-serif;color:var(--acc);width:46px;flex:none;font-variant-numeric:tabular-nums}
+.ev .tx{font:400 var(--f-nm)/1.3 Inter,sans-serif}
+.ev .who{font:400 12px/1.3 Inter,sans-serif;color:var(--dim);margin-top:3px}
+.ev.past{opacity:.45}
+.strip{flex:none;display:flex;gap:12px}
+.sth{aspect-ratio:16/9}
+.sth{flex:1;position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a0e14}
+.sth svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.sth .nm{position:absolute;left:10px;bottom:8px;font:500 12px/1 Inter,sans-serif;color:#fff;text-shadow:0 1px 4px #000}
+.sth .lv{position:absolute;left:10px;top:8px;display:flex;align-items:center;gap:5px;font:600 10px/1 Inter,sans-serif;color:#fff;background:rgba(0,0,0,.55);padding:4px 7px;border-radius:5px}
+.sth .lv i{width:5px;height:5px;border-radius:50%;background:#e2664f;animation:bl 1.6s infinite}
+@keyframes bl{50%{opacity:.25}}
+
+/* ---------- griglie 2 colonne ---------- */
+.g2{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap);min-height:0}
+.lc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between}
+.lc .top{display:flex;align-items:center;gap:10px}
+.lc .top svg{width:21px;height:21px;color:var(--dim)}
+.lc .nm{font:500 var(--f-nm)/1 Inter,sans-serif}
+.lc .sw{margin-left:auto;width:56px;height:31px;border-radius:20px;background:var(--off);position:relative}
+.lc .sw i{position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:#6b7686}
+.lc.on .sw{background:var(--acc)}.lc.on .sw i{left:28px;background:var(--ink)}
+.lc .pct{font:600 var(--f-val)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.lc .pct span{font-size:16px;color:var(--dim)}
+.lc .track{height:9px;border-radius:6px;background:var(--off);position:relative;overflow:hidden}
+.lc .track i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:6px}
+.lc.off .pct,.lc.off .nm{color:var(--dim)}
+.dots{height:26px;flex:none;display:flex;align-items:center;justify-content:center;gap:9px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--off)}
+.dots i.on{background:var(--acc);width:24px;border-radius:5px}
+
+/* clima */
+.tabs{flex:none;display:flex;gap:10px}
+.tab{flex:1;height:52px;border:1px solid var(--line);background:var(--card2);border-radius:13px;display:flex;align-items:center;justify-content:center;gap:9px;font:500 var(--f-nm)/1 Inter,sans-serif;color:var(--dim)}
+.tab svg{width:18px;height:18px}
+.tab.sel{background:var(--acc);border-color:var(--acc);color:var(--ink);font-weight:600}
+.ext{flex:none;height:46px;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:500 var(--f-nm)/1 Inter,sans-serif;color:#c3cad6}
+.ext svg{width:18px;height:18px;color:var(--acc)}
+.zone{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between}
+.zone .zt{display:flex;align-items:center;gap:9px}
+.zone .zt .nm{font:500 var(--f-nm)/1 Inter,sans-serif}
+.zone .zt .hum{margin-left:auto;font:400 12px/1 Inter,sans-serif;color:var(--dim)}
+.zone .now{font:600 var(--f-val)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.zone .set{display:flex;align-items:center;gap:9px}
+.zone .set .b{width:46px;height:42px;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font:500 21px/1 Inter,sans-serif;color:var(--dim);background:var(--card2)}
+.zone .set .v{flex:1;text-align:center;font:500 var(--f-nm)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.zone .set .v small{display:block;font:400 11px/1 Inter,sans-serif;color:var(--dim);margin-top:5px}
+.zone.heat{border-color:#3a2f1a}.zone.heat .now{color:var(--acc)}
+.zone.off .now,.zone.off .nm{color:var(--dim)}
+.ac{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;display:flex;flex-direction:column;gap:11px}
+.ac .hd{display:flex;align-items:center;gap:9px}
+.ac .hd .nm{font:600 var(--f-nm)/1.2 Inter,sans-serif}
+.ac .md{margin-left:auto;display:flex;align-items:center;gap:6px;border-radius:8px;padding:6px 9px;font:600 11px/1 Inter,sans-serif;background:var(--off);color:var(--dim)}
+.ac .md svg{width:13px;height:13px}
+.ac.cool{border-color:#1d3a4a}.ac.cool .md{background:#12303f;color:var(--cool)}.ac.cool .now{color:var(--cool)}
+.ac.hot{border-color:#3a2f1a}.ac.hot .md{background:#2a2313;color:var(--acc)}.ac.hot .now{color:var(--acc)}
+.ac .now{font:600 var(--f-val)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.ac .rows{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.ac .row{display:flex;align-items:center;gap:9px;font:400 12.5px/1 Inter,sans-serif;color:var(--dim)}
+.ac .row svg{width:15px;height:15px;color:#5d6878}
+.ac .row b{margin-left:auto;color:var(--txt);font-weight:500}
+
+/* energia */
+.stats{flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px}
+.stat .v{font:600 var(--f-val)/1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:10px}
+.stat .v small{font-size:15px;color:var(--dim);margin-left:3px;font-weight:500}
+.stat .s{font:400 12px/1.3 Inter,sans-serif;color:var(--dim);margin-top:7px}
+.chart{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 10px;display:flex;flex-direction:column;min-height:0}
+.chart .hd{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.chart .hd .t{font:500 var(--f-nm)/1 Inter,sans-serif}
+.chart .hd .m{font:400 12px/1 Inter,sans-serif;color:var(--dim);margin-left:auto}
+.chart svg{flex:1;width:100%;min-height:0}
+.strings{flex:none;display:flex;gap:12px}
+.str{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.str .nm{font:500 13.5px/1 Inter,sans-serif}
+.str .big{font:600 22px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:9px}
+.str .det{display:flex;gap:14px;font:400 12px/1.3 Inter,sans-serif;color:var(--dim);margin-top:6px}
+
+/* telecamere e accessi */
+.qgrid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;min-height:0;align-content:start}
+.qcam{aspect-ratio:16/9}
+.qcam{position:relative;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#05070a}
+.qcam svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.qcam .nm{position:absolute;left:12px;bottom:10px;font:500 14px/1 Inter,sans-serif;color:#fff;text-shadow:0 1px 4px #000}
+.qcam .lv{position:absolute;left:12px;top:10px;display:flex;align-items:center;gap:6px;font:600 11px/1 Inter,sans-serif;color:#fff;background:rgba(0,0,0,.55);padding:5px 8px;border-radius:6px}
+.qcam .lv i{width:6px;height:6px;border-radius:50%;background:#e2664f;animation:bl 1.6s infinite}
+.qbar{flex:none;height:56px;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);display:flex;align-items:center;gap:18px;padding:0 16px;font:400 12.5px/1 Inter,sans-serif;color:var(--dim)}
+.qbar b{color:var(--txt);font-weight:500}
+.camtop{flex:none;position:relative;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#05070a}
+.camtop svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.camtop .ov{position:absolute;left:13px;top:12px;display:flex;align-items:center;gap:9px;font:600 12px/1 Inter,sans-serif;color:#fff}
+.camtop .live{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.55);padding:6px 9px;border-radius:6px}
+.camtop .live i{width:7px;height:7px;border-radius:50%;background:#e2664f;animation:bl 1.6s infinite}
+.camtop .ts{position:absolute;right:13px;bottom:11px;font:500 12px/1 Inter,sans-serif;color:#e6eaf0;background:rgba(0,0,0,.55);padding:6px 9px;border-radius:6px}
+.thumbs{flex:none;display:flex;gap:10px}
+.th{aspect-ratio:16/9}
+.th{flex:1;border:1px solid var(--line);border-radius:11px;overflow:hidden;position:relative;background:#0a0e14}
+.th.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.th svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.th span{position:absolute;left:8px;bottom:6px;font:500 11.5px/1 Inter,sans-serif;color:#dfe5ee;text-shadow:0 1px 3px #000}
+.arow{background:var(--card);border:1px solid var(--line);border-radius:var(--r);flex:1;display:flex;align-items:center;gap:14px;padding:0 16px;min-height:0}
+.arow>svg{width:23px;height:23px;color:var(--dim);flex:none}
+.arow .nm{font:500 var(--f-nm)/1.15 Inter,sans-serif}
+.arow .st{font:400 12.5px/1.3 Inter,sans-serif;color:var(--dim);margin-top:5px}
+.btn{margin-left:auto;flex:none;background:var(--acc);color:var(--ink);border-radius:11px;padding:15px 22px;font:600 16px/1 Inter,sans-serif;text-align:center;min-width:118px}
+.btn small{display:block;font:500 10px/1 Inter,sans-serif;color:rgba(0,0,0,.55);margin-top:5px}
+.arow.luce{border-color:#3a2f1a}
+.swbig{margin-left:auto;width:58px;height:32px;border-radius:20px;background:var(--acc);position:relative;flex:none}
+.swbig i{position:absolute;top:3px;left:29px;width:26px;height:26px;border-radius:50%;background:var(--ink)}
+
+/* agenda in colonna */
+.giorno{flex:none}
+.giorno .gh{display:flex;align-items:baseline;gap:10px;margin-bottom:11px}
+.giorno .gh .t{font:600 var(--f-nm)/1 Inter,sans-serif}
+.giorno .gh .d{font:400 12.5px/1 Inter,sans-serif;color:var(--dim);margin-left:auto}
+.agev{display:flex;gap:11px;padding:10px 0;border-top:1px solid var(--line)}
+.agev:first-of-type{border-top:none}
+.agev .bl{width:3px;border-radius:3px;background:var(--acc);flex:none}
+.agev .bl.b2{background:#4fc39a}.agev .bl.b3{background:#6f9fe0}
+.agev .tm{font:600 13px/1.2 Inter,sans-serif;color:var(--dim);width:46px;flex:none;font-variant-numeric:tabular-nums;padding-top:2px}
+.agev .tx{font:400 var(--f-nm)/1.3 Inter,sans-serif}
+.agev .who{font:400 12px/1.3 Inter,sans-serif;color:var(--dim);margin-top:3px}
+.aglg{flex:none;height:46px;display:flex;align-items:center;gap:20px;padding:0 16px;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);font:400 12.5px/1 Inter,sans-serif;color:var(--dim)}
+.aglg .l{display:flex;align-items:center;gap:8px}
+.aglg i{width:9px;height:9px;border-radius:3px;background:var(--acc)}
+.aglg i.b2{background:#4fc39a}.aglg i.b3{background:#6f9fe0}
+
+/* wifi */
+.qcard{flex:none;background:#fff;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px}
+.qcard .q{width:100%;max-width:420px;aspect-ratio:1}
+.qcard .cap{font:600 14px/1.3 Inter,sans-serif;color:#171b20;margin-top:14px;text-align:center}
+.wbox{flex:none}
+.wbox .v{font:600 34px/1.15 Inter,sans-serif;margin-top:11px;word-break:break-all}
+.wbox .v.mono{font-family:"JetBrains Mono",monospace;font-size:28px;font-weight:500}
+.wbox .hd{display:flex;align-items:center;gap:12px}
+.wbox .hd .act{margin-left:auto;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font:500 13px/1 Inter,sans-serif;color:var(--txt);background:var(--card2)}
+.wnote{flex:none;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;gap:11px;font:400 13px/1.55 Inter,sans-serif;color:var(--dim)}
+.wnote svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--ok)}
+.wbtn{flex:none;display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--card2);border-radius:var(--r);padding:16px 18px;font:600 var(--f-nm)/1 Inter,sans-serif}
+.wbtn svg{width:20px;height:20px;color:var(--dim)}
+.wbtn .ar2{margin-left:auto;color:#4a5461}
+.wbtn .ar2 svg{width:17px;height:17px}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8V16h7.2v-2.2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="7" width="12" height="10" rx="2"/><path d="M14 10.5 21 7v10l-7-3.5z"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V9l9-5 9 5v11M3 20h18M7 20v-7h10v7M7 16.5h10"/></symbol>
+  <symbol id="i-fence" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l3-3 3 3v13M14 21V8l3-3 3 3v13M2 12h20M2 16h20"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9H4z"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1 2 2 0 1 1-4 0 1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 15a2 2 0 1 1 0-4 1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9.6 4.6a2 2 0 1 1 4 0 1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7 2 2 0 1 1 0 4 1.6 1.6 0 0 0-1.8 1.8z"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-batt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="8" width="16" height="9" rx="2"/><path d="M21 11v3"/><rect x="4" y="10" width="9" height="5" rx="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4v16M12 4v16M20 4v16M4 9h16M4 15h16"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-1.6.6-2.8 1.6-4 .3 1 .9 1.7 1.7 2 .3-3 .9-5 1.7-7z"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10M12 6l-2.5-2.5M12 6l2.5-2.5M12 18l-2.5 2.5M12 18l2.5 2.5"/></symbol>
+  <symbol id="i-fan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-3 1-6 4-6s3 4 0 5.2M14 12c3 0 6 1 6 4s-4 3-5.2 0M12 14c0 3-1 6-4 6s-3-4 0-5.2M10 12c-3 0-6-1-6-4s4-3 5.2 0"/></symbol>
+  <symbol id="i-swingv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18M8 9v10M8 19l-3-3M8 19l3-3M16 9v10M16 19l-3-3M16 19l3-3"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4.5l3 2M9 2h6"/></symbol>
+  <symbol id="i-motion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="13" cy="4.5" r="1.6"/><path d="M6 21l3-6 3-3-1-4M12 12l4 2 2 5M9 8l3-2 4 2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+
+<div class="shell">
+  <h1 class="tt">Pannelli in verticale — riorganizzazione, non rotazione</h1>
+  <p class="sub">Profilo <code>p4-800x1280</code>.</p>
+
+  <div class="grp" id="gr">
+    <span class="lb">Pannello</span>
+    <button data-p="p4" aria-pressed="true">10,1" · 800×1280</button>
+  </div>
+  <div class="grp" id="gs">
+    <button data-s="home" aria-pressed="true">Home</button>
+    <button data-s="luci" aria-pressed="false">Luci</button>
+    <button data-s="clima" aria-pressed="false">Clima</button>
+    <button data-s="cond" aria-pressed="false">Condizionatori</button>
+    <button data-s="pv" aria-pressed="false">Energia</button>
+    <button data-s="cam" aria-pressed="false">Telecamere</button>
+    <button data-s="acc" aria-pressed="false">Accessi</button>
+    <button data-s="ag" aria-pressed="false">Agenda</button>
+    <button data-s="wifi" aria-pressed="false">Wi-Fi</button>
+  </div>
+
+  <div class="wrap">
+    <div class="frame" id="frame"><div class="stage" id="stage"></div></div>
+    <div class="caption" id="cap"></div>
+  </div>
+</div>
+
+<script>
+function scene(id){return `
+<svg class="scene" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="sk${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3a4d"/><stop offset="1" stop-color="#151d27"/></linearGradient>
+  <radialGradient id="lm${id}" cx="50%" cy="50%"><stop offset="0" stop-color="rgba(255,214,150,.5)"/><stop offset="1" stop-color="rgba(255,214,150,0)"/></radialGradient></defs>
+  <rect width="640" height="360" fill="url(#sk${id})"/>
+  <rect y="150" width="640" height="210" fill="#171d25"/>
+  <path d="M0 360 L250 168 L390 168 L640 360 Z" fill="#20272f"/>
+  <path d="M60 360 L268 176 L372 176 L580 360 Z" fill="#262e37"/>
+  <rect x="0" y="120" width="150" height="130" fill="#1b222b"/><rect x="490" y="120" width="150" height="130" fill="#1b222b"/>
+  <circle cx="150" cy="128" r="70" fill="url(#lm${id})"/>
+  <g stroke="#39434f" stroke-width="5">
+    <path d="M150 150v100M186 150v100M222 150v100M258 152v96M294 154v92M148 160h150M148 236h150"/>
+    <path d="M350 154v92M386 152v96M422 150v100M458 150v100M494 150v100M346 160h150M346 236h150"/></g>
+  <rect x="300" y="140" width="44" height="120" fill="#2c343d"/></svg>`}
+function qr(seed){
+  let s=seed,N=25,m=[];
+  const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+  for(let y=0;y<N;y++){m[y]=[];for(let x=0;x<N;x++)m[y][x]=rnd()>0.52?1:0}
+  const fp=(ox,oy)=>{for(let y=0;y<7;y++)for(let x=0;x<7;x++){
+    const b=(x===0||x===6||y===0||y===6)||(x>1&&x<5&&y>1&&y<5);m[oy+y][ox+x]=b?1:0}
+    for(let y=-1;y<8;y++)for(let x=-1;x<8;x++){const px=ox+x,py=oy+y;
+      if(px>=0&&py>=0&&px<N&&py<N&&(x<0||x>6||y<0||y>6))m[py][px]=0}};
+  fp(0,0);fp(N-7,0);fp(0,N-7);
+  for(let i=8;i<N-8;i++){m[6][i]=i%2?0:1;m[i][6]=i%2?0:1}
+  let r=`<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" style="width:100%;height:100%"><rect width="${N}" height="${N}" fill="#fff"/><g fill="#0d1014">`;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(m[y][x])r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  return r+'</g></svg>';
+}
+
+const NAV=[['luci','Luci','i-bulb'],['clima','Clima','i-thermo'],['pv','Energia','i-sun'],
+           ['cam','Camere','i-cam'],['acc','Accessi','i-gate'],['ag','Agenda','i-cal'],['wifi','Wi-Fi','i-wifi']];
+const bar=(sel)=>`<nav class="navbar">
+  <div class="nb home"><svg><use href="#i-home"/></svg><span>HOME</span></div>
+  ${NAV.map(([id,lb,ic])=>`<div class="nb ${id===sel||(sel==='cond'&&id==='clima')?'sel':''}"><svg><use href="#${ic}"/></svg><span>${lb}</span></div>`).join('')}
+</nav>`;
+const sh=(ti,cr,right)=>`<div class="sh"><div class="ti">${ti}</div><div class="cr">${cr}</div>${right||'<div class="clock">18:42</div>'}</div>`;
+const wrap=(r,corpo,sel)=>`<section class="screen" data-r="${r}">${corpo}${bar(sel)}</section>`;
+
+/* ---------------- HOME ---------------- */
+const home=(r)=>wrap(r,`
+<div class="hh">
+  <div><div class="t">18:42</div><div class="d">giovedì 13 agosto</div></div>
+  <div class="wx"><svg><use href="#i-sun"/></svg><div class="deg">27°</div>
+    <div class="meta">sereno<br>min 19 · max 31</div></div>
+  <div class="gear"><svg><use href="#i-gear"/></svg></div>
+</div>
+<div class="content">
+  <div class="card" style="flex:none">
+    <div class="k">Energia adesso</div>
+    <div class="en-top"><div class="v">3,42</div><div class="u">kW dal sole</div></div>
+    <div class="en-grid">
+      <div class="en-cell"><div class="kk">Casa</div><div class="vv">1,20 kW</div></div>
+      <div class="en-cell"><div class="kk">In rete</div><div class="vv">2,20 kW</div></div>
+      <div class="en-cell"><div class="kk">Oggi</div><div class="vv">24,8 kWh</div></div>
+    </div>
+    <div class="bar2"><i style="width:78%"></i></div>
+    <div style="font:400 12.5px/1 Inter,sans-serif;color:#8a95a6;margin-top:9px">batteria 78% · in carica +0,90 kW</div>
+  </div>
+  <div class="due" style="flex:1">
+    <div class="card">
+      <div class="k">In casa</div>
+      <div class="plist">
+        <div class="prow"><div class="av in">N</div><div><div class="nm">Nome 1</div><div class="st">dalle 17:40</div></div></div>
+        <div class="prow"><div class="av in">N</div><div><div class="nm">Nome 2</div><div class="st">dalle 16:05</div></div></div>
+        <div class="prow out"><div class="av">N</div><div><div class="nm">Nome 3</div><div class="st">fuori · rientro 19:15</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="k">Aperture e luci</div>
+      <div class="op-big"><div class="v">2</div><div class="u">finestre<br>aperte</div></div>
+      <div class="op-l"><div>Cucina · 35 min</div><div>Bagno · 12 min</div></div>
+      <div class="op-f">
+        <div class="f"><svg><use href="#i-bulb"/></svg><b>4 luci accese</b></div>
+        <div class="f"><svg><use href="#i-gate"/></svg>Cancelli <b>chiusi</b></div>
+        <div class="f"><svg><use href="#i-shield"/></svg>Allarme <b>disinserito</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="flex:none">
+    <div class="k">Oggi</div>
+    <div class="ag-list">
+      <div class="ev past"><div class="tm">15:00</div><div><div class="tx">Consegna pacco</div></div></div>
+      <div class="ev"><div class="tm">19:30</div><div><div class="tx">Cena da amici</div><div class="who">Calendario condiviso</div></div></div>
+      <div class="ev"><div class="tm">21:00</div><div><div class="tx">Lezione di chitarra</div></div></div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="sth">${scene('h1')}<span class="lv"><i></i>DIRETTA</span><span class="nm">Pedonale</span></div>
+    <div class="sth">${scene('h2')}<span class="nm">Carraio</span></div>
+    <div class="sth">${scene('h3')}<span class="nm">Garage</span></div>
+    <div class="sth">${scene('h4')}<span class="nm">Portico</span></div>
+  </div>
+</div>`,'');
+
+/* ---------------- LUCI ---------------- */
+const Z=[['Soggiorno','on','65'],['Sala da pranzo','on','100'],['Striscia LED divano','off',''],['Camera bambini','off',''],
+ ['Corridoio notte','on','40'],['Luci giardino','on','30'],['Cucina','off',''],['Isola cucina','off','']];
+const luci=(r)=>wrap(r, sh('Luci','13 zone · 4 accese',
+  `<div class="pager"><div class="ar off"><svg><use href="#i-left"/></svg></div><span class="n">1 / 2</span><div class="ar"><svg><use href="#i-right"/></svg></div></div>`)+
+`<div class="content">
+  <div class="g2">${Z.slice(0, 8).map(([n,s,p])=>`
+    <div class="lc ${s}"><div class="top"><svg><use href="#i-bulb"/></svg><span class="nm">${n}</span><span class="sw"><i></i></span></div>
+     <div class="pct">${p?p+'<span>%</span>':'spenta'}</div><div class="track"><i style="width:${p||0}%"></i></div></div>`).join('')}</div>
+  <div class="dots"><i class="on"></i><i></i></div>
+</div>`,'luci');
+
+/* ---------------- CLIMA ---------------- */
+const ZC=[['Salotto','48','24,5','24,0','richiesta','heat'],['Cucina','51','24,8','24,0','raggiunta',''],
+ ['Camera','47','22,6','22,0','raggiunta',''],['Camera bambini','46','23,1','23,0','raggiunta',''],
+ ['Studio','45','23,4','23,0','raggiunta',''],['Bagno di servizio','58','24,1','25,0','richiesta','heat'],
+ ['Lavanderia','55','23,8','23,0','raggiunta',''],['Camera padronale','54','19,8','—','spenta','off']];
+const clima=(r)=>wrap(r, sh('Clima','2 zone in richiesta')+
+`<div class="content">
+  <div class="tabs"><div class="tab sel"><svg><use href="#i-flame"/></svg>Riscaldamento</div>
+    <div class="tab"><svg><use href="#i-snow"/></svg>Condizionatori</div></div>
+  <div class="ext"><svg><use href="#i-sun"/></svg>Esterno 30,4°</div>
+  <div class="g2">${ZC.slice(0, 8).map(([n,h,now,set,lb,cls])=>`
+    <div class="zone ${cls}"><div class="zt"><span class="nm">${n}</span><span class="hum">${h}%</span></div>
+     <div class="now">${now}°</div>
+     <div class="set"><div class="b">−</div><div class="v">${set==='—'?'spenta':set+'°'}<small>${lb}</small></div><div class="b">+</div></div>
+    </div>`).join('')}</div>
+  <div class="dots"><i class="on"></i><i></i></div>
+</div>`,'clima');
+
+const AC=[['Salotto','cool','Freddo','i-snow','30,0','28,0','Media','Oscilla centro','1h 30m'],
+ ['Mansarda','cool','Freddo','i-snow','27,4','26,0','Auto','Fisso alto','—'],
+ ['Camera bambini','','Spento','i-fan','28,2','—','—','—','—'],
+ ['Camera matr.','hot','Caldo','i-flame','21,6','22,5','Bassa','Tutta escursione','—']];
+const cond=(r)=>wrap(r, sh('Clima','2 in funzione · 1 con timer')+
+`<div class="content">
+  <div class="tabs"><div class="tab"><svg><use href="#i-flame"/></svg>Riscaldamento</div>
+    <div class="tab sel"><svg><use href="#i-snow"/></svg>Condizionatori</div></div>
+  <div class="g2" style="grid-template-rows:repeat(2,1fr)">${AC.map(([n,cls,md,ic,now,set,fan,sw,tm])=>`
+    <div class="ac ${cls}">
+      <div class="hd"><span class="nm">${n}</span><span class="md"><svg><use href="#${ic}"/></svg>${md}</span></div>
+      <div class="now">${now}°</div>
+      <div class="set" style="display:flex;align-items:center;gap:9px">
+        <div class="b" style="width:44px;height:40px;border:1px solid #1e242d;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#8a95a6;background:#11161c">−</div>
+        <div style="flex:1;text-align:center;font:600 17px/1 Inter,sans-serif">${set==='—'?'—':set+'°'}</div>
+        <div class="b" style="width:44px;height:40px;border:1px solid #1e242d;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#8a95a6;background:#11161c">+</div>
+      </div>
+      <div class="rows">
+        <div class="row"><svg><use href="#i-fan"/></svg>Vent.<b>${fan}</b></div>
+        <div class="row"><svg><use href="#i-swingv"/></svg>Defl.<b>${sw}</b></div>
+        <div class="row"><svg><use href="#i-timer"/></svg>Timer<b>${tm}</b></div>
+      </div>
+    </div>`).join('')}</div>
+</div>`,'cond');
+
+/* ---------------- ENERGIA ---------------- */
+const pv=(r)=>wrap(r, sh('Fotovoltaico','3,42 kW in produzione')+
+`<div class="content">
+  <div class="stats">
+    <div class="stat"><div class="k">Produzione</div><div class="v">3,42<small>kW</small></div><div class="s">2 stringhe attive</div></div>
+    <div class="stat"><div class="k">Consumo casa</div><div class="v">1,20<small>kW</small></div><div class="s">pompa di calore ferma</div></div>
+    <div class="stat"><div class="k">Batteria</div><div class="v">78<small>%</small></div><div class="s">in carica +0,90 kW</div></div>
+    <div class="stat"><div class="k">Rete</div><div class="v">2,20<small>kW</small></div><div class="s">in immissione</div></div>
+  </div>
+  <div class="chart">
+    <div class="hd"><span class="t">Oggi</span><span class="m">24,8 kWh · autoconsumo 61%</span></div>
+    <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+      <g stroke="currentColor" opacity=".12"><path d="M0 40h600M0 90h600M0 140h600M0 190h600"/></g>
+      <g fill="currentColor" opacity=".85">
+        ${[6,14,26,40,58,74,88,104,120,138,150,158,150,132,110,86,58,34,16,6].map((v,i)=>`<rect x="${8+i*30}" y="${190-v}" width="20" height="${v}" rx="3"/>`).join('')}
+      </g></svg>
+  </div>
+  <div class="strings">
+    <div class="str"><div class="nm">Stringa 1</div><div class="big">1,98 kW</div><div class="det"><span>412 V</span><span>4,8 A</span></div></div>
+    <div class="str"><div class="nm">Stringa 2</div><div class="big">1,44 kW</div><div class="det"><span>388 V</span><span>3,7 A</span></div></div>
+  </div>
+</div>`,'pv');
+
+/* ---------------- TELECAMERE ---------------- */
+const CAMS=[['Cancello','k1'],['Porta ingresso','k2'],['Vialetto','k3'],['Strada','k4'],
+ ['Giardino','k5'],['Retro','k6'],['Terrazzo','k7'],['Garage','k8']];
+const cam=(r)=>{
+  const n = 8;
+  const pager = '<div class="clock">18:42</div>';
+  return wrap(r, sh('Telecamere', '8 · tutte visibili', pager)+
+`<div class="content">
+  <div class="qgrid">
+    ${CAMS.slice(0,n).map(([nm,id])=>`<div class="qcam">${scene(id)}<span class="lv"><i></i>DIRETTA</span><span class="nm">${nm}</span></div>`).join('')}
+  </div>
+  <div class="qbar"><svg style="width:16px;height:16px;color:#5d6878"><use href="#i-motion"/></svg>
+    Ultimo movimento <b>17:58</b> · vialetto</div>
+</div>`,'cam');
+};
+
+/* ---------------- ACCESSI ---------------- */
+const acc=(r)=>wrap(r, sh('Accessi','4 telecamere in diretta')+
+`<div class="content">
+  <div class="camtop" style="aspect-ratio:16/9">${scene('m')}
+    <div class="ov"><span class="live"><i></i>DIRETTA</span><span>Cancello pedonale</span></div>
+    <div class="ts">18:42:07</div></div>
+  <div class="thumbs">
+    <div class="th sel">${scene('t1')}<span>Pedonale</span></div>
+    <div class="th">${scene('t2')}<span>Carraio</span></div>
+    <div class="th">${scene('t3')}<span>Garage</span></div>
+    <div class="th">${scene('t4')}<span>Portico</span></div>
+  </div>
+  <div class="arow"><svg><use href="#i-fence"/></svg>
+    <div><div class="nm">Cancello pedonale</div><div class="st">ultimo impulso 17:58</div></div>
+    <div class="btn">Apri</div></div>
+  <div class="arow"><svg><use href="#i-gate"/></svg>
+    <div><div class="nm">Cancello esterno</div><div class="st">conferma richiesta</div></div>
+    <div class="btn">Apri<small>TIENI PREMUTO</small></div></div>
+  <div class="arow"><svg><use href="#i-home"/></svg>
+    <div><div class="nm">Porta del garage</div><div class="st">chiusa</div></div>
+    <div class="btn">Apri<small>TIENI PREMUTO</small></div></div>
+  <div class="arow luce"><svg><use href="#i-bulb"/></svg>
+    <div><div class="nm">Luci giardino</div><div class="st" style="color:#f0a835">accese</div></div>
+    <div class="swbig"><i></i></div></div>
+</div>`,'acc');
+
+/* ---------------- AGENDA ---------------- */
+const ag=(r)=>wrap(r, sh('Agenda','3 impegni oggi · 2 domani')+
+`<div class="content">
+  <div class="card giorno">
+    <div class="gh"><span class="t">Oggi</span><span class="d">giovedì 13 agosto</span></div>
+    <div class="agev"><div class="bl b2"></div><div class="tm">15:00</div><div><div class="tx">Consegna pacco</div><div class="who">Casa</div></div></div>
+    <div class="agev"><div class="bl"></div><div class="tm">19:30</div><div><div class="tx">Cena da amici</div><div class="who">Calendario condiviso</div></div></div>
+    <div class="agev"><div class="bl b3"></div><div class="tm">21:00</div><div><div class="tx">Lezione di chitarra</div><div class="who">Calendario 3</div></div></div>
+  </div>
+  <div class="card giorno">
+    <div class="gh"><span class="t">Domani</span><span class="d">venerdì 14 agosto</span></div>
+    <div class="agev"><div class="bl b3"></div><div class="tm">08:15</div><div><div class="tx">Visita dal meccanico</div><div class="who">Calendario 3</div></div></div>
+    <div class="agev"><div class="bl b2"></div><div class="tm">tutto<br>il dì</div><div><div class="tx">Ferragosto</div><div class="who">Festività</div></div></div>
+  </div>
+  <div class="card giorno" style="flex:1">
+    <div class="gh"><span class="t">Prossimi giorni</span><span class="d">entro il 20</span></div>
+    <div class="agev"><div class="bl"></div><div class="tm">sab 16</div><div><div class="tx">Manutenzione caldaia</div><div class="who">Calendario condiviso</div></div></div>
+    <div class="agev"><div class="bl b3"></div><div class="tm">lun 18</div><div><div class="tx">Consegna mobili</div><div class="who">Calendario 3</div></div></div>
+  </div>
+  <div class="aglg"><div class="l"><i></i>Condiviso</div><div class="l"><i class="b2"></i>Casa</div><div class="l"><i class="b3"></i>Calendario 3</div></div>
+</div>`,'ag');
+
+/* ---------------- WIFI ---------------- */
+const wifi=(r)=>wrap(r, sh('Wi-Fi ospiti','inquadra il codice per collegarti')+
+`<div class="content">
+  <div class="qcard"><div class="q">${qr(7)}</div><div class="cap">Inquadra con la fotocamera del telefono</div></div>
+  <div class="card wbox"><div class="k">Nome rete</div><div class="v">CasaOspiti</div></div>
+  <div class="card wbox"><div class="hd"><div class="k">Password</div><div class="act">Nascondi</div></div>
+    <div class="v mono">benvenuti2026</div></div>
+  <div class="wnote"><svg><use href="#i-shield"/></svg>
+    Rete separata da quella di casa: chi si collega naviga in internet ma non vede telecamere né dispositivi domestici.</div>
+  <div class="wbtn"><svg><use href="#i-lock"/></svg>Rete privata<span class="ar2"><svg><use href="#i-right"/></svg></span></div>
+</div>`,'wifi');
+
+const S={home,luci,clima,cond,pv,cam,acc,ag,wifi};
+const CAP={
+ home:`<h3>Home</h3>La barra di navigazione in basso è sempre presente, quindi <b>il dock sparisce</b>: la home torna a essere solo un cruscotto, e recupera lo spazio di sette pulsanti. L'energia sta in alto con tre celle affiancate, presenza e aperture si dividono la fascia centrale, l'agenda del giorno sotto. Sul pannello grande la striscia delle telecamere chiude in basso, con le anteprime in 16:9; sul piccolo non entra e viene omessa.`,
+ luci:`<h3>Luci</h3>Due colonne invece di tre o quattro, ma <b>schede più alte</b>: il cursore di luminosità diventa più lungo e quindi più preciso, che in verticale è il guadagno principale. Otto per pagina sul grande, sei sul piccolo.`,
+ clima:`<h3>Clima</h3>I due gruppi diventano due schede piene in cima, larghe metà schermo ciascuna: molto più facili da centrare della fascia orizzontale. La temperatura esterna ha una riga sua.`,
+ cond:`<h3>Condizionatori</h3>Da quattro colonne strette a <b>una griglia 2×2 di schede quadrate</b>: è il caso in cui la verticale funziona meglio dell'orizzontale, perché ogni unità ha spazio per il setpoint e le tre righe di stato senza comprimere nulla.`,
+ pv:`<h3>Energia</h3>I quattro riquadri passano da una riga a una griglia 2×2, il grafico della giornata resta ampio e le due stringhe si affiancano in fondo. Nessuna perdita rispetto all'orizzontale.`,
+ cam:`<h3>Telecamere</h3>Ogni riquadro rispetta il <b>rapporto 16:9 delle telecamere</b>: le immagini non vengono né tagliate né deformate. Due colonne di riquadri bassi e larghi, e in verticale ci sta molto: sul pannello grande <b>tutte e otto insieme</b>, senza paginazione; sul piccolo sei per pagina.`,
+ acc:`<h3>Accessi</h3><b>La schermata che guadagna di più.</b> La telecamera occupa tutta la larghezza in alto <b>nel suo rapporto 16:9 naturale</b>, le miniature sotto, e i quattro comandi diventano righe piene larghe quanto lo schermo: il pulsante Apri è enorme e impossibile da sbagliare. È il formato naturale per un pannello accanto al campanello.`,
+ ag:`<h3>Agenda</h3>Le colonne per giorno non hanno senso in verticale: diventa <b>un elenco unico con intestazioni di giorno</b>, che è anche il modo in cui si legge un'agenda. Più giorni visibili insieme rispetto all'orizzontale.`,
+ wifi:`<h3>Wi-Fi</h3>Il codice QR va a tutta larghezza, quindi <b>più grande che in orizzontale</b> e leggibile da più lontano. Nome e password sotto, uno per riga, senza comprimere.`
+};
+
+let prof='p4', scr='home';
+const DIM={p4:[800,1280]};
+function render(){
+  const [w,h]=DIM[prof];
+  const st=document.getElementById('stage');
+  st.style.width=w+'px'; st.style.height=h+'px';
+  st.innerHTML=S[scr](prof);
+  document.getElementById('cap').innerHTML=CAP[scr];
+  document.querySelectorAll('#gr button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===prof)));
+  document.querySelectorAll('#gs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===scr)));
+  fit();
+}
+function fit(){
+  const [w,h]=DIM[prof];
+  const frame=document.getElementById('frame');
+  const disp=Math.min(760, window.innerHeight-160);
+  const s=Math.min(1, disp/h);
+  document.getElementById('stage').style.transform='scale('+s+')';
+  frame.style.width=(w*s+24)+'px'; frame.style.height=(h*s+24)+'px';
+}
+document.querySelectorAll('#gr button').forEach(b=>b.onclick=()=>{prof=b.dataset.p;render()});
+document.querySelectorAll('#gs button').forEach(b=>b.onclick=()=>{scr=b.dataset.s;render()});
+addEventListener('resize',fit);
+render();
+</script>
+</body>
+</html>

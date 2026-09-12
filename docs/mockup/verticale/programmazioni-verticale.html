@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Sezione Programmazioni · tre proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1560px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:15px;font-weight:600;margin:40px 0 4px;color:#e6e9ee;border-top:1px solid #262a31;padding-top:24px}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 18px;max-width:98ch;line-height:1.65}
+p.sub b{color:#e6e9ee}
+p.sub code,li code,td code{font-size:11.5px;background:#1e242d;padding:1px 4px;border-radius:3px}
+.riga{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:13px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap .si{color:#4fc39a}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+table.mis{border-collapse:collapse;font-size:12.5px;margin:6px 0 16px}
+table.mis th,table.mis td{border:1px solid #262a31;padding:5px 10px;text-align:left;color:#9aa1ad;vertical-align:top}
+table.mis th{color:#e6e9ee;font-weight:600;background:#1a1e24}
+pre.cfg{font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:#11151b;border:1px solid #262a31;
+  border-radius:8px;padding:14px 16px;color:#9aa1ad;overflow-x:auto;max-width:98ch}
+pre.cfg b{color:#e6e9ee;font-weight:600}
+
+/* ── lo schermo ───────────────────────────────────────────────────── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;--ink:#1a1206;
+  --selbg:#1a1710;
+  --r:16px;--pad:18px;--gap:14px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+.head{height:72px;flex:none;padding:0 var(--pad);display:flex;align-items:baseline;gap:14px}
+.head .t{font-size:30px;font-weight:600}
+.head .s{font-size:14px;color:var(--dim)}
+.head .p{margin-left:auto;font-size:14px;color:var(--dim)}
+.head .fr{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px;color:var(--dim)}
+.head .fr .b{width:48px;height:48px;border:1px solid var(--line);border-radius:11px;display:flex;
+  align-items:center;justify-content:center;font-size:20px;color:var(--txt)}
+.head .fr .b.off{color:#3a4250}
+.body{flex:1;padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+.nav{height:112px;flex:none;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);align-items:center}
+.nav .v{text-align:center;font:500 11px/1.4 Inter,sans-serif;letter-spacing:.06em;color:var(--dim);
+  height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nav .v.on{color:var(--acc);background:#241d0e}
+.nav .v .ic{font-size:22px;line-height:1}
+
+/* ── mattoni comuni ───────────────────────────────────────────────── */
+.card{background:var(--card);border-radius:var(--r);padding:15px 17px}
+.occhiello{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin:2px 0 -4px}
+.sw{width:56px;height:32px;border-radius:16px;background:var(--off);flex:none;position:relative}
+.sw::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#7c8595}
+.sw.on{background:var(--acc)}
+.sw.on::after{left:28px;background:#1a1206}
+.sw.piccolo{width:46px;height:26px}
+.sw.piccolo::after{width:20px;height:20px;top:3px;left:3px}
+.sw.piccolo.on::after{left:23px}
+
+/* riga generica di una scheda */
+.r{display:flex;align-items:center;gap:13px;padding:11px 0;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r .ic{font-size:20px;color:var(--dim);width:24px;text-align:center;flex:none}
+.r .nm{flex:1;min-width:0;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r .nm .se{display:block;font-size:12.5px;color:var(--dim);margin-top:2px}
+.r .vl{font-size:16px;color:var(--dim);flex:none}
+.r.spenta .nm{color:var(--dim)}
+
+/* riga finestra: due orari toccabili */
+.fin{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:1px solid var(--line)}
+.fin .et{font-size:13px;color:var(--dim);width:88px;flex:none;letter-spacing:.04em}
+.ora{font-size:25px;font-weight:500;background:var(--card2);border:1px solid var(--line);
+  border-radius:11px;padding:6px 14px;line-height:1.15;min-width:104px;text-align:center}
+.fin .fr{color:var(--dim);font-size:19px}
+.fin .du{margin-left:auto;font-size:13px;color:var(--dim)}
+.ora.attiva{border-color:var(--acc);color:var(--acc)}
+
+/* intestazione di gruppo */
+.gh{display:flex;align-items:center;gap:13px}
+.gh .ic{font-size:26px;color:var(--acc);width:30px;text-align:center;flex:none}
+.gh .ic.off{color:var(--dim)}
+.gh .nm{flex:1;min-width:0}
+.gh .nm .t{font-size:20px;font-weight:600}
+.gh .nm .s{font-size:13px;color:var(--dim);margin-top:2px}
+.gh .nm .s.on{color:var(--acc)}
+
+/* elenco dei gruppi (proposta A) */
+.gruppo{background:var(--card);border-radius:var(--r);padding:14px 16px;display:flex;
+  align-items:center;gap:14px}
+.gruppo .ic{font-size:26px;width:32px;text-align:center;flex:none;color:var(--dim)}
+.gruppo .ic.on{color:var(--acc)}
+.gruppo .co{flex:1;min-width:0}
+.gruppo .co .t{font-size:19px;font-weight:600}
+.gruppo .co .o{font-size:14px;color:var(--dim);margin-top:3px;font-variant-numeric:tabular-nums}
+.gruppo .co .o b{color:var(--txt);font-weight:500}
+.gruppo .dx{text-align:right;flex:none;font-size:13px;color:var(--dim)}
+.gruppo .dx .st{font-size:15px;color:var(--acc);display:block;margin-bottom:3px}
+.gruppo .dx .st.off{color:var(--dim)}
+.gruppo .fr{font-size:22px;color:#3a4250;flex:none}
+
+/* fisarmonica (proposta C) */
+.acc-h{display:flex;align-items:center;gap:13px;padding:13px 16px;background:var(--card);
+  border-radius:var(--r)}
+.acc-h.aperta{border-radius:var(--r) var(--r) 0 0}
+.acc-c{background:var(--card2);border-radius:0 0 var(--r) var(--r);padding:2px 17px 12px;
+  border-top:1px solid var(--line)}
+.freccia{font-size:16px;color:var(--dim);flex:none;width:18px;text-align:center}
+
+/* tastierino dell'ora */
+.velo{position:absolute;inset:0;background:#000c;display:flex;align-items:center;justify-content:center}
+.pick{width:660px;background:var(--card);border-radius:22px;padding:26px 28px 24px;border:1px solid var(--line)}
+.pick .ti{font-size:14px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.pick .nm{font-size:23px;font-weight:600;margin:5px 0 20px}
+.pick .cif{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px}
+.pick .cif .cl{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pick .cif .bt{width:112px;height:64px;border-radius:14px;background:var(--card2);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--txt)}
+.pick .cif .nu{font-size:82px;font-weight:300;line-height:1;font-variant-numeric:tabular-nums}
+.pick .cif .dp{font-size:60px;font-weight:300;color:var(--dim);padding-bottom:4px}
+.pick .az{display:flex;gap:14px}
+.pick .az .b{flex:1;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:600}
+.pick .az .b.si{background:var(--acc);color:var(--ink)}
+.pick .az .b.no{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.pallini{display:flex;gap:7px;justify-content:center;padding:2px 0 0}
+.pallini i{width:9px;height:9px;border-radius:50%;background:#2b3340}
+.pallini i.on{background:var(--acc);width:26px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">Sezione «Programmazioni» — tre proposte, profilo <code>p4-800x1280</code></h1>
+<p class="sub">
+Rendering 1:1 a 800×1280, ridotti al 44%. I dati sono quelli veri:
+<code>view-automazioni.yaml</code>, <code>automations.yaml</code> e
+<code>input_datetime.yaml</code>. Sei gruppi hanno orari — Campanello, Stufetta bagno,
+Luci giardino, Irrigazione, Albero di Natale, Luce corridoio notte — e ognuno porta con sé
+<b>tutte</b> le automazioni della sua scheda, come in Home Assistant: anche quelle che
+non c'entrano con l'orologio.<br><br>
+Tre decisioni sono già prese e valgono per tutte e tre le proposte: <b>gli orari si
+appaiano in finestre</b> dichiarate in configurazione (<code>07:00 → 09:00</code> invece
+di due righe separate), <b>l'ora si cambia toccandola</b> e si apre il tastierino a
+pagina piena, e <b>le automazioni ci sono tutte</b>, ognuna col suo interruttore.
+</p>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<h2 class="tt2">Proposta A — elenco dei gruppi, e il gruppo si apre a pagina piena</h2>
+<p class="sub">
+Come funziona già il Clima con il dettaglio del condizionatore: una schermata che elenca,
+una che comanda.
+</p>
+
+<div class="riga">
+
+  <!-- A1: l'elenco -->
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Programmazioni</span>
+        <span class="s">6 gruppi · 2 attivi adesso</span><span class="p">18:42</span></div>
+      <div class="body">
+
+        <div class="gruppo">
+          <span class="ic">☏</span>
+          <div class="co"><div class="t">Campanello</div>
+            <div class="o"><b>08:00 → 22:30</b></div></div>
+          <div class="dx"><span class="st off">spento</span>6 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+        <div class="gruppo">
+          <span class="ic on">♨</span>
+          <div class="co"><div class="t">Stufetta bagno</div>
+            <div class="o"><b>06:30 → 08:00</b> · <b>18:00 → 21:30</b></div></div>
+          <div class="dx"><span class="st">acceso</span>4 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+        <div class="gruppo">
+          <span class="ic on">◍</span>
+          <div class="co"><div class="t">Luci giardino</div>
+            <div class="o"><b>18:30 → 23:30</b> · <b>05:30 → 07:00</b></div></div>
+          <div class="dx"><span class="st">accese</span>9 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+        <div class="gruppo">
+          <span class="ic">≋</span>
+          <div class="co"><div class="t">Irrigazione</div>
+            <div class="o"><b>09:00 → 13:00</b> · <b>15:00 → 19:00</b></div></div>
+          <div class="dx"><span class="st off">ferma</span>2 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+        <div class="gruppo">
+          <span class="ic">✦</span>
+          <div class="co"><div class="t">Albero di Natale</div>
+            <div class="o"><b>17:00 → 23:00</b></div></div>
+          <div class="dx"><span class="st off">spento</span>2 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+        <div class="gruppo">
+          <span class="ic">☾</span>
+          <div class="co"><div class="t">Luce corridoio notte</div>
+            <div class="o">attiva <b>22:00 → 06:00</b> · a movimento</div></div>
+          <div class="dx"><span class="st off">in attesa</span>2 automazioni</div>
+          <span class="fr">›</span>
+        </div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>A · la prima schermata</h3>
+      Sei righe, una per gruppo, e su ognuna la sola cosa che si guarda da lontano:
+      <b>se è acceso adesso</b> e <b>fra che ore</b>. Le finestre stanno in riga, con
+      i numeri a spaziatura fissa perché si leggano incolonnati.
+      Il conteggio delle automazioni a destra dice quanto c'è dentro senza mostrarlo.</div>
+  </div>
+
+  <!-- A2: il dettaglio -->
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Luci giardino</span>
+        <span class="s">← Programmazioni</span><span class="p">18:42</span></div>
+      <div class="body">
+
+        <div class="card">
+          <div class="r">
+            <span class="ic" style="color:var(--acc)">◍</span>
+            <span class="nm">Luci giardino<span class="se">accese · 148 W</span></span>
+            <span class="sw on"></span>
+          </div>
+        </div>
+
+        <div class="occhiello">Finestre</div>
+        <div class="card" style="padding-top:6px;padding-bottom:8px">
+          <div class="fin" style="border-top:0">
+            <span class="et">1ª</span>
+            <span class="ora">18:30</span><span class="fr">→</span><span class="ora">23:30</span>
+            <span class="du">5 h</span>
+          </div>
+          <div class="fin">
+            <span class="et">2ª</span>
+            <span class="ora">05:30</span><span class="fr">→</span><span class="ora">07:00</span>
+            <span class="du">1 h 30</span>
+          </div>
+        </div>
+
+        <div class="occhiello">Automazioni</div>
+        <div class="card" style="padding-top:4px;padding-bottom:6px">
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Accensione alla pianificazione<span class="se">ieri 18:30</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">◐</span>
+            <span class="nm">Accensione al calar del sole<span class="se">ieri 18:12</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Spegnimento alla pianificazione<span class="se">oggi 07:00</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">◑</span>
+            <span class="nm">Spegnimento al sorgere del sole<span class="se">oggi 06:41</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r spenta"><span class="ic">▤</span>
+            <span class="nm">Accensione all'apertura del cancello<span class="se">disattivata</span></span>
+            <span class="sw piccolo"></span></div>
+          <div class="r"><span class="ic">▤</span>
+            <span class="nm">Accensione all'apertura della porta del garage</span>
+            <span class="sw on piccolo"></span></div>
+        </div>
+        <div class="pallini"><i class="on"></i><i></i></div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>A · il gruppo aperto</h3>
+      In cima il dispositivo con il suo comando, poi le finestre, poi le automazioni.
+      Nove non ci stanno in una schermata: le ultime tre vanno alla seconda pagina, e i
+      pallini in fondo lo dicono — la stessa impaginazione di tutto il resto del pannello.
+      <b>«← Programmazioni»</b> in testata al posto del tasto indietro, come nel dettaglio
+      del condizionatore.</div>
+  </div>
+
+  <!-- A3: il tastierino -->
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Luci giardino</span>
+        <span class="s">← Programmazioni</span><span class="p">18:42</span></div>
+      <div class="body" style="filter:blur(1px)">
+        <div class="card">
+          <div class="r"><span class="ic" style="color:var(--acc)">◍</span>
+            <span class="nm">Luci giardino<span class="se">accese · 148 W</span></span>
+            <span class="sw on"></span></div>
+        </div>
+        <div class="occhiello">Finestre</div>
+        <div class="card" style="padding-top:6px;padding-bottom:8px">
+          <div class="fin" style="border-top:0">
+            <span class="et">1ª</span>
+            <span class="ora attiva">18:30</span><span class="fr">→</span><span class="ora">23:30</span>
+            <span class="du">5 h</span>
+          </div>
+          <div class="fin">
+            <span class="et">2ª</span>
+            <span class="ora">05:30</span><span class="fr">→</span><span class="ora">07:00</span>
+            <span class="du">1 h 30</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="velo">
+        <div class="pick">
+          <div class="ti">Accensione · 1ª finestra</div>
+          <div class="nm">Luci giardino</div>
+          <div class="cif">
+            <div class="cl"><div class="bt">+</div><div class="nu">18</div><div class="bt">−</div></div>
+            <div class="dp">:</div>
+            <div class="cl"><div class="bt">+</div><div class="nu">30</div><div class="bt">−</div></div>
+          </div>
+          <div class="az"><div class="b no">Annulla</div><div class="b si">Salva</div></div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>Il tastierino — uguale in tutte e tre</h3>
+      Si apre toccando un orario, e dietro il velo resta visibile <b>quale</b> orario si
+      sta cambiando: la pastiglia toccata è ambra. Ore e minuti con tasti da 112×64,
+      minuti a passi di 5, tenendo premuto scorre. <b>Salva</b> chiama
+      <code>input_datetime.set_datetime</code>; <b>Annulla</b> non manda niente, e senza
+      tocchi si chiude da solo dopo otto secondi come le altre modali del pannello.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<h2 class="tt2">Proposta B — un gruppo per pagina, si scorre con le frecce</h2>
+<p class="sub">
+Nessun elenco e nessuna gerarchia: si entra e si è già dentro un gruppo. Le frecce in
+testata cambiano gruppo, i pallini in fondo dicono a che punto si è — la stessa
+impaginazione della sezione Clima.
+</p>
+
+<div class="riga">
+
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Irrigazione</span>
+        <div class="fr"><div class="b">‹</div><span>4 / 6</span><div class="b">›</div></div></div>
+      <div class="body">
+
+        <div class="card">
+          <div class="r">
+            <span class="ic">≋</span>
+            <span class="nm">Irrigazione<span class="se">ferma · 0 W</span></span>
+            <span class="sw"></span>
+          </div>
+        </div>
+
+        <div class="occhiello">Finestre</div>
+        <div class="card" style="padding-top:6px;padding-bottom:8px">
+          <div class="fin" style="border-top:0">
+            <span class="et">1ª</span>
+            <span class="ora">09:00</span><span class="fr">→</span><span class="ora">13:00</span>
+            <span class="du">4 h</span>
+          </div>
+          <div class="fin">
+            <span class="et">2ª</span>
+            <span class="ora">15:00</span><span class="fr">→</span><span class="ora">19:00</span>
+            <span class="du">4 h</span>
+          </div>
+        </div>
+
+        <div class="occhiello">Automazioni</div>
+        <div class="card" style="padding-top:4px;padding-bottom:6px">
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Accensione alla pianificazione<span class="se">oggi 15:00</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Spegnimento alla pianificazione<span class="se">oggi 13:00</span></span>
+            <span class="sw on piccolo"></span></div>
+        </div>
+
+        <div class="occhiello">Consumo</div>
+        <div class="card" style="padding-top:4px;padding-bottom:6px">
+          <div class="r"><span class="ic">⚡</span>
+            <span class="nm">Potenza istantanea</span><span class="vl">0 W</span></div>
+          <div class="r"><span class="ic">∑</span>
+            <span class="nm">Energia di oggi</span><span class="vl">2,4 kWh</span></div>
+        </div>
+
+        <div style="flex:1"></div>
+        <div class="pallini"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>B · un gruppo intero, senza passare da un elenco</h3>
+      Il gruppo si prende tutta la schermata, quindi ci sta anche quello che in A finisce
+      in seconda pagina: qui la pompa mostra pure il sensore di assorbimento, in sola
+      lettura, come nella scheda di Home Assistant.
+      <span class="si">Ogni cosa è a un tocco di distanza</span> — niente elenco da
+      attraversare.</div>
+  </div>
+
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Luci giardino</span>
+        <div class="fr"><div class="b">‹</div><span>3 / 6</span><div class="b">›</div></div></div>
+      <div class="body">
+
+        <div class="card">
+          <div class="r">
+            <span class="ic" style="color:var(--acc)">◍</span>
+            <span class="nm">Luci giardino<span class="se">accese · 148 W</span></span>
+            <span class="sw on"></span>
+          </div>
+        </div>
+
+        <div class="occhiello">Finestre</div>
+        <div class="card" style="padding-top:6px;padding-bottom:8px">
+          <div class="fin" style="border-top:0">
+            <span class="et">1ª</span>
+            <span class="ora">18:30</span><span class="fr">→</span><span class="ora">23:30</span>
+            <span class="du">5 h</span></div>
+          <div class="fin">
+            <span class="et">2ª</span>
+            <span class="ora">05:30</span><span class="fr">→</span><span class="ora">07:00</span>
+            <span class="du">1 h 30</span></div>
+        </div>
+
+        <div class="occhiello">Automazioni · 9</div>
+        <div class="card" style="padding-top:4px;padding-bottom:6px">
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Accensione alla pianificazione<span class="se">ieri 18:30</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">◐</span>
+            <span class="nm">Accensione al calar del sole<span class="se">ieri 18:12</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">⏱</span>
+            <span class="nm">Spegnimento alla pianificazione<span class="se">oggi 07:00</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">◑</span>
+            <span class="nm">Spegnimento al sorgere del sole<span class="se">oggi 06:41</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r spenta"><span class="ic">▤</span>
+            <span class="nm">Accensione all'apertura del cancello<span class="se">disattivata</span></span>
+            <span class="sw piccolo"></span></div>
+          <div class="r"><span class="ic">▤</span>
+            <span class="nm">Accensione all'apertura della porta del garage</span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">▤</span>
+            <span class="nm">Accensione entrando in casa alla sera</span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">✉</span>
+            <span class="nm">Notifica inizio consumo</span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">✉</span>
+            <span class="nm">Notifica fine consumo</span>
+            <span class="sw on piccolo"></span></div>
+        </div>
+
+        <div style="flex:1"></div>
+        <div class="pallini"><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>B · il gruppo più pieno che hai</h3>
+      Le nove automazioni delle luci del giardino ci stanno tutte, in una schermata sola, senza
+      impaginare niente. È il caso peggiore ed è anche la prova che regge:
+      un gruppo più grosso di questo, in casa tua, non c'è.
+      <span class="no">Il prezzo</span>: per arrivare all'albero di Natale, che è il
+      quinto, servono quattro frecce — e non sai mai a memoria dove sta un gruppo.</div>
+  </div>
+
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Luce corridoio notte</span>
+        <div class="fr"><div class="b">‹</div><span>6 / 6</span><div class="b off">›</div></div></div>
+      <div class="body">
+
+        <div class="card">
+          <div class="r">
+            <span class="ic">☾</span>
+            <span class="nm">Luce corridoio<span class="se">spenta · in attesa di movimento</span></span>
+            <span class="sw"></span>
+          </div>
+        </div>
+
+        <div class="occhiello">Finestra di validità</div>
+        <div class="card" style="padding-top:6px;padding-bottom:8px">
+          <div class="fin" style="border-top:0">
+            <span class="et">dalle</span>
+            <span class="ora">22:00</span><span class="fr">→</span><span class="ora">06:00</span>
+            <span class="du">8 h</span></div>
+          <div style="font-size:14px;color:var(--dim);line-height:1.6;padding:9px 0 2px;
+                      border-top:1px solid var(--line);margin-top:6px">
+            Fuori da queste ore il movimento non accende niente: non è un orario di
+            accensione, è quando l'automazione ha il permesso di scattare.</div>
+        </div>
+
+        <div class="occhiello">Automazioni</div>
+        <div class="card" style="padding-top:4px;padding-bottom:6px">
+          <div class="r"><span class="ic">◉</span>
+            <span class="nm">Accendi su movimento<span class="se">stanotte 02:14 · sotto 10 lux</span></span>
+            <span class="sw on piccolo"></span></div>
+          <div class="r"><span class="ic">◉</span>
+            <span class="nm">Spegni a fine movimento<span class="se">stanotte 02:16</span></span>
+            <span class="sw on piccolo"></span></div>
+        </div>
+
+        <div style="flex:1"></div>
+        <div class="pallini"><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>Il caso che non è come gli altri</h3>
+      Il corridoio non ha orari di accensione: ha un <b>intervallo che dà il permesso</b> a
+      un'automazione a movimento (<code>condition: time / after: … before: …</code>).
+      Disegnarlo come una finestra qualunque farebbe credere che alle 22:00 la luce si
+      accenda. Vale per tutte e tre le proposte: la finestra si chiama
+      <b>«di validità»</b> e una riga dice cosa vuol dire.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<h2 class="tt2">Proposta C — un elenco solo, e i gruppi si aprono sul posto</h2>
+<p class="sub">
+La più vicina alla tua view di Home Assistant: una colonna lunga con tutte le schede.
+Chiuso, ogni gruppo mostra comando e finestre — che è quello che si guarda. Toccando
+l'intestazione si aprono le automazioni, e il gruppo si allunga in mezzo agli altri.
+</p>
+
+<div class="riga">
+
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Programmazioni</span>
+        <span class="s">6 gruppi · 2 attivi adesso</span><span class="p">18:42</span></div>
+      <div class="body" style="gap:11px">
+
+        <div>
+          <div class="acc-h">
+            <span class="freccia">›</span>
+            <span class="gh-ic" style="font-size:24px;color:var(--dim);width:28px;text-align:center">☏</span>
+            <div class="nm" style="flex:1"><div style="font-size:19px;font-weight:600">Campanello</div></div>
+            <span class="sw"></span>
+          </div>
+        </div>
+
+        <div>
+          <div class="acc-h">
+            <span class="freccia">›</span>
+            <span style="font-size:24px;color:var(--acc);width:28px;text-align:center">♨</span>
+            <div style="flex:1"><div style="font-size:19px;font-weight:600">Stufetta bagno</div>
+              <div style="font-size:13.5px;color:var(--dim);margin-top:2px">acceso fino alle 21:30</div></div>
+            <span class="sw on"></span>
+          </div>
+        </div>
+
+        <div>
+          <div class="acc-h aperta">
+            <span class="freccia">⌄</span>
+            <span style="font-size:24px;color:var(--acc);width:28px;text-align:center">◍</span>
+            <div style="flex:1"><div style="font-size:19px;font-weight:600">Luci giardino</div>
+              <div style="font-size:13.5px;color:var(--dim);margin-top:2px">accese · 148 W</div></div>
+            <span class="sw on"></span>
+          </div>
+          <div class="acc-c">
+            <div class="fin" style="border-top:0">
+              <span class="et">1ª</span>
+              <span class="ora">18:30</span><span class="fr">→</span><span class="ora">23:30</span>
+              <span class="du">5 h</span></div>
+            <div class="fin">
+              <span class="et">2ª</span>
+              <span class="ora">05:30</span><span class="fr">→</span><span class="ora">07:00</span>
+              <span class="du">1 h 30</span></div>
+            <div class="r"><span class="ic">⏱</span>
+              <span class="nm">Accensione alla pianificazione</span>
+              <span class="sw on piccolo"></span></div>
+            <div class="r"><span class="ic">◐</span>
+              <span class="nm">Accensione al calar del sole</span>
+              <span class="sw on piccolo"></span></div>
+            <div class="r"><span class="ic">⏱</span>
+              <span class="nm">Spegnimento alla pianificazione</span>
+              <span class="sw on piccolo"></span></div>
+            <div class="r"><span class="ic">◑</span>
+              <span class="nm">Spegnimento al sorgere del sole</span>
+              <span class="sw on piccolo"></span></div>
+            <div class="r spenta"><span class="ic">▤</span>
+              <span class="nm">All'apertura del cancello</span>
+              <span class="sw piccolo"></span></div>
+            <div class="r" style="color:var(--dim);font-size:14px;justify-content:center">
+              altre 4 ⌄</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="acc-h">
+            <span class="freccia">›</span>
+            <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">≋</span>
+            <div style="flex:1"><div style="font-size:19px;font-weight:600">Irrigazione</div>
+              <div style="font-size:13.5px;color:var(--dim);margin-top:2px">ferma · riparte alle 09:00</div></div>
+            <span class="sw"></span>
+          </div>
+        </div>
+
+        <div>
+          <div class="acc-h">
+            <span class="freccia">›</span>
+            <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">✦</span>
+            <div style="flex:1"><div style="font-size:19px;font-weight:600">Albero di Natale</div></div>
+            <span class="sw"></span>
+          </div>
+        </div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>C · uno aperto, gli altri chiusi</h3>
+      Il gruppo aperto mostra finestre e automazioni sul posto; gli altri restano righe
+      alte 60 px con nome, stato e interruttore. L'interruttore è sull'intestazione:
+      accendere le luci del giardino non chiede di aprire niente.
+      <span class="no">Il problema si vede qui</span>: con un gruppo aperto, il sesto
+      esce dalla schermata e bisogna scorrere — e quando è chiuso non si vedono le sue
+      finestre, che sono la ragione per cui uno entra in questa sezione.</div>
+  </div>
+
+  <div class="col">
+    <div class="frame"><div class="stage"><div class="screen">
+      <div class="head"><span class="t">Programmazioni</span>
+        <span class="s">6 gruppi · 2 attivi adesso</span><span class="p">18:42</span></div>
+      <div class="body" style="gap:11px">
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">☏</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Campanello</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              08:00 → 22:30</div></div>
+          <span class="sw"></span></div></div>
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--acc);width:28px;text-align:center">♨</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Stufetta bagno</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              06:30 → 08:00 · <span style="color:var(--acc)">18:00 → 21:30</span></div></div>
+          <span class="sw on"></span></div></div>
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--acc);width:28px;text-align:center">◍</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Luci giardino</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              <span style="color:var(--acc)">18:30 → 23:30</span> · 05:30 → 07:00</div></div>
+          <span class="sw on"></span></div></div>
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">≋</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Irrigazione</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              09:00 → 13:00 · 15:00 → 19:00</div></div>
+          <span class="sw"></span></div></div>
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">✦</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Albero di Natale</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              17:00 → 23:00</div></div>
+          <span class="sw"></span></div></div>
+
+        <div><div class="acc-h">
+          <span class="freccia">›</span>
+          <span style="font-size:24px;color:var(--dim);width:28px;text-align:center">☾</span>
+          <div style="flex:1"><div style="font-size:19px;font-weight:600">Luce corridoio notte</div>
+            <div style="font-size:13.5px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums">
+              attiva 22:00 → 06:00</div></div>
+          <span class="sw"></span></div></div>
+
+        <div style="flex:1"></div>
+        <div style="font-size:13.5px;color:var(--dim);text-align:center;padding-bottom:2px">
+          tocca un gruppo per aprirne finestre e automazioni</div>
+
+      </div>
+      <div class="nav">
+        <div class="v"><span class="ic">⌂</span>HOME</div>
+        <div class="v"><span class="ic">◍</span>Luci</div>
+        <div class="v"><span class="ic">⏻</span>Interr.</div>
+        <div class="v"><span class="ic">🌡</span>Clima</div>
+        <div class="v"><span class="ic">⚡</span>Energia</div>
+        <div class="v on"><span class="ic">⋯</span>Altro</div>
+      </div>
+    </div></div></div>
+    <div class="cap"><h3>C · tutto chiuso</h3>
+      Sei gruppi in una schermata, ognuno con le sue finestre in riga e la finestra
+      <b>in corso adesso</b> in ambra. Da un metro e mezzo si legge la casa intera.
+      Questa è la variante di C che regge: se l'intestazione chiusa mostra le finestre,
+      l'apertura serve solo per le automazioni — cioè per la cosa che si tocca due volte
+      l'anno.</div>
+  </div>
+
+  <div class="col">
+    <div class="cap" style="margin-top:0">
+      <h3>Come si configura, in tutte e tre</h3>
+      La forma ricalca la tua view: un gruppo per scheda, e dentro l'elenco delle entità
+      nell'ordine in cui devono comparire. Le finestre sono l'unica cosa in più, e sono
+      la coppia che hai già in testa quando guardi due <code>input_datetime</code>.
+    </div>
+<pre class="cfg">"programmazioni": [
+  {
+    "nome": "<b>Luci giardino</b>",
+    "icona": "<b>outdoor_lamp</b>",
+    "entita": "<b>light.luci_giardino</b>",
+    "potenza": "sensor.potenza_luci_esterne",
+
+    "finestre": [
+      { "accensione": "<b>input_datetime.giardino_on_1</b>",
+        "spegnimento": "<b>input_datetime.giardino_off_1</b>" },
+      { "accensione": "input_datetime.giardino_on_2",
+        "spegnimento": "input_datetime.giardino_off_2" }
+    ],
+
+    "automazioni": [
+      { "entita": "<b>automation.giardino_on_programmato</b>",
+        "nome": "Accensione alla pianificazione" },
+      { "entita": "automation.giardino_on_tramonto" },
+      { "entita": "automation.giardino_off_programmato" },
+      { "entita": "automation.giardino_off_alba" }
+    ]
+  },
+  {
+    "nome": "<b>Luce corridoio notte</b>",
+    "icona": "bedtime",
+    "entita": "light.corridoio_notte",
+    "finestre": [
+      { "<b>validita</b>": true,
+        "accensione": "input_datetime.corridoio_notte_dalle",
+        "spegnimento": "input_datetime.corridoio_notte_alle" }
+    ],
+    "automazioni": [
+      { "entita": "automation.corridoio_notte_on_movimento" },
+      { "entita": "automation.corridoio_notte_off_fine_movimento" }
+    ]
+  }
+]</pre>
+    <div class="cap">
+      <b>Il <code>nome</code> è facoltativo</b> su ogni riga: senza, il pannello usa il
+      <code>friendly_name</code> che l'entità ha già in Home Assistant — così un nome
+      cambiato là non va rincorso qui. Serve dove il nome vero è lungo per una riga:
+      «Seconda Ora accensione luci del giardino» diventa «2ª».<br><br>
+      <b><code>validita: true</code></b> è l'unico campo che cambia il significato di una
+      finestra invece del suo aspetto, e per questo va dichiarato: nessuna regola dedotta
+      dai nomi, come per l'appaiamento.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<h2 class="tt2">Quello che vale in tutte e tre</h2>
+
+<table class="mis">
+<tr><th>Cosa</th><th>Come</th></tr>
+<tr><td>Cambiare un orario</td>
+    <td><code>input_datetime.set_datetime</code> con il solo campo <code>time</code>:
+        i tuoi helper sono tutti <code>has_date: false</code>.</td></tr>
+<tr><td>Accendere o spegnere il dispositivo</td>
+    <td>Il servizio si ricava dal dominio, come già per accessi e interruttori:
+        <code>switch.</code>, <code>light.</code>, <code>input_boolean.</code></td></tr>
+<tr><td>Sospendere una pianificazione</td>
+    <td><code>automation.turn_off</code> sull'automazione. Gli orari restano scritti:
+        si riaccende e ricomincia da dove stava.</td></tr>
+<tr><td>«Ultimo scatto»</td>
+    <td>Dall'attributo <code>last_triggered</code>, che le automazioni hanno già.
+        È l'equivalente del tuo <code>secondary_info: last-triggered</code>.</td></tr>
+<tr><td>Un'automazione disattivata</td>
+    <td>Riga attenuata e la parola <b>«disattivata»</b> al posto dell'ultimo scatto:
+        un interruttore grigio da solo si legge male da lontano.</td></tr>
+<tr><td>La finestra in corso</td>
+    <td>In ambra. È l'unica cosa che il pannello <b>deduce</b> — confrontando l'ora con
+        gli estremi — e non cambia niente: colora, non comanda.</td></tr>
+<tr><td>Dove sta la sezione</td>
+    <td>Nel foglio «Altro», con Telecamere uscita e Accessi, Agenda, Wi-Fi, Robot.</td></tr>
+</table>
+
+<div class="cap" style="max-width:98ch">
+<h3>Una cosa che non farei, e la dico perché è l'errore facile</h3>
+Sarebbe comodo che il pannello sapesse <b>eseguire</b> un'automazione
+(<code>automation.trigger</code>): «accendi come faresti alle 18:30». Non lo metterei.
+Su un vetro a muro, un tocco per sbaglio su una riga che si scorre farebbe partire
+un'automazione vera — e alcune delle tue mandano notifiche a tutti i telefoni di casa.
+L'interruttore accende il dispositivo, che è la stessa cosa senza gli effetti collaterali.
+</div>
+
+</div>
+</body>
+</html>

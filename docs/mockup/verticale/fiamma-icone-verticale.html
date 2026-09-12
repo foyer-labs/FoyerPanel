@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · L'icona del riscaldamento acceso · tre proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Il font vero del pannello, istanziato agli assi veri — wght 300, FILL 0,
+   GRAD 0, opsz 24 — cioe' quelli che tools/genera_icone.py congela quando
+   compila i bitmap. Quello che si vede qui e' quello che verrebbe disegnato.
+
+   **Incorporato e non collegato.** Un @font-face con percorso relativo,
+   aperto da file://, non si carica, e il guasto non si presenta come un
+   errore: si presenta come rettangoli vuoti — lo stesso modo in cui si
+   romperebbe un'icona sbagliata sul pannello. Qui dentro ci sono nove
+   glifi soli: 4,8 kB. */
+@font-face{font-family:"MS";src:url("data:font/ttf;base64,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") format("truetype")}
+.ic{font-family:"MS";font-variation-settings:"wght" 300,"FILL" 0,"GRAD" 0,"opsz" 24;line-height:1;font-weight:normal;display:inline-block;white-space:nowrap;-webkit-font-smoothing:antialiased}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1560px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:15px;font-weight:600;margin:38px 0 4px;color:#e6e9ee;border-top:1px solid #262a31;padding-top:24px}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 18px;max-width:98ch;line-height:1.65}
+p.sub b{color:#e6e9ee}
+p.sub code,li code{font-size:11.5px;background:#1e242d;padding:1px 4px;border-radius:3px}
+.riga{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.colw{flex:none;width:496px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.striscia{position:relative;background:#000;border:9px solid #24272d;border-radius:16px;overflow:hidden;width:496px;height:186px}
+.stage2{transform:scale(.62);transform-origin:top left;position:relative;width:800px;height:300px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:13px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f} .cap .si{color:#4fc39a}
+.cap ul{margin:7px 0 0;padding-left:17px} .cap li{margin-bottom:4px}
+
+.prova{background:#0d1014;border:1px solid #1e242d;border-radius:14px;padding:20px 22px;margin-bottom:22px}
+.prova table{border-collapse:collapse;width:100%}
+.prova th{font:600 12px/1 Inter,sans-serif;color:#8a95a6;text-align:left;padding:0 0 14px;letter-spacing:.1em;text-transform:uppercase}
+.prova td{padding:12px 10px;border-top:1px solid #1a1e24;vertical-align:middle}
+.prova td.nome{font-size:13px;color:#e8ecf2;width:230px}
+.prova td.nome small{display:block;color:#8a95a6;font-size:11.5px;margin-top:3px}
+.prova .g{color:#f0a835} .prova .sp{color:#8a95a6}
+.scartate td.nome{color:#8a95a6}
+.scartate .g{color:#6b5b33}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;--acc:#f0a835;
+  --r:16px;--pad:18px;--gap:14px;background:var(--bg);color:var(--txt);font-size:16px}
+.nero{background:#000}
+.sb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8a8a8a}
+.sb .ora{font-size:126px;font-weight:300;line-height:1}
+.sb .data{font-size:19px;margin-top:6px}
+.sb hr{width:480px;border:0;border-top:1px solid #2a2a2a;margin:22px 0}
+.sb .tt{font-size:84px;font-weight:300;line-height:1;display:flex;align-items:center;gap:20px}
+.sb .past{display:flex;gap:12px;margin-top:16px}
+.sb .past span{border:1px solid #4a3c1c;border-radius:99px;padding:6px 14px;font-size:15px;display:inline-flex;align-items:center;gap:8px}
+.sb .dove{font-size:15px;margin-top:10px}
+.sb .fondo{position:absolute;left:0;right:0;bottom:36px;display:grid;grid-template-columns:1fr 1fr;gap:20px 60px;padding:0 60px}
+.sb .fondo div{display:flex;align-items:center;gap:14px}
+.sb .fondo .v{font-size:30px}
+.sb .fondo .l{font-size:13px;display:block;margin-top:2px}
+.acceso{color:#f0a835}
+.hh{height:116px;flex:none;padding:0 var(--pad);display:flex;align-items:center;gap:20px}
+.hh .ora{font-size:52px;font-weight:300;line-height:1}
+.hh .data{font-size:13px;color:var(--dim);margin-top:5px}
+.hh .grp{display:flex;align-items:center;gap:10px}
+.hh .v{font-size:34px;font-weight:300}
+.hh .lb{font-size:12px;color:var(--dim)}
+.hh .gear{width:64px;height:64px;border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--dim);margin-left:auto}
+.finto{flex:1;background:var(--card);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px;margin:0 var(--pad) var(--pad)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">L'icona del «riscaldamento acceso» — tre proposte, coi glifi veri</h1>
+<p class="sub">
+<b>Nei mockup di ieri avevo usato ♨ come segnaposto</b>, che è il simbolo delle terme e non è l'icona del pannello.
+Qui il font è quello vero, istanziato agli stessi assi che il generatore congela: quello che vedi è quello che verrebbe
+disegnato. La prima riga è l'icona di oggi vista com'è davvero — può darsi che, senza il mio surrogato in mezzo, ti
+convinca più di prima.
+</p>
+<p class="sub" style="border-left:2px solid #4a3c1c;padding-left:14px">
+<b>Due candidate le ho scartate dopo averle guardate</b>, e vale la pena dire perché: <code>mode_heat</code>, che sulla
+carta era la più adatta — è il «modo caldo» di Material — <b>è quasi identica</b> a quella di oggi, e proporla sarebbe
+stato proporre nessun cambiamento; <code>whatshot</code>, che il nome fa pensare a una fiamma, in Material Symbols
+<b>non è una fiamma</b>: è un cerchio con dentro una freccia che sale. Le trovi in fondo, in grigio, così le vedi anche tu.
+</p>
+
+<h2 class="tt2">I glifi, alle quattro misure del pannello</h2>
+<p class="sub">
+Le misure non sono scelte qui: sono i quattro corpi che il profilo <code>p4-800x1280</code> compila —
+<b>19, 24, 30 e 64 px</b>. La colonna «acceso» è ambra, quella a destra è la stessa icona spenta.
+</p>
+
+<div class="prova">
+<table>
+<tr><th>Icona</th><th style="width:70px">19</th><th style="width:80px">24</th><th style="width:100px">30</th><th style="width:150px">64 · standby</th><th>spenta</th></tr>
+<tr>
+  <td class="nome">local_fire_department<small>quella di oggi — vista com'è davvero</small></td>
+  <td><span class="ic g" style="font-size:19px">&#xEA05;</span></td>
+  <td><span class="ic g" style="font-size:24px">&#xEA05;</span></td>
+  <td><span class="ic g" style="font-size:30px">&#xEA05;</span></td>
+  <td><span class="ic g" style="font-size:64px">&#xEA05;</span></td>
+  <td><span class="ic sp" style="font-size:64px">&#xEA05;</span></td>
+</tr>
+<tr>
+  <td class="nome">heat<small>proposta 1 — onde di calore</small></td>
+  <td><span class="ic g" style="font-size:19px">&#xF537;</span></td>
+  <td><span class="ic g" style="font-size:24px">&#xF537;</span></td>
+  <td><span class="ic g" style="font-size:30px">&#xF537;</span></td>
+  <td><span class="ic g" style="font-size:64px">&#xF537;</span></td>
+  <td><span class="ic sp" style="font-size:64px">&#xF537;</span></td>
+</tr>
+<tr>
+  <td class="nome">fireplace<small>proposta 2 — la stufa</small></td>
+  <td><span class="ic g" style="font-size:19px">&#xEA43;</span></td>
+  <td><span class="ic g" style="font-size:24px">&#xEA43;</span></td>
+  <td><span class="ic g" style="font-size:30px">&#xEA43;</span></td>
+  <td><span class="ic g" style="font-size:64px">&#xEA43;</span></td>
+  <td><span class="ic sp" style="font-size:64px">&#xEA43;</span></td>
+</tr>
+<tr>
+  <td class="nome">hvac<small>proposta 3 — l'impianto</small></td>
+  <td><span class="ic g" style="font-size:19px">&#xF10E;</span></td>
+  <td><span class="ic g" style="font-size:24px">&#xF10E;</span></td>
+  <td><span class="ic g" style="font-size:30px">&#xF10E;</span></td>
+  <td><span class="ic g" style="font-size:64px">&#xF10E;</span></td>
+  <td><span class="ic sp" style="font-size:64px">&#xF10E;</span></td>
+</tr>
+</table>
+</div>
+
+<h2 class="tt2">Le tre proposte, sulle due schermate</h2>
+<p class="sub">
+Ogni proposta usa <b>la stessa icona su tutte e due le schermate</b>: due simboli diversi per lo stesso fatto sarebbero
+due cose da imparare invece di una. Nello standby è a <b>64 px</b> — il corpo <code>IC_XL</code>, lo stesso della
+lampadina nelle Luci — accanto a una temperatura di 84: si vede dalla porta. La pastiglia «sta scaldando» resta con la
+sua fiamma, ed è il confronto che conta: quanto si distingue la nuova icona da quella?
+</p>
+
+<div class="riga" style="margin-top:26px">
+<div class="col"><div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt"><span class="ic acceso" style="font-size:64px">&#xF537;</span>20,8°C</div>
+    <div class="past"><span class="acceso"><span class="ic" style="font-size:19px">&#xEA05;</span> sta scaldando</span><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span class="ic" style="font-size:26px">&#xE81A;</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xEC0F;</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE88A;</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE1A4;</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div></div>
+<div class="colw"><div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xF537;</span><div><div class="v">20,8°</div><div class="lb">chiesti 21,0°</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xE81A;</span><div class="v">11°</div></div>
+    <div class="gear"><span class="ic" style="font-size:24px">&#xE8B8;</span></div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap"><h3>1 · <code>heat</code> — onde di calore</h3>
+Tre onde che salgono. <b>Non è una fiamma</b>: dice tepore, non fuoco.
+<ul>
+<li class="si"><b>Non somiglia a niente altro sul pannello</b>, e soprattutto non somiglia a un avviso: una fiamma ambra su nero, grande, ha un'aria da allarme che questa non ha.</li>
+<li class="si">Risolve da sola il difetto che la proposta A si porta dietro: nella stessa schermata resta la pastiglia «sta scaldando» con la sua fiamma, e i due simboli <b>non si confondono</b> perché non si somigliano affatto.</li>
+<li class="si">Linee spesse e distanziate: a 64 px si legge da tre metri.</li>
+<li class="no">Va imparata. Da sola, a chi non l'ha mai vista, non dice «riscaldamento» — dice «caldo».</li>
+<li class="no">A 19 px, se un giorno servisse piccola, le tre onde si impastano.</li>
+</ul></div>
+</div>
+</div><div class="riga" style="margin-top:26px">
+<div class="col"><div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt"><span class="ic acceso" style="font-size:64px">&#xEA43;</span>20,8°C</div>
+    <div class="past"><span class="acceso"><span class="ic" style="font-size:19px">&#xEA05;</span> sta scaldando</span><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span class="ic" style="font-size:26px">&#xE81A;</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xEC0F;</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE88A;</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE1A4;</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div></div>
+<div class="colw"><div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xEA43;</span><div><div class="v">20,8°</div><div class="lb">chiesti 21,0°</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xE81A;</span><div class="v">11°</div></div>
+    <div class="gear"><span class="ic" style="font-size:24px">&#xE8B8;</span></div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap"><h3>2 · <code>fireplace</code> — la stufa</h3>
+Un focolare squadrato con dentro una fiamma. È la più <b>letterale</b>: riscaldamento domestico, non incendio.
+<ul>
+<li class="si">Silhouette <b>rettangolare</b>, quindi distinguibile dalla pastiglia con la fiamma anche con la coda dell'occhio.</li>
+<li class="si">Nessuno ha bisogno di impararla: si capisce da sola.</li>
+<li class="si">Il riquadro pieno regge la distanza meglio di un contorno sottile.</li>
+<li class="no">È un <b>camino</b>, e in casa tua il riscaldamento è a termosifoni: dice la cosa giusta con l'oggetto sbagliato.</li>
+<li class="no">Molto disegno dentro un quadrato piccolo: a 19 px la fiamma interna sparisce e resta un rettangolo.</li>
+</ul></div>
+</div>
+</div><div class="riga" style="margin-top:26px">
+<div class="col"><div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt"><span class="ic acceso" style="font-size:64px">&#xF10E;</span>20,8°C</div>
+    <div class="past"><span class="acceso"><span class="ic" style="font-size:19px">&#xEA05;</span> sta scaldando</span><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span class="ic" style="font-size:26px">&#xE81A;</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xEC0F;</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE88A;</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span class="ic" style="font-size:26px">&#xE1A4;</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div></div>
+<div class="colw"><div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xF10E;</span><div><div class="v">20,8°</div><div class="lb">chiesti 21,0°</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:30px">&#xE81A;</span><div class="v">11°</div></div>
+    <div class="gear"><span class="ic" style="font-size:24px">&#xE8B8;</span></div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap"><h3>3 · <code>hvac</code> — l'impianto</h3>
+L'unità dell'impianto: un riquadro con dentro le lamelle. Dice <b>«la macchina sta girando»</b> invece di «c'è del fuoco».
+<ul>
+<li class="si">È l'unica che parla di <b>impianto</b>, che è esattamente cosa dice l'interruttore del piano: non «questa stanza è calda», ma «il riscaldamento di questo piano è abilitato».</li>
+<li class="si">Rettangolare come <code>fireplace</code>, quindi stessa immunità alla confusione con la pastiglia.</li>
+<li class="no">Assomiglia a un termoconvettore ma anche a una griglia di aerazione, e su un pannello che ha pure i condizionatori <b>si può leggere come «ventilazione»</b>.</li>
+<li class="no">La meno immediata delle tre: è un simbolo tecnico, non un'immagine.</li>
+</ul></div>
+</div>
+</div>
+
+<div class="cap" style="max-width:98ch;margin-top:34px;border-top:1px solid #262a31;padding-top:20px">
+<h3>Le due scartate, per completezza</h3>
+<div class="prova scartate" style="margin-top:12px">
+<p style="font-size:12.5px;color:#8a95a6;line-height:1.65;margin:0">
+Non le ho incorporate nel font di questa pagina — sarebbero due glifi in più per mostrare due scarti. Se le vuoi vedere,
+sono in <code>build/catture/icone-candidate.png</code> e <code>icone-candidate2.png</code>, insieme alle altre otto che
+ho guardato e scartato: termometri (che il pannello usa già per la sezione Clima), la caldaia, il contatore del gas,
+la pompa di calore e il fulmine.
+</p>
+</div>
+<h3 style="margin-top:18px">Il corpo da 64 px costa flash, e va detto quanto</h3>
+A quella misura il pannello compila un font-icona che contiene <b>una sola icona</b> — la lampadina delle Luci, 8,8 kB
+di sorgente. Aggiungerci questa raddoppia quel file. È poco, la flash libera è al 36%, ma è il genere di costo che si
+paga senza accorgersene: nel generatore c'è un elenco apposta (<code>ICONE_XL</code>) proprio perché la spesa si veda.
+E in mezzo non c'è niente: i corpi sono quattro, dopo 64 si scende a 30. Nel dubbio si parte da 64, che è quello che
+hai chiesto, e si scende solo se sul vetro grida.
+</div>
+
+</div>
+</body>
+</html>

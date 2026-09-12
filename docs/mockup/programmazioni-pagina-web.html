@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Pagina di configurazione · sezione Programmazioni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1340px;margin:0 auto;padding:20px 14px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:15px;font-weight:600;margin:40px 0 4px;color:#e6e9ee;border-top:1px solid #262a31;padding-top:24px}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 18px;max-width:98ch;line-height:1.65}
+p.sub b{color:#e6e9ee}
+p.sub code,li code,td code{font:11.5px/1 "JetBrains Mono",monospace;background:#1e242d;padding:2px 5px;border-radius:3px}
+.caption{font-size:12.5px;color:#9aa1ad;margin:14px 2px 0;line-height:1.65;max-width:1000px}
+.caption h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.caption b{color:#e6e9ee;font-weight:600}
+.caption .no{color:#e2664f}
+.caption .si{color:#4fc39a}
+.caption ul{margin:7px 0 0;padding-left:17px}
+.caption li{margin-bottom:5px}
+table.mis{border-collapse:collapse;font-size:12.5px;margin:8px 0 4px}
+table.mis th,table.mis td{border:1px solid #262a31;padding:6px 11px;text-align:left;color:#9aa1ad;vertical-align:top}
+table.mis th{color:#e6e9ee;font-weight:600;background:#1a1e24}
+
+/* finestra del browser */
+.browser{background:#d7dade;border-radius:12px 12px 10px 10px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.chrome{height:44px;background:#e8eaed;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #cdd1d6}
+.chrome .dots{display:flex;gap:6px}
+.chrome .dots i{width:11px;height:11px;border-radius:50%;background:#c3c8ce}
+.chrome .url{flex:1;height:27px;background:#fff;border-radius:14px;display:flex;align-items:center;
+  padding:0 14px;font:500 12.5px/1 "JetBrains Mono",monospace;color:#4a5058}
+
+/* ══ la pagina vera, con i suoi colori ══════════════════════════════ */
+.page{background:#f4f5f7;color:#171b20;display:flex;flex-direction:column;
+  font:400 14px/1.5 Inter,sans-serif;
+  --card:#fff;--line:#e2e5e8;--line2:#edeff1;--txt:#171b20;--dim:#6b737d;--dim2:#8b939d;
+  --lbl:#4a525b;--acc:#f0a835;--ok:#25a05f;--err:#c0402f;--warn:#8a6412;--warn-bg:#fdf6e6;--warn-line:#e8cf94}
+.page .apphead{background:var(--card);border-bottom:1px solid var(--line);padding:13px 22px;
+  display:flex;align-items:center;gap:14px;flex:none}
+.page .brand .t{font:600 15px/1.2 inherit}
+.page .brand .s{font:400 12px/1.2 inherit;color:var(--dim);margin-top:3px}
+.page .apphead .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.page .pill{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:14px;
+  border:1px solid var(--line);font:500 12px/1 inherit;color:var(--ok);background:var(--card)}
+.page .pill i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.page .bar{display:flex;align-items:center;gap:10px;padding:10px 22px;background:var(--warn-bg);
+  border-bottom:1px solid var(--warn-line);color:var(--warn);font:500 12.5px/1.4 inherit;flex:none}
+.page .bar .t{margin-left:auto;font-variant-numeric:tabular-nums}
+.page .wrap{flex:1;display:flex;min-height:0}
+.page .nav{width:214px;flex:none;background:var(--card);border-right:1px solid var(--line);
+  padding:12px 10px;overflow:hidden}
+.page .nav .gl{font:600 10.5px/1 inherit;letter-spacing:.16em;text-transform:uppercase;color:#98a0aa;padding:12px 10px 7px}
+.page .nav button{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;
+  border-radius:8px;background:none;text-align:left;font:500 13.5px/1 inherit;color:#404952}
+.page .nav button.sel{background:#171b20;color:#fff}
+.page .nav button .n{margin-left:auto;font:500 11px/1 inherit;color:#98a0aa}
+.page .nav button.sel .n{color:#8b939d}
+.page .pane{flex:1;overflow:hidden;padding:22px 26px 20px;min-width:0}
+.page .pane h2{font:600 20px/1.2 inherit;margin:0 0 5px}
+.page .pane .lead{font:400 13.5px/1.6 inherit;color:var(--dim);margin:0 0 18px;max-width:680px}
+.page .card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:14px}
+.page .card>.ch{padding:13px 18px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:10px}
+.page .card>.ch .t{font:600 14px/1 inherit}
+.page .card>.ch .s{font:400 12.5px/1 inherit;color:#828a94;margin-left:auto}
+.page .card>.cb{padding:16px 18px}
+.page .field{margin-bottom:0}
+.page .field>label{display:block;font:500 12.5px/1 inherit;color:var(--lbl);margin-bottom:7px}
+.page .field .hint{font:400 12px/1.45 inherit;color:var(--dim2);margin-top:6px}
+.page input[type=text],.page select{width:100%;height:42px;border:1px solid #d5d9de;border-radius:9px;
+  background:var(--card);padding:0 12px;font:400 14px/1 inherit;color:var(--txt)}
+.page input.mono{font-family:"JetBrains Mono",monospace;font-size:13px}
+.page .griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.page .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;
+  border-radius:9px;font:600 13.5px/1 inherit;border:1px solid #d5d9de;background:var(--card);color:var(--txt)}
+.page .btn.acc{background:var(--acc);border-color:var(--acc)}
+.page .btn.danger{border-color:#e6b7b1;color:var(--err)}
+.page .btn.sm{height:34px;padding:0 11px;font-size:12.5px}
+.page .piede{background:var(--card);border-top:1px solid var(--line);padding:11px 22px;display:flex;
+  align-items:center;gap:12px;flex:none}
+.page .piede .stato{font:500 13px/1.4 inherit;color:var(--warn)}
+.page .piede .destra{margin-left:auto;display:flex;gap:10px}
+.page .sw{display:flex;align-items:center;gap:9px;font:400 13.5px/1 inherit;height:42px}
+.page .sw input{width:17px;height:17px;margin:0}
+
+/* ── righe ripetibili, come le disegna oggi ─────────────────────────── */
+.page .riga{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.page .riga:last-of-type{border-bottom:0}
+.page .riga .idx{width:26px;flex:none;text-align:center;color:var(--dim2);font:500 12px/42px inherit}
+.page .riga .campi{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;min-width:0}
+.page .ord{display:flex;gap:4px;margin-left:auto}
+.page .ord .btn{min-width:2rem;padding:0 .4rem}
+
+/* ── la parte nuova: righe con elenchi dentro ───────────────────────── */
+.page .rg{border:1px solid var(--line);border-radius:11px;margin-bottom:10px;background:#fcfcfd}
+.page .rg:last-child{margin-bottom:0}
+.page .rg>.rt{display:flex;align-items:center;gap:11px;padding:11px 13px}
+.page .rg>.rt .idx{width:22px;flex:none;text-align:center;color:var(--dim2);font:500 12px/1 inherit}
+.page .rg>.rt .nm{font:600 13.5px/1.35 inherit}
+.page .rg>.rt .nm .s{display:block;font:400 12px/1.35 inherit;color:var(--dim2);margin-top:3px}
+.page .rg>.rt .ord{margin-left:auto}
+.page .rg>.rt .chev{width:30px;height:30px;border:1px solid #d5d9de;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;color:var(--dim);font-size:12px;flex:none;background:#fff}
+.page .rg.aperta>.rt{border-bottom:1px solid var(--line2);background:#fff;border-radius:11px 11px 0 0}
+.page .rg>.rb{padding:14px 13px 13px}
+.page .dentro{margin-top:14px;border-left:3px solid #e6e9ec;padding-left:13px}
+.page .dentro>.dt{font:600 11.5px/1 inherit;letter-spacing:.1em;text-transform:uppercase;color:#8b939d;
+  margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.page .dentro>.dt .n{font:500 11px/1 inherit;letter-spacing:0;text-transform:none;color:#a8afb8}
+.page .dentro .riga{padding:7px 0}
+.page .dentro .riga .idx{line-height:38px}
+.page .dentro input[type=text],.page .dentro select{height:38px}
+.page .dentro .btn.sm{height:31px}
+.page .vuoto{color:var(--dim2);font:400 13px/1.6 inherit;padding:6px 0}
+
+/* tendina aperta, per far vedere cosa contiene */
+.page .dl{position:relative}
+.page .dl .lista{position:absolute;left:0;right:0;top:41px;background:#fff;border:1px solid #c9cfd6;
+  border-radius:9px;box-shadow:0 10px 30px rgba(20,25,32,.16);z-index:5;overflow:hidden}
+.page .dl .lista div{padding:8px 12px;font:400 13px/1.35 "JetBrains Mono",monospace;color:#2b3138;
+  border-bottom:1px solid var(--line2)}
+.page .dl .lista div:last-child{border-bottom:0}
+.page .dl .lista div.sel{background:#f2f4f6}
+.page .dl .lista div .q{color:#8b939d;font-family:Inter,sans-serif;font-size:12px;margin-left:7px}
+.page .dl .lista .nulla{color:var(--err);font-family:Inter,sans-serif;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">Pagina di configurazione — la sezione «Programmazioni»</h1>
+<p class="sub">
+Rendering 1:1 della pagina vera, con i suoi colori e le sue misure. I dati sono quelli
+della casa: i sei gruppi di <code>view-automazioni.yaml</code>, gli orari di
+<code>input_datetime.yaml</code>, i nomi delle automazioni di
+<code>automations.yaml</code>.<br><br>
+La pagina disegna i campi <b>dallo schema</b>, non a mano: qui si vede come verrebbe
+<code>programmazioni[]</code>, che è il primo elenco del progetto ad avere altri elenchi
+dentro — <code>finestre[]</code> e <code>automazioni[]</code>.
+</p>
+
+<div class="browser">
+  <div class="chrome"><div class="dots"><i></i><i></i><i></i></div>
+    <div class="url">pannelloingresso.local</div></div>
+  <div class="page" style="height:930px">
+
+    <div class="apphead">
+      <div class="brand"><div class="t">PannelloIngresso</div>
+        <div class="s">v0.5+50 · p4-800x1280</div></div>
+      <div class="right"><span class="pill"><i></i>Home Assistant collegato</span></div>
+    </div>
+    <div class="bar"><span>Configurazione sbloccata dal pannello. Al termine si richiude
+      da sola e questa pagina non sarà più raggiungibile.</span><span class="t">12:04</span></div>
+
+    <div class="wrap">
+      <nav class="nav">
+        <div class="gl">Collegamenti</div>
+        <button>Rete</button>
+        <button>Home Assistant</button>
+        <div class="gl">Contenuti</div>
+        <button>Luci <span class="n">13</span></button>
+        <button>Interruttori <span class="n">4</span></button>
+        <button>Clima <span class="n">12</span></button>
+        <button class="sel">Programmazioni <span class="n">6</span></button>
+        <button>Energia</button>
+        <button>Accessi <span class="n">4</span></button>
+        <button>Robot <span class="n">22</span></button>
+      </nav>
+
+      <main class="pane">
+        <h2>Programmazioni</h2>
+        <p class="lead">Un gruppo per cosa che va a orario: il dispositivo che comanda, le
+          finestre di accensione e le automazioni che le fanno scattare. Gli orari stanno
+          negli <code>input_datetime</code> di Home Assistant — il pannello li legge e li
+          scrive, non ne tiene una copia.</p>
+
+        <div class="card">
+          <div class="ch"><div class="t">Programmazioni</div><div class="s">6 configurate</div></div>
+          <div class="cb">
+
+            <!-- gruppo chiuso -->
+            <div class="rg">
+              <div class="rt">
+                <div class="idx">1</div>
+                <div class="nm">Campanello<span class="s">switch.campanello · 1 finestra · 6 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">›</div>
+              </div>
+            </div>
+
+            <div class="rg">
+              <div class="rt">
+                <div class="idx">2</div>
+                <div class="nm">Stufetta bagno<span class="s">switch.stufetta_bagno · 2 finestre · 4 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">›</div>
+              </div>
+            </div>
+
+            <!-- gruppo aperto -->
+            <div class="rg aperta">
+              <div class="rt">
+                <div class="idx">3</div>
+                <div class="nm">Luci giardino<span class="s">light.luci_giardino · 2 finestre · 9 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">⌄</div>
+              </div>
+              <div class="rb">
+
+                <div class="griglia">
+                  <div class="field"><label>Nome sul pannello</label>
+                    <input type="text" value="Luci giardino"></div>
+                  <div class="field"><label>Icona</label>
+                    <select><option>outdoor_lamp</option></select></div>
+                  <div class="field"><label>Entità comandata</label>
+                    <input type="text" class="mono" value="light.luci_giardino"></div>
+                  <div class="field"><label>Sensore dell'assorbimento</label>
+                    <input type="text" class="mono" value="sensor.potenza_luci_esterne"></div>
+                </div>
+
+                <div class="dentro">
+                  <div class="dt">Finestre <span class="n">quando si accende e quando si spegne</span></div>
+
+                  <div class="riga">
+                    <div class="idx">1</div>
+                    <div class="campi">
+                      <div class="field"><label>Accensione</label>
+                        <input type="text" class="mono" value="input_datetime.giardino_on_1"></div>
+                      <div class="field"><label>Spegnimento</label>
+                        <input type="text" class="mono" value="input_datetime.giardino_off_1"></div>
+                      <div class="field"><label>&nbsp;</label>
+                        <label class="sw"><input type="checkbox"><span>Finestra di validità</span></label></div>
+                    </div>
+                    <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                    <button class="btn sm danger">Togli</button>
+                  </div>
+
+                  <div class="riga">
+                    <div class="idx">2</div>
+                    <div class="campi">
+                      <div class="field"><label>Accensione</label>
+                        <input type="text" class="mono" value="input_datetime.giardino_on_2"></div>
+                      <div class="field"><label>Spegnimento</label>
+                        <input type="text" class="mono" value="input_datetime.giardino_off_2"></div>
+                      <div class="field"><label>&nbsp;</label>
+                        <label class="sw"><input type="checkbox"><span>Finestra di validità</span></label></div>
+                    </div>
+                    <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                    <button class="btn sm danger">Togli</button>
+                  </div>
+
+                  <button class="btn sm" style="margin-top:9px">Aggiungi finestra</button>
+                </div>
+
+                <div class="dentro">
+                  <div class="dt">Automazioni <span class="n">compaiono sul pannello nell'ordine di qui</span></div>
+
+                  <div class="riga">
+                    <div class="idx">1</div>
+                    <div class="campi">
+                      <div class="field"><label>Automazione</label>
+                        <input type="text" class="mono" value="automation.giardino_on_programmato"></div>
+                      <div class="field"><label>Nome sul pannello (facoltativo)</label>
+                        <input type="text" value="Accensione alla pianificazione"></div>
+                    </div>
+                    <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                    <button class="btn sm danger">Togli</button>
+                  </div>
+
+                  <div class="riga">
+                    <div class="idx">2</div>
+                    <div class="campi">
+                      <div class="field"><label>Automazione</label>
+                        <input type="text" class="mono" value="automation.giardino_on_tramonto"></div>
+                      <div class="field"><label>Nome sul pannello (facoltativo)</label>
+                        <input type="text" value=""></div>
+                    </div>
+                    <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                    <button class="btn sm danger">Togli</button>
+                  </div>
+
+                  <div class="riga">
+                    <div class="idx">3</div>
+                    <div class="campi">
+                      <div class="field"><label>Automazione</label>
+                        <input type="text" class="mono" value="automation.giardino_off_programmato"></div>
+                      <div class="field"><label>Nome sul pannello (facoltativo)</label>
+                        <input type="text" value=""></div>
+                    </div>
+                    <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                    <button class="btn sm danger">Togli</button>
+                  </div>
+
+                  <button class="btn sm" style="margin-top:9px">Aggiungi automazione</button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="rg">
+              <div class="rt">
+                <div class="idx">4</div>
+                <div class="nm">Irrigazione<span class="s">switch.irrigazione · 2 finestre · 2 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">›</div>
+              </div>
+            </div>
+
+            <div class="rg">
+              <div class="rt">
+                <div class="idx">5</div>
+                <div class="nm">Albero di Natale<span class="s">light.albero_di_natale · 1 finestra · 2 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">›</div>
+              </div>
+            </div>
+
+            <div class="rg">
+              <div class="rt">
+                <div class="idx">6</div>
+                <div class="nm">Luce corridoio notte<span class="s">light.corridoio_notte · 1 finestra di validità · 2 automazioni</span></div>
+                <span class="ord"><button class="btn sm">↑</button><button class="btn sm">↓</button></span>
+                <button class="btn sm danger">Togli</button>
+                <div class="chev">›</div>
+              </div>
+            </div>
+
+            <button class="btn sm" style="margin-top:12px">Aggiungi gruppo</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <div class="piede">
+      <span class="stato">3 modifiche non salvate</span>
+      <span class="destra">
+        <button class="btn">Esporta file…</button>
+        <button class="btn">Importa file…</button>
+        <button class="btn">Annulla</button>
+        <button class="btn acc">Salva e applica</button>
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<div class="caption">
+  <h3>La riga che si apre — l'unica cosa nuova nella pagina</h3>
+  Oggi ogni riga di un elenco mostra tutti i suoi campi, sempre. Con sei gruppi che
+  contengono in tutto <b>quattordici finestre e venticinque automazioni</b>, la pagina
+  diventerebbe alta seimila pixel e per arrivare al sesto gruppo si scorrerebbe attraverso
+  il quinto per intero.<br><br>
+  Perciò una riga che contiene altri elenchi prende un'<b>intestazione</b>: numero, nome,
+  un riassunto di cosa c'è dentro, i tasti di ordine e di cancellazione, e la freccia che
+  apre. Chiusa è alta 52 px. <b>Le righe che non contengono elenchi restano come sono</b> —
+  luci, clima, accessi non cambiano di una virgola.<br><br>
+  Dentro, i due elenchi sono rientrati e hanno un filetto a sinistra: si vede che
+  appartengono al gruppo e non alla scheda. Ognuno ha i propri <b>Aggiungi</b>,
+  <b>Togli</b> e frecce, e funzionano come quelli di sopra perché <b>sono</b> quelli di
+  sopra: <code>righeArray()</code> chiama se stessa.
+</div>
+
+<h2 class="tt2">La tendina degli orari — e quella delle automazioni, che oggi sarebbe quasi vuota</h2>
+<p class="sub">
+Il campo di un'entità non è un menu chiuso ma una tendina di suggerimenti
+(<code>datalist</code>): si può sempre scrivere a mano, perché un'entità può esistere
+senza stare nel registro. Il dominio da suggerire lo dice il <code>pattern</code> dello
+schema, quindi davanti a un campo <code>^input_datetime\.</code> non compaiono i
+duecento sensori.
+</p>
+
+<div class="browser">
+  <div class="chrome"><div class="dots"><i></i><i></i><i></i></div>
+    <div class="url">pannelloingresso.local</div></div>
+  <div class="page" style="height:440px">
+    <div class="pane" style="padding:20px 26px">
+      <div class="card" style="margin-bottom:0">
+        <div class="ch"><div class="t">Finestre</div><div class="s">gruppo 3 · Luci giardino</div></div>
+        <div class="cb">
+          <div class="riga" style="border-bottom:0">
+            <div class="idx">1</div>
+            <div class="campi" style="grid-template-columns:1fr 1fr">
+              <div class="field dl"><label>Accensione</label>
+                <input type="text" class="mono" value="input_datetime.acc">
+                <div class="lista">
+                  <div class="sel">input_datetime.giardino_on_1<span class="q">Ora accensione luci del giardino</span></div>
+                  <div>input_datetime.campanello_on<span class="q">Ora accensione campanello</span></div>
+                  <div>input_datetime.stufetta_on_1<span class="q">Ora accensione stufetta 1</span></div>
+                  <div>input_datetime.stufetta_on_2<span class="q">Ora accensione stufetta 2</span></div>
+                  <div>input_datetime.albero_on<span class="q">Ora accensione albero di natale</span></div>
+                </div>
+              </div>
+              <div class="field"><label>Spegnimento</label>
+                <input type="text" class="mono" value="input_datetime.giardino_off_1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="caption">
+  <h3>Gli orari: nessun problema</h3>
+  I tuoi ventidue <code>input_datetime</code> stanno tutti nel registro delle entità, quindi
+  la tendina li ha tutti. <span class="si">Questa parte funziona già oggi</span>: il campo
+  filtra sul dominio e mostra accanto il nome leggibile, quello che hai scritto in
+  <code>input_datetime.yaml</code>.
+</div>
+
+<div class="riga" style="display:flex;gap:26px;flex-wrap:wrap;margin-top:26px">
+
+  <div style="flex:1;min-width:430px">
+    <div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">oggi</div></div>
+      <div class="page" style="height:330px">
+        <div class="pane" style="padding:20px 22px">
+          <div class="card" style="margin-bottom:0">
+            <div class="ch"><div class="t">Automazioni</div><div class="s">come sarebbe oggi</div></div>
+            <div class="cb">
+              <div class="riga" style="border-bottom:0">
+                <div class="idx">1</div>
+                <div class="campi" style="grid-template-columns:1fr">
+                  <div class="field dl"><label>Automazione</label>
+                    <input type="text" class="mono" value="automation.accensione_luci_alla">
+                    <div class="lista">
+                      <div class="nulla">Nessun suggerimento: il pannello non conosce
+                        quest'automazione.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="caption">
+      <h3 class="no">Il difetto che ho trovato verificando</h3>
+      In <code>automations.yaml</code> hai <b>133 automazioni</b>. L'elenco che il pannello
+      chiede a Home Assistant ne contiene <b>40</b>, e delle dodici «alla pianificazione»
+      — quelle che servono proprio qui — <b>ne conosce una sola</b>.<br><br>
+      Il motivo: l'elenco viene dal <b>registro</b> delle entità, e un'automazione scritta
+      in YAML entra nel registro solo se ha un <code>id:</code> esplicito. Nel tuo file ce
+      l'hanno in quindici. Le altre esistono e funzionano — semplicemente il registro non
+      le ha.<br><br>
+      Il campo resta scrivibile, ma un id sbagliato <b>non protesta</b>: la riga compare
+      sul pannello e non fa niente.
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:430px">
+    <div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">chiedendo anche gli stati</div></div>
+      <div class="page" style="height:330px">
+        <div class="pane" style="padding:20px 22px">
+          <div class="card" style="margin-bottom:0">
+            <div class="ch"><div class="t">Automazioni</div><div class="s">con la correzione</div></div>
+            <div class="cb">
+              <div class="riga" style="border-bottom:0">
+                <div class="idx">1</div>
+                <div class="campi" style="grid-template-columns:1fr">
+                  <div class="field dl"><label>Automazione</label>
+                    <input type="text" class="mono" value="automation.accensione_luci_alla">
+                    <div class="lista">
+                      <div class="sel">automation.giardino_on_programmato<span class="q">Accensione luci alla pianificazione</span></div>
+                      <div>automation.giardino_off_programmato<span class="q">Spegnimento luci alla pianificazione</span></div>
+                      <div>automation.irrigazione_on_programmata<span class="q">Accensione irrigazione…</span></div>
+                      <div>automation.stufetta_on_programmata<span class="q">Accendi stufetta alla pianificazione</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="caption">
+      <h3 class="si">Come si risolve</h3>
+      Chiedendo a Home Assistant anche gli <b>stati</b> (<code>get_states</code>) oltre al
+      registro: quella risposta contiene tutto ciò che esiste davvero, YAML compreso, e
+      porta con sé il <code>friendly_name</code> — che è il nome che vedi qui accanto
+      all'id.<br><br>
+      È una chiamata WebSocket in più, fatta <b>solo quando qualcuno apre la pagina di
+      configurazione</b>: sul pannello a muro non cambia niente, né in memoria né in
+      traffico.<br><br>
+      Sistema anche un difetto vecchio: delle sedici <code>climate.</code> che usi, la
+      tendina oggi ne mostra cinque, per la stessa ragione.
+    </div>
+  </div>
+
+</div>
+
+<h2 class="tt2">Cosa cambia davvero nel codice</h2>
+<table class="mis">
+<tr><th>Dove</th><th>Cosa</th><th>Quanto</th></tr>
+<tr><td><code>web/index.html</code> · <code>righeArray()</code></td>
+    <td>Ricorsione quando una proprietà dell'elemento è un elenco di oggetti, e
+        intestazione richiudibile per le sole righe che ne contengono.</td>
+    <td>~40 righe più tre regole CSS</td></tr>
+<tr><td><code>web/index.html</code> · <code>campoSemplice()</code></td>
+    <td>Un ramo che intercetta <code>type: "array"</code> e non lo disegna come casella di
+        testo. <b>Oggi lo farebbe</b>, e al primo carattere digitato sostituirebbe
+        l'elenco con una stringa.</td>
+    <td>3 righe</td></tr>
+<tr><td><code>main/ha/ha.c</code></td>
+    <td>Chiedere anche <code>get_states</code> per le tendine, unendo il risultato al
+        registro.</td>
+    <td>~50 righe</td></tr>
+<tr><td><code>docs/config.schema.json</code></td>
+    <td>Il blocco <code>programmazioni</code>, con <code>maxItems</code> su tutti e tre i
+        livelli.</td>
+    <td>—</td></tr>
+<tr><td>Lettura dal firmware</td>
+    <td><b>Niente.</b> <code>cfg_testo("programmazioni/2/finestre/0/accensione")</code>
+        funziona già: i segmenti numerici sono indici.</td>
+    <td>—</td></tr>
+<tr><td>Validazione della pagina</td>
+    <td><b>Niente.</b> <code>validaTutto()</code> e <code>raddrizza()</code> scendono già
+        ricorsivamente a qualunque profondità.</td>
+    <td>—</td></tr>
+</table>
+
+<div class="caption" style="max-width:1000px">
+  <h3>Una cosa che vale la pena dire</h3>
+  Il campo <b>Nome sul pannello</b> è facoltativo dappertutto. Lasciandolo vuoto il
+  pannello usa il <code>friendly_name</code> che l'entità ha già in Home Assistant: un
+  nome cambiato là non va rincorso qui. Serve solo dove il nome vero non entra in una
+  riga — «Seconda Ora accensione luci del giardino» diventa «2ª».<br><br>
+  E il campo <b>Finestra di validità</b> è l'unico che cambia il <i>significato</i> di una
+  riga invece del suo aspetto: senza, il pannello scriverebbe «si accende alle 22:00» per
+  la luce del corridoio, che alle 22:00 non si accende affatto. Per questo si dichiara e non
+  si deduce.
+</div>
+
+</div>
+</body>
+</html>

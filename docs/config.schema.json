@@ -1,0 +1,1555 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pannello.local/config.schema.json",
+  "title": "Foyer Panel configuration",
+  "description": "AUTHORITATIVE SOURCE for structure, types and ranges. 03-config-contratto.md explains the why of the rules; this file defines the what, and wins if the two disagree. What each field means, as the configuration page shows it, is in i18n/<code>.json: field.<path>.label and field.<path>.hint.",
+  "type": "object",
+  "required": [
+    "schema",
+    "system",
+    "display",
+    "home_assistant",
+    "access",
+    "lights",
+    "climate",
+    "energy",
+    "presence",
+    "house_state",
+    "weather",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "system": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "panel_name",
+        "profile",
+        "timezone"
+      ],
+      "properties": {
+        "panel_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "profile": {
+          "enum": [
+            "p4-1280x800",
+            "p4-800x1280"
+          ]
+        },
+        "language": {
+          "enum": [
+            "en",
+            "it"
+          ],
+          "default": "en"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 3,
+          "examples": [
+            "Europe/Rome",
+            "Europe/London",
+            "Europe/Paris",
+            "Europe/Berlin",
+            "Europe/Madrid",
+            "Europe/Lisbon",
+            "Europe/Amsterdam",
+            "Europe/Brussels",
+            "Europe/Zurich",
+            "Europe/Vienna",
+            "Europe/Prague",
+            "Europe/Warsaw",
+            "Europe/Stockholm",
+            "Europe/Oslo",
+            "Europe/Copenhagen",
+            "Europe/Helsinki",
+            "Europe/Athens",
+            "Europe/Bucharest",
+            "Europe/Dublin",
+            "Europe/Malta",
+            "Europe/Moscow",
+            "Atlantic/Canary",
+            "UTC",
+            "America/New_York",
+            "America/Chicago",
+            "America/Denver",
+            "America/Los_Angeles",
+            "America/Sao_Paulo",
+            "Asia/Dubai",
+            "Asia/Jerusalem",
+            "Asia/Kolkata",
+            "Asia/Shanghai",
+            "Asia/Tokyo",
+            "Australia/Sydney"
+          ]
+        },
+        "ntp": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ssid"
+          ],
+          "properties": {
+            "ssid": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            "hidden": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "brightness_active",
+        "brightness_standby",
+        "standby_after_s",
+        "off_after_s"
+      ],
+      "properties": {
+        "brightness_active": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "brightness_standby": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "standby_after_s": {
+          "type": "integer",
+          "minimum": 15,
+          "maximum": 3600
+        },
+        "off_after_s": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400
+        },
+        "off_when_nobody_home": {
+          "type": "boolean"
+        },
+        "return_home_after_s": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 600
+        },
+        "long_press_ms": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 3000
+        },
+        "night_off": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "from": {
+              "type": "string",
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            }
+          }
+        },
+        "standby": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "clock": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 4
+            },
+            "temperature": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 2
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#0D1014"
+        },
+        "cards": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#151A21"
+        },
+        "borders": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#1E242D"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#E8ECF2"
+        },
+        "text_dim": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#8A95A6"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#F0A835"
+        },
+        "positive": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#4FC39A"
+        },
+        "negative": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#E2664F"
+        },
+        "lights_on": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "format": "colore",
+          "default": "#F0A835"
+        }
+      }
+    },
+    "home": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indoor_temperature": {
+          "type": "boolean",
+          "default": true
+        },
+        "robot": {
+          "type": "boolean",
+          "default": true
+        },
+        "appliances": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "standby": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indoor_temperature": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entity"
+          ],
+          "properties": {
+            "entity": {
+              "type": "string",
+              "pattern": "^[a-z_]+\\.[a-z0-9_]+$"
+            },
+            "attribute": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16
+            }
+          }
+        },
+        "climate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^climate\\.[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "home_assistant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "port"
+      ],
+      "properties": {
+        "host": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "tls": {
+          "type": "boolean"
+        },
+        "ws_path": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "retry_s": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300
+        }
+      }
+    },
+    "access": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "type",
+          "entity"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "type": {
+            "enum": [
+              "pulse",
+              "switch"
+            ]
+          },
+          "entity": {
+            "type": "string",
+            "pattern": "^[a-z_]+\\.[a-z0-9_]+$"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "confirm": {
+            "type": "boolean"
+          },
+          "pulse_ms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 200,
+                "maximum": 5000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state_sensor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^binary_sensor\\.[a-z0-9_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "schedules": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24
+          },
+          "icon": {
+            "type": "string",
+            "enum": [
+              "outlet",
+              "power_settings_new",
+              "lightbulb",
+              "bolt",
+              "cable",
+              "mode_fan",
+              "wind_power",
+              "ac_unit",
+              "local_fire_department",
+              "heat_pump",
+              "water_drop",
+              "valve",
+              "pool",
+              "shower",
+              "grass",
+              "sunny",
+              "tv",
+              "speaker",
+              "coffee",
+              "kitchen",
+              "videocam",
+              "router",
+              "storage",
+              "garage",
+              "door_front",
+              "speed",
+              "timer",
+              "sensors"
+            ],
+            "default": "timer"
+          },
+          "entity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z_]+\\.[a-z0-9_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "power": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^sensor\\.[a-z0-9_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "windows": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "on_time",
+                "off_time"
+              ],
+              "properties": {
+                "on_time": {
+                  "type": "string",
+                  "pattern": "^input_datetime\\.[a-z0-9_]+$"
+                },
+                "off_time": {
+                  "type": "string",
+                  "pattern": "^input_datetime\\.[a-z0-9_]+$"
+                },
+                "validity": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          },
+          "automations": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "entity"
+              ],
+              "properties": {
+                "entity": {
+                  "type": "string",
+                  "pattern": "^automation\\.[a-z0-9_]+$"
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 32
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "zones"
+      ],
+      "properties": {
+        "scenes": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "entity"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 24
+              },
+              "entity": {
+                "type": "string",
+                "pattern": "^scene\\.[a-z0-9_]+$"
+              }
+            }
+          }
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "entity"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32
+              },
+              "entity": {
+                "type": "string",
+                "pattern": "^(light|switch)\\.[a-z0-9_]+$"
+              },
+              "dimmable": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "climate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "heating",
+        "air_conditioners"
+      ],
+      "properties": {
+        "heating_limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "ac_limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "heating": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "climate"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "climate": {
+                "type": "string",
+                "pattern": "^climate\\.[a-z0-9_]+$"
+              },
+              "temperature": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^sensor\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "humidity": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^sensor\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "floor": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "air_conditioners": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "climate"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "climate": {
+                "type": "string",
+                "pattern": "^climate\\.[a-z0-9_]+$"
+              },
+              "timer": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^timer\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "timer_automation": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^automation\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "default_duration": {
+                "type": "string",
+                "pattern": "^[0-9]{1,2}:[0-5][0-9]$"
+              },
+              "extras": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "quiet": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^switch\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "panel_light": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^switch\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "fresh_air": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^switch\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "xfan": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^switch\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "intermittent": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^input_boolean\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "minutes_on": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^input_number\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "minutes_off": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^input_number\\.[a-z0-9_]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "floors": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "switch"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$",
+                "maxLength": 16
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 20
+              },
+              "switch": {
+                "type": "string",
+                "pattern": "^(switch|input_boolean)\\.[a-z0-9_]+$"
+              }
+            }
+          }
+        },
+        "panel_floor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "energy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregate_sensor"
+      ],
+      "properties": {
+        "aggregate_sensor": {
+          "type": "string",
+          "pattern": "^sensor\\.[a-z0-9_]+$"
+        },
+        "history": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^sensor\\.[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "properties": {
+            "grid_w": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            },
+            "battery_w": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            },
+            "battery_pct": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            },
+            "today_kwh": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            },
+            "house_w": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$",
+              "maxLength": 40
+            }
+          }
+        },
+        "signs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "grid_positive": {
+              "enum": [
+                "import",
+                "export"
+              ]
+            },
+            "battery_positive": {
+              "enum": [
+                "charge",
+                "discharge"
+              ]
+            }
+          }
+        },
+        "strings": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 24
+              },
+              "voltage": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^sensor\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "current": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^sensor\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "power": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^sensor\\.[a-z0-9_]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "devices": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "entity"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 20
+              },
+              "entity": {
+                "type": "string",
+                "pattern": "^sensor\\.[a-z0-9_]+$"
+              }
+            }
+          }
+        },
+        "today": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "produced": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sensor\\.[a-z0-9_]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "consumed": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sensor\\.[a-z0-9_]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "imported": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sensor\\.[a-z0-9_]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "exported": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^sensor\\.[a-z0-9_]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "calendar": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "sensor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^sensor\\.[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14
+        },
+        "home_max_events": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "calendars": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^calendar\\.[a-z0-9_]+$"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "color": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "robot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "entity": {
+          "type": "string"
+        },
+        "battery": {
+          "type": "string"
+        },
+        "no_selection": {
+          "type": "string",
+          "enum": [
+            "whole_house",
+            "nothing"
+          ]
+        },
+        "rooms_command": {
+          "type": "string"
+        },
+        "rooms_format": {
+          "type": "string",
+          "enum": [
+            "segments",
+            "list"
+          ],
+          "default": "segments"
+        },
+        "repeats": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "rooms": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "number",
+              "name"
+            ],
+            "properties": {
+              "number": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 999
+              },
+              "name": {
+                "type": "string"
+              },
+              "col": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "row": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4
+              }
+            }
+          }
+        },
+        "alerts": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "entity"
+            ],
+            "properties": {
+              "entity": {
+                "type": "string",
+                "pattern": "^(binary_sensor|sensor)\\.[a-z0-9_]+$"
+              },
+              "text": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "when": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "on",
+                      "off"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": "on"
+              }
+            }
+          }
+        },
+        "maintenance": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "entity"
+            ],
+            "properties": {
+              "entity": {
+                "type": "string",
+                "pattern": "^sensor\\.[a-z0-9_]+$"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "threshold": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "appliances": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "cycle"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "cycle": {
+            "type": "string",
+            "pattern": "^(input_boolean|binary_sensor|switch)\\.[a-z0-9_]+$"
+          },
+          "power": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^sensor\\.[a-z0-9_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_power": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "presence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sensor"
+      ],
+      "properties": {
+        "sensor": {
+          "type": "string",
+          "pattern": "^sensor\\.[a-z0-9_]+$"
+        }
+      }
+    },
+    "house_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "openings_sensor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^sensor\\.[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "weather": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity"
+      ],
+      "properties": {
+        "entity": {
+          "type": "string",
+          "pattern": "^weather\\.[a-z0-9_]+$"
+        },
+        "local_temperature_sensor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^sensor\\.[a-z0-9_]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "local_temperature_attribute": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "maxLength": 40
+        }
+      }
+    },
+    "wifi_sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "return_home_after_s": {
+          "type": "integer",
+          "minimum": 30,
+          "maximum": 600
+        },
+        "networks": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/network"
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status_endpoint": {
+          "type": "boolean",
+          "default": true
+        },
+        "config_always_open": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "lights",
+          "climate",
+          "energy",
+          "access",
+          "calendar",
+          "wifi",
+          "robot",
+          "switches",
+          "schedules"
+        ]
+      }
+    },
+    "switches": {
+      "type": "array",
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "entity"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "entity": {
+            "type": "string",
+            "pattern": "^(switch|light|input_boolean)\\.[a-z0-9_]+$"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "outlet",
+                  "power_settings_new",
+                  "lightbulb",
+                  "bolt",
+                  "cable",
+                  "mode_fan",
+                  "wind_power",
+                  "ac_unit",
+                  "local_fire_department",
+                  "heat_pump",
+                  "water_drop",
+                  "valve",
+                  "pool",
+                  "shower",
+                  "grass",
+                  "sunny",
+                  "tv",
+                  "speaker",
+                  "coffee",
+                  "kitchen",
+                  "videocam",
+                  "router",
+                  "storage",
+                  "garage",
+                  "door_front",
+                  "speed",
+                  "timer",
+                  "sensors"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "power": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^sensor\\.[a-z0-9_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "enum": [
+            0.1,
+            0.5,
+            1.0
+          ]
+        },
+        "min": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 35
+        },
+        "max": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 35
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "display_name": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "ssid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "security": {
+          "enum": [
+            "WPA",
+            "WEP",
+            "none"
+          ]
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "show_password": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,214 @@
+# ---------------------------------------------------------------------------
+# ESP32-P4 — profili p4-1280x800 e p4-800x1280.
+#
+# Tre cose da sapere prima di leggere il resto.
+#
+# **Lo schermo e MIPI-DSI**: c'e un controllore serio in mezzo, il segnale
+# e differenziale, e i tempi li tiene il pannello.
+#
+# **Non c'e radio.** Il Wi-Fi passa da un ESP32-C6 collegato via SDIO, con
+# esp_wifi_remote da questa parte e esp-hosted-mcu dall'altra. Sono due
+# firmware da tenere allineati, ed e la ragione della partizione `c6_fw`.
+#
+# **La flash e sedici megabyte**, e le partizioni sono quelle
+# di partitions.csv. Qui c'era scritto trentadue, dedotto dalla
+# documentazione della famiglia prima di avere la scheda: quella vera ne ha
+# sedici, e `esptool flash_id` lo dice in una riga.
+#
+# Le righe qui sotto sono quelle che si possono decidere leggendo la
+# documentazione del silicio. Quelle che dipendono dalla **scheda** — piedini,
+# corsie DSI, indirizzi I2C — stanno in main/hw/scheda_p4.h, che e l'unico
+# file da confrontare con la scheda vera quando arriva.
+# ---------------------------------------------------------------------------
+
+# --- PSRAM ------------------------------------------------------------------
+# Il P4 la vuole in modalita esadecimale a 200 MHz: e cio che monta la
+# famiglia di schede per cui questo profilo esiste. Se la scheda ne avesse
+# una diversa il pannello non parte, e lo dice subito.
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+
+# --- codice e costanti in PSRAM, e la riga che se lo era predetto ----------
+#
+# Qui c'era scritto che restavano in flash, perche su questo silicio flash
+# e PSRAM non stanno sullo stesso controller. Poi c'era questa frase: «**da rimisurare sul vetro**
+# quando la scheda c'e: se il quadro fosse instabile, e la prima riga da
+# provare».
+#
+# Il quadro era instabile. Aree piene striate riga per riga, anche
+# riempiendo il framebuffer di bianco senza passare da nessuna interfaccia.
+#
+# La premessa era sbagliata: finche' l'applicazione gira dalla flash, ogni
+# fallimento di cache e una lettura MSPI, e quella lettura mette in pausa la
+# PSRAM **proprio mentre il controllore video ne sta leggendo i pixel**. La
+# sua coda si svuota, e una coda vuota si vede come una riga.
+#
+# Con queste quattro righe l'applicazione viene copiata in PSRAM all'avvio e
+# la flash non si tocca piu. Sono le stesse che il demo del costruttore
+# accende, ed erano l'ultima differenza rimasta fra la sua configurazione e
+# la nostra.
+#
+# Costa: l'avvio e piu lento di qualche decimo, e due megabyte di PSRAM su
+# trentadue. Su un pannello a muro che si accende una volta ogni tanto non
+# si nota; le righe si notavano da un metro.
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+CONFIG_SPIRAM_FLASH_LOAD_TO_PSRAM=y
+
+# --- quale silicio ----------------------------------------------------------
+#
+# L'ESP32-P4 esiste in due famiglie di revisione che ESP-IDF considera
+# **mutuamente esclusive**: sotto la v3.0 e dalla v3.0 in su. La
+# predefinita e la seconda, e con quella il bootloader si rifiuta di
+# scriversi su un chip piu vecchio dicendo il numero di revisione che si
+# aspettava — che e il modo giusto di fallire, ma bisogna sapere dove
+# metterci mano.
+#
+# La scheda di questo progetto porta un P4 **v1.3**, letto da
+# `esptool flash_id`. Questa riga sceglie la famiglia giusta.
+#
+# Il prezzo e dichiarato: questo binario non gira su un P4 v3.x. Non e una
+# limitazione che si possa aggirare compilando "per tutti" — le due
+# famiglie si escludono, e a doverne servire due servirebbero due immagini.
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+
+# --- flash ------------------------------------------------------------------
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+# La flash montata su questa scheda e una Boya, e senza questa riga il
+# driver generico funziona ma lo dice a ogni avvio. Un avviso che compare
+# sempre e un avviso che si smette di leggere, e nel registro di un
+# pannello a muro ci sono gia abbastanza righe.
+CONFIG_SPI_FLASH_SUPPORT_BOYA_CHIP=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Il bootloader del P4 nei 24 kB prima di 0x8000 non ci sta: la tabella scende a 0xC000. La compilazione lo dice da
+# sola — "Bootloader binary size is too large for partition table offset" —
+# ma il numero va deciso qui e le partizioni devono seguirlo.
+CONFIG_PARTITION_TABLE_OFFSET=0xC000
+
+# --- Wi-Fi da un altro chip -------------------------------------------------
+# esp_wifi_remote presenta la stessa interfaccia di esp_wifi, cosi rete.c non
+# sa di stare parlando con un altro chip: e il motivo per cui non c'e un ramo
+# `#ifdef` in quel file.
+CONFIG_ESP_WIFI_REMOTE_ENABLED=y
+
+# I piedini del collegamento SDIO verso il C6 **non sono fissati qui**, e
+# restano i predefiniti del silicio per lo slot 1. Su una scheda che li
+# porta altrove il P4 parte, disegna, e la rete non sale mai: e il guasto
+# piu probabile del primo avvio, ed e anche quello che sembra un problema
+# di Wi-Fi mentre e un problema di cablaggio.
+#
+# Si sistemano da `idf.py -B build-p4 menuconfig`, sotto ESP-Hosted: c'e un
+# preset per le schede di sviluppo note (ESP_HOSTED_P4_DEV_BOARD_*) e, se
+# la scheda non e fra quelle, i sei piedini uno per uno
+# (ESP_HOSTED_SDIO_CLK_GPIO e compagni). Quando il valore giusto si sa, va
+# scritto qui — non lasciato in sdkconfig, che non e versionato.
+
+# --- la cache di secondo livello, e una lezione ------------------------------
+#
+# Il DPI legge il framebuffer dalla PSRAM **attraverso la L2**, e questi due
+# numeri sono quelli con cui il demo del costruttore gira su questa scheda.
+# I predefiniti di ESP-IDF sono 64 byte di linea e 128 kB, e con quelli il
+# vetro riceveva i comandi e non mostrava niente.
+#
+# La lezione sta nella storia di questa riga. C'era gia, con l'intenzione
+# giusta scritta accanto, e con il nome sbagliato:
+# CACHE_L2_CACHE_LINE_SIZE_64B invece di CACHE_L2_CACHE_LINE_64B. Kconfig la
+# ignorava dicendolo. Durante il riesame l'ho tolta come "impostazione che
+# non esiste" — vero del nome, falso dell'intenzione — e ho buttato via
+# insieme al refuso la ragione per cui qualcuno l'aveva scritta.
+#
+# Una riga che non fa niente non va tolta senza chiedersi cosa volesse fare.
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_CACHE_L2_CACHE_LINE_128B=y
+
+# esp_hosted invece si accende da solo quando c'e esp_wifi_remote, e la
+# compilazione lo conferma con "Using Hosted Wi-Fi": quella riga era davvero
+# di troppo.
+
+# --- il reset del co-processore Wi-Fi, e come si asserisce ----------------
+#
+# Il P4 non ha radio: ce l'ha un ESP32-C6 collegato via SDIO, e il piedino
+# 54 lo tiene a riposo. Il verso di quel segnale non e una preferenza — su
+# questa scheda passa per un invertitore, quindi il reset si asserisce
+# **alto**, e il valore predefinito del componente e basso.
+#
+# Sbagliarlo non da un errore chiaro: da un'enumerazione SDIO che scade a
+# ripetizione — «sdmmc_init_ocr: send_op_cond (1) returned 0x107» — che
+# somiglia a un problema di piedini o di frequenza e manda a controllare
+# quelli, che sono giusti. Il numero e quello che il costruttore usa nei
+# suoi demo su questa scheda.
+CONFIG_ESP_HOSTED_SDIO_RESET_ACTIVE_HIGH=y
+
+# Il co-processore si rimette a zero a ogni accensione dell'host, cosi le
+# due meta ripartono insieme: un C6 che sta ancora finendo la sessione
+# precedente e un host che gli parla da capo non si trovano.
+CONFIG_ESP_HOSTED_SLAVE_RESET_ON_EVERY_HOST_BOOTUP=y
+
+# Se il collegamento cade, il trasporto si rialza da solo invece di lasciare
+# il pannello senza rete fino al prossimo riavvio.
+CONFIG_ESP_HOSTED_TRANSPORT_RESTART_ON_FAILURE=y
+
+# --- la memoria quando arriva il video ------------------------------------
+#
+# Sedici megabyte di flash e trentadue di PSRAM, e il pannello si riavviava
+# lo stesso appena le telecamere cominciavano a dare fotogrammi:
+# `assert failed: sdio_rx_get_buffer`, il driver SDIO del Wi-Fi che non
+# trova un buffer. La PSRAM non c'entrava: a finire era la RAM **interna**,
+# che su questo chip e circa trecento kilobyte in tutto.
+#
+# I buffer grandi stavano gia al loro posto — novantasei kilobyte per flusso
+# piu trentadue per fotogramma vanno in PSRAM da soli, perche' superano la
+# soglia qui sotto. A riempire la RAM interna erano le allocazioni **piccole
+# e tante**: sotto la soglia ci vanno tutte, e con quattro flussi HTTP
+# aperti sono molte.
+#
+# Sedicimila diventano quattromila: sopra i quattro kilobyte si va in PSRAM.
+# Chi ha davvero bisogno della RAM interna — DMA e interruzioni — la chiede
+# esplicitamente e continua ad averla.
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=4096
+
+# E se ne tiene da parte il doppio di prima per quei richiedenti. Il driver
+# SDIO e uno di loro, e quando resta a secco non degrada: asserisce e
+# riavvia il pannello.
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=65536
+
+# --- e la memoria di LVGL, che era una stanza chiusa ----------------------
+#
+# LVGL aveva una riserva sua di 64 kB, presa in RAM interna all'avvio e mai
+# restituita. Due difetti in una riga: quei 64 kB mancavano a tutti gli
+# altri, e a LVGL non bastavano comunque — un fotogramma 640x360 decodificato
+# occupa 460 kB, sette volte la stanza in cui doveva stare. I riquadri delle
+# telecamere restavano neri e non c'era nessun errore da nessuna parte: una
+# decodifica che non trova memoria semplicemente non disegna.
+#
+# Con l'allocatore di sistema LVGL chiede al mucchio comune, che qui
+# comprende la PSRAM. La riserva fissa sparisce, e un fotogramma decodificato
+# trova i suoi mezzo megabyte dove ce ne sono trenta.
+CONFIG_LV_USE_BUILTIN_MALLOC=n
+CONFIG_LV_USE_CLIB_MALLOC=y
+
+# --- la frequenza del bus verso la radio ----------------------------------
+#
+# Quaranta megahertz e il valore di riposo del componente, ed e quello che
+# usa anche il costruttore nei suoi demo. Su questa scheda, con quattro
+# flussi video aperti, non regge: il bus comincia a dare errori di CRC
+# (`sdmmc_send_cmd returned 0x109`), il driver ritenta, e il pannello si
+# riavvia.
+#
+# Venti bastano con abbondanza per cio che ci passa. Quattro telecamere a
+# quaranta kilobyte per fotogramma e cinque fotogrammi al secondo fanno
+# circa sei megabit al secondo; un bus a quattro fili a venti megahertz ne
+# porta ottanta teorici. Si perde meta della velocita di punta e non si
+# perde niente di cio che serve.
+#
+# Il valore giusto **si misura**, non si sceglie: se un domani i flussi
+# diventassero piu pesanti si guarda se gli errori tornano prima di alzarla
+# di nuovo. E se tornassero anche a venti, il passo dopo e il bus a un filo
+# solo, che e piu lento e molto piu tollerante.
+CONFIG_ESP_HOSTED_SDIO_CLOCK_FREQ_KHZ=20000

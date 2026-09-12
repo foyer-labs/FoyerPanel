@@ -1,0 +1,68 @@
+## Componenti presi dal registro di Espressif.
+##
+## Si dichiarano qui invece di copiarli nel repository: sono codice di
+## altri, con un ciclo di vita loro, e tenerne una copia vorrebbe dire
+## ereditarne la manutenzione senza accorgersene.
+##
+## LVGL e la stessa versione del simulatore: se divergessero, le due
+## compilazioni proverebbero due librerie diverse e la parola "portabile"
+## smetterebbe di voler dire qualcosa.
+dependencies:
+  idf: ">=5.3"
+  lvgl/lvgl: "~9.5.0"
+  ## L'interfaccia comune dei vetri capacitivi: il driver del GSL3680, in
+  ## firmware/components, la implementa.
+  espressif/esp_lcd_touch: "^1.2.1"
+  joltwallet/littlefs: "^1.14.0"
+  ## mDNS non e piu incluso in ESP-IDF: da 5.x sta nel registro. E quello che
+  ## fa rispondere `pannello.local`, cioe l'unico modo di raggiungere la
+  ## pagina di configurazione senza sapere a memoria l'indirizzo che il
+  ## router ha assegnato oggi.
+  espressif/mdns: "^1.8.0"
+
+  ## Il vetro **non** si prende dal registro, e sta in
+  ## firmware/components. E l'eccezione alla regola scritta in cima a questo
+  ## file, e ha una ragione precisa: la sequenza di accensione del registro
+  ## dichiara al pannello quattro corsie DSI, e questa scheda ne ha due.
+  ## Il costruttore spedisce la stessa sequenza con una riga cambiata —
+  ## `{0x80, 0x01} // 03->01 2lane` — e senza quella riga il vetro riceve i
+  ## comandi, risponde, e non mostra niente. Ci abbiamo passato una sera.
+  ##
+  ## Lo stesso vale per il controllore del tocco: un GSL3680 che non ha il
+  ## firmware a bordo e se lo fa caricare via I2C a ogni accensione. Quel
+  ## blocco e legato a questo modello di vetro e non esiste nel registro.
+
+  ## La radio sta su un altro chip. esp_wifi_remote presenta la stessa
+  ## interfaccia di esp_wifi, ed e la ragione per cui rete.c non ha un solo
+  ## ramo condizionale: da quella parte del confine il codice non sa di
+  ## stare parlando via SDIO con un ESP32-C6.
+  ##
+  ## --- e qui esp_hosted va fissato, dopo essersi detti il contrario ------
+  ##
+  ## Qui c'era scritto di **non** fissarlo: lasciar scegliere a
+  ## esp_wifi_remote, perche' fissarlo a mano accoppia una versione con una
+  ## di ESP-IDF che non la conosce — ed era successo davvero, la 0.0.25
+  ## contro le intestazioni di IDF 5.5.5 non compila.
+  ##
+  ## Quel ragionamento guardava una parte sola del problema. esp_hosted non
+  ## e una libreria che sta tutta da questa parte: e **meta di un
+  ## protocollo**, e l'altra meta gira sull'ESP32-C6 saldato sulla scheda,
+  ## con un firmware che noi non compiliamo e che la fabbrica ha gia scritto
+  ## nella sua flash. Lasciando scegliere si prendeva la 3.0.6, e il C6 ne
+  ## parla una 2.x: l'host leggeva «coprocessor 0.0.0» — cioe non capiva
+  ## nemmeno la sua presentazione — e poi esp_wifi_init() falliva. Il
+  ## registro diceva soltanto «radio non avviata», che manda a cercare la
+  ## password.
+  ##
+  ## 2.11.7 e la versione che il costruttore fissa nei suoi demo su questa
+  ## scheda, e i suoi demo sul C6 di questa scheda funzionano. Insieme va
+  ## esp_wifi_remote 1.2.*, che e la sua compagna in quella generazione:
+  ## sono un paio, e presi separati tornano al disaccordo di prima.
+  ##
+  ## Il vincolo vero e questo: **la versione qui non si sceglie, si
+  ## constata**. Aggiornarla vuol dire prima cambiare il firmware del C6, e
+  ## a quello non si arriva da fuori — passa dallo stesso collegamento che
+  ## smette di funzionare quando le due meta non si capiscono.
+  espressif/esp_hosted: "2.11.7"
+  espressif/esp_wifi_remote: "1.2.*"
+

@@ -1,0 +1,372 @@
+{
+  "_nota": "Unica fonte macchina-leggibile delle divergenze fra i pannelli. Due profili: una famiglia hardware x due orientamenti. Genera profile.h da qui con tools/genera_profilo.py. Le misure derivate da una distribuzione flex o grid (larghezza di una voce della barra, di un tasto del tastierino) non compaiono: le calcola il layout a runtime.",
+  "_predefinito": "p4-800x1280",
+  "_nota_predefinito": "Il pannello montato al muro: 10,1\" ESP32-P4 verticale. E il profilo su cui parte il simulatore senza argomenti e quello che la compilazione usa se non le si dice altro.",
+  "profili": {
+    "p4-1280x800": {
+      "nome": "pannello da 10,1\"",
+      "scheda": "ESP32-P4-WIFI6-Touch-LCD 10,1\"",
+      "schermo": {
+        "larghezza": 1280,
+        "altezza": 800,
+        "ppi": 149,
+        "interfaccia": "mipi_dsi",
+        "fps_atteso": "60"
+      },
+      "memoria": {
+        "psram_mb": 32,
+        "ram_interna_kb": 768,
+        "flash_mb": 16
+      },
+      "geometria": {
+        "rail_w": 106,
+        "rail_item": [
+          88,
+          88
+        ],
+        "rail_home": [
+          88,
+          66
+        ],
+        "rail_gear": [
+          88,
+          56
+        ],
+        "head_h": 66,
+        "home_head_h": 102,
+        "pad": 20,
+        "pad_scheda": [
+          18,
+          16
+        ],
+        "gap": 14,
+        "radius": 16,
+        "radius_btn": 11,
+        "radius_tile": 13,
+        "barra_max": 0
+      },
+      "font": {
+        "f_xxl": 56,
+        "f_xl": 38,
+        "f_l": 26,
+        "f_m": 17,
+        "f_s": 14,
+        "f_xs": 12,
+        "standby": 126,
+        "standby_temp": 84,
+        "energia_home": 52,
+        "clima_dettaglio": 96,
+        "decimi_xl": 30,
+        "password_mono": 34,
+        "standby_1": 60,
+        "standby_2": 84,
+        "standby_3": 104,
+        "standby_4": 126,
+        "standby_5": 150
+      },
+      "griglie": {
+        "luci": [
+          3,
+          4
+        ],
+        "clima": [
+          3,
+          4
+        ],
+        "agenda_colonne": 4,
+        "scene_max": 5,
+        "condizionatori": [
+          4,
+          1
+        ],
+        "standby": [
+          4,
+          1
+        ]
+      },
+      "home": {
+        "fascia_h": 300,
+        "presenza_w": 250,
+        "energia_w": 296,
+        "aperture_w": 320,
+        "agenda_w": null,
+        "dock": true,
+        "dock_max": 7
+      },
+      "tocco": {
+        "dock": [
+          171,
+          195
+        ],
+        "apertura": [
+          132,
+          52
+        ],
+        "comando_robot_h": 66,
+        "clima_pm": [
+          48,
+          42
+        ],
+        "clima_pm_dettaglio": [
+          78,
+          78
+        ],
+        "pin": [
+          108,
+          72
+        ],
+        "tastiera": [
+          116,
+          105
+        ],
+        "interruttore": [
+          58,
+          32
+        ],
+        "pager": [
+          48,
+          44
+        ],
+        "riga_rete_h": 110,
+        "pin_box_w": 740
+      },
+      "comportamenti": {
+        "passi_avvio": 6,
+        "ota_rollback_s": 120,
+        "partizione_c6": true,
+        "standby_shift": [
+          4,
+          5
+        ],
+        "rotazione_software": true
+      },
+      "orientamento": "orizzontale",
+      "icone": {
+        "s": 19,
+        "m": 24,
+        "l": 30,
+        "xl": 64
+      },
+      "clima": {
+        "dettaglio_col_w": 420,
+        "timer_passo": [
+          56,
+          50
+        ],
+        "segmento_h": 52,
+        "extra_h": 56,
+        "deflettore": [
+          34,
+          28
+        ],
+        "riquadro_h": 96,
+        "righe_con_fasce": 5
+      },
+      "energia": {
+        "fascia_h": 118,
+        "banda_h": 132,
+        "stringa_h": 116,
+        "consumo_riga_h": 62
+      },
+      "wifi": {
+        "colonna_w": 420,
+        "qr": 250
+      },
+      "interruttori": {
+        "riga_h": 72,
+        "per_pagina": 8
+      }
+    },
+    "p4-800x1280": {
+      "nome": "pannello da 10,1\" in verticale",
+      "scheda": "ESP32-P4-WIFI6-Touch-LCD 10,1\"",
+      "schermo": {
+        "larghezza": 800,
+        "altezza": 1280,
+        "ppi": 149,
+        "interfaccia": "mipi_dsi",
+        "fps_atteso": "60"
+      },
+      "memoria": {
+        "psram_mb": 32,
+        "ram_interna_kb": 768,
+        "flash_mb": 16
+      },
+      "geometria": {
+        "navbar_h": 112,
+        "head_h": 72,
+        "pad": 18,
+        "pad_scheda": [
+          17,
+          15
+        ],
+        "gap": 14,
+        "radius": 16,
+        "rail_w": null,
+        "home_head_h": 116,
+        "radius_btn": 11,
+        "radius_tile": 13,
+        "barra_max": 6
+      },
+      "font": {
+        "f_xxl": 56,
+        "f_xl": 38,
+        "f_l": 26,
+        "f_m": 17,
+        "f_s": 14,
+        "f_xs": 12,
+        "standby": 126,
+        "standby_temp": 84,
+        "energia_home": 52,
+        "clima_dettaglio": 96,
+        "decimi_xl": 30,
+        "password_mono": 34,
+        "standby_1": 60,
+        "standby_2": 84,
+        "standby_3": 104,
+        "standby_4": 126,
+        "standby_5": 150
+      },
+      "griglie": {
+        "luci": [
+          2,
+          7
+        ],
+        "clima": [
+          2,
+          6
+        ],
+        "condizionatori": [
+          2,
+          2
+        ],
+        "agenda_colonne": 1,
+        "scene_max": 5,
+        "standby": [
+          2,
+          2
+        ]
+      },
+      "home": {
+        "dock": false,
+        "nota": "la barra di navigazione in basso sostituisce il dock",
+        "dock_max": 0
+      },
+      "tocco": {
+        "dock": [
+          171,
+          195
+        ],
+        "apertura": [
+          132,
+          52
+        ],
+        "comando_robot_h": 66,
+        "clima_pm": [
+          46,
+          42
+        ],
+        "clima_pm_dettaglio": [
+          78,
+          78
+        ],
+        "pin": [
+          null,
+          76
+        ],
+        "tastiera": [
+          72,
+          88
+        ],
+        "interruttore": [
+          58,
+          32
+        ],
+        "pager": [
+          48,
+          44
+        ],
+        "riga_rete_h": 110,
+        "pin_box_w": null
+      },
+      "comportamenti": {
+        "passi_avvio": 6,
+        "ota_rollback_s": 120,
+        "partizione_c6": true,
+        "standby_shift": [
+          4,
+          5
+        ],
+        "rotazione_software": false
+      },
+      "orientamento": "verticale",
+      "icone": {
+        "s": 19,
+        "m": 24,
+        "l": 30,
+        "xl": 64
+      },
+      "clima": {
+        "dettaglio_col_w": 0,
+        "timer_passo": [
+          56,
+          50
+        ],
+        "segmento_h": 60,
+        "extra_h": 60,
+        "deflettore": [
+          34,
+          28
+        ],
+        "riquadro_h": 96,
+        "righe_con_fasce": 8
+      },
+      "energia": {
+        "fascia_h": 118,
+        "banda_h": 132,
+        "stringa_h": 116,
+        "consumo_riga_h": 62
+      },
+      "wifi": {
+        "colonna_w": 0,
+        "qr": 250
+      },
+      "interruttori": {
+        "riga_h": 76,
+        "per_pagina": 12
+      }
+    }
+  },
+  "comuni": {
+    "_nota": "Uguali su tutti i profili. Stanno qui perche' profile.h e' l'unico file con misure.",
+    "tocco_min": 44,
+    "bordo": 1,
+    "tratto": 2,
+    "tratteggio_segno": 4,
+    "tratteggio_vuoto": 4,
+    "pastiglia_pad_v": 6,
+    "pastiglia_pad_h": 9,
+    "pastiglia_gap": 7,
+    "gap_stretto": 4,
+    "righe_titolo_evento": 2,
+    "righe_nome_luce": 2,
+    "barretta_w": 4,
+    "barretta_gap": 3,
+    "barretta_h": 20,
+    "barra_percentuale_h": 9,
+    "pila_w": 56,
+    "pila_h": 6,
+    "pallino_paginatore": 8,
+    "pallino_paginatore_attivo": 22,
+    "gap_pallini": 8,
+    "velo_conferma_pct": 76,
+    "opacita_dato_vecchio_pct": 45,
+    "opacita_evento_passato_pct": 45,
+    "opacita_standby_pct": 62,
+    "opacita_condizionatore_spento_pct": 68,
+    "spaziatura_maiuscoletto_em": 0.16,
+    "spaziatura_dock_em": 0.08,
+    "dissolvenza_modale_ms": 150,
+    "barra_scorrimento_w": 6
+  }
+}

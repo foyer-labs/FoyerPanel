@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Clima · riscaldamento e condizionatori</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1400px;margin:0 auto;padding:18px 14px 60px}
+h1.tt{font-size:15px;font-weight:600;margin:0 0 2px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 14px}
+.grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.grp .lb{font:500 11px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6d747f;margin-right:4px}
+.grp button{appearance:none;border:1px solid #2c3038;background:#1c1f25;color:#aeb5c0;font:500 12.5px/1 Inter,sans-serif;padding:9px 12px;border-radius:8px;cursor:pointer}
+.grp button:hover{border-color:#3d434e;color:#e6e9ee}
+.grp button[aria-pressed="true"]{background:#e6e9ee;color:#15171b;border-color:#e6e9ee}
+.frame{position:relative;background:#000;border:12px solid #24272d;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;margin:14px auto 0}
+.stage{transform-origin:top left;position:relative;overflow:hidden}
+.caption{font-size:12.5px;color:#9aa1ad;margin:12px 2px 0;line-height:1.6;max-width:980px}
+.caption b{color:#e6e9ee;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+.screen{position:absolute;inset:0;display:flex;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--ink:#0d1014;--off:#232b35;
+  /* profilo 10,1" */
+  --r:16px;--rail:106px;--head:66px;--pad:20px;--gap:14px;
+  --f-ti:26px;--f-nm:17px;--f-big:40px;--f-sm:13px;--f-lb:12px;--f-set:18px;
+  --btn-h:42px;--tile-h:96px;
+  background:var(--bg);color:var(--txt)}
+
+.mrail{width:var(--rail);flex:none;background:var(--card2);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:9px}
+.mhome{width:calc(var(--rail) - 18px);height:62px;border-radius:13px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:var(--acc);margin-bottom:7px;flex:none}
+.mhome svg{width:23px;height:23px}
+.mhome span{font:600 10px/1 Inter,sans-serif;letter-spacing:.1em}
+.mitem{width:calc(var(--rail) - 18px);flex:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#6f7b8c;margin-bottom:3px}
+.mitem svg{width:22px;height:22px}
+.mitem span{font:500 10px/1 Inter,sans-serif}
+.mitem.sel{background:#221c0e;color:var(--acc);box-shadow:inset 0 0 0 1px #4a3c1c}
+.mgear{width:calc(var(--rail) - 18px);height:50px;flex:none;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#6f7b8c;margin-top:3px}
+.mgear svg{width:20px;height:20px}
+.mgear span{font:500 10px/1 Inter,sans-serif}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.mhead{height:var(--head);flex:none;display:flex;align-items:center;padding:0 var(--pad);gap:14px}
+.mhead .ti{font:600 var(--f-ti)/1 Inter,sans-serif}
+.mhead .cr{font:400 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.mhead .clock{margin-left:auto;font:400 21px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--dim)}
+.mhead .back{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:0 14px;height:44px;font:500 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.mhead .back svg{width:17px;height:17px;transform:scaleX(-1)}
+.content{flex:1;min-height:0;padding:2px var(--pad) 16px;display:flex;flex-direction:column}
+.k{font:600 var(--f-lb)/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+
+/* fascia gruppi */
+.tabs{height:calc(var(--btn-h) + 14px);flex:none;display:flex;gap:10px;margin-bottom:var(--gap)}
+.tab{border:1px solid var(--line);background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;font:500 var(--f-nm)/1 Inter,sans-serif;color:var(--dim)}
+.tab svg{width:19px;height:19px}
+.tab .n{font:500 var(--f-sm)/1 Inter,sans-serif;opacity:.7}
+.tab.sel{background:var(--acc);border-color:var(--acc);color:var(--ink);font-weight:600}
+.tab.sel .n{opacity:.65}
+.ext{margin-left:auto;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 20px;font:500 var(--f-nm)/1 Inter,sans-serif;color:#c3cad6}
+.ext svg{width:19px;height:19px;color:var(--acc)}
+
+/* griglia riscaldamento */
+.g4{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:var(--gap);min-height:0}
+.zone{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between}
+.zone .zt{display:flex;align-items:center;gap:10px}
+.zone .zt .nm{font:500 var(--f-nm)/1 Inter,sans-serif}
+.zone .zt .hum{margin-left:auto;font:400 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.zone .now{font:600 var(--f-big)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.zone .set{display:flex;align-items:center;gap:10px}
+.zone .set .b{width:46px;height:var(--btn-h);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font:500 21px/1 Inter,sans-serif;color:var(--dim);background:var(--card2)}
+.zone .set .v{flex:1;text-align:center;font:500 var(--f-set)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.zone .set .v small{display:block;font:400 11px/1 Inter,sans-serif;color:var(--dim);margin-top:5px}
+.zone.heat{border-color:#3a2f1a}.zone.heat .now{color:var(--acc)}
+.zone.off .now,.zone.off .nm{color:var(--dim)}
+
+/* colonne condizionatori */
+.g4c{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);min-height:0}
+.ac{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.ac .hd{display:flex;align-items:center;gap:10px}
+.ac .hd .nm{font:600 var(--f-nm)/1.2 Inter,sans-serif}
+.ac .md{margin-left:auto;display:flex;align-items:center;gap:7px;border-radius:8px;padding:6px 9px;font:600 11px/1 Inter,sans-serif;background:var(--off);color:var(--dim)}
+.ac .md svg{width:14px;height:14px}
+.ac.cool{border-color:#1d3a4a}
+.ac.cool .md{background:#12303f;color:var(--cool)}
+.ac.cool .now{color:var(--cool)}
+.ac.hot{border-color:#3a2f1a}
+.ac.hot .md{background:#2a2313;color:var(--acc)}
+.ac.hot .now{color:var(--acc)}
+.ac .now{font:600 var(--f-big)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.ac .now small{font-size:var(--f-sm);color:var(--dim);font-weight:400;display:block;margin-top:6px}
+.ac .set{display:flex;align-items:center;gap:9px}
+.ac .set .b{width:44px;height:var(--btn-h);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font:500 21px/1 Inter,sans-serif;color:var(--dim);background:var(--card2)}
+.ac .set .v{flex:1;text-align:center;font:600 var(--f-set)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.ac .rows{margin-top:auto;display:flex;flex-direction:column;gap:9px;padding-top:11px;border-top:1px solid var(--line)}
+.ac .row{display:flex;align-items:center;gap:9px;font:400 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.ac .row svg{width:16px;height:16px;color:#5d6878}
+.ac .row b{margin-left:auto;color:var(--txt);font-weight:500;font-variant-numeric:tabular-nums}
+.ac .row.on b{color:var(--acc)}
+.ac .more{border:1px solid var(--line);background:var(--card2);border-radius:10px;height:var(--btn-h);display:flex;align-items:center;justify-content:center;gap:8px;font:500 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.ac .more svg{width:15px;height:15px}
+.ac.spento{opacity:.68}
+.ac.spento .now{color:var(--dim)}
+
+/* dettaglio condizionatore */
+.det{flex:1;display:flex;gap:var(--gap);min-height:0}
+.dleft{width:420px;flex:none;display:flex;flex-direction:column;gap:var(--gap)}
+.dcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column}
+.dnow{flex:1;justify-content:center;align-items:center;text-align:center}
+.dnow .lb{font:400 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.dnow .v{font:300 96px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.04em;margin:10px 0 4px;color:var(--cool)}
+.dnow .st{font:500 var(--f-nm)/1 Inter,sans-serif;color:var(--dim);margin-top:8px}
+.dset{flex:none;display:flex;align-items:center;gap:14px}
+.dset .b{width:78px;height:78px;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;justify-content:center;font:400 34px/1 Inter,sans-serif;color:var(--txt);background:var(--card2)}
+.dset .v{flex:1;text-align:center}
+.dset .v b{font:600 44px/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.dset .v span{display:block;font:400 var(--f-sm)/1 Inter,sans-serif;color:var(--dim);margin-top:8px}
+.dtimer{flex:none}
+.dtimer .hd{display:flex;align-items:center;gap:11px}
+.dtimer .hd svg{width:19px;height:19px;color:var(--acc)}
+.dtimer .hd .t{font:500 var(--f-nm)/1 Inter,sans-serif}
+.dtimer .sw{margin-left:auto;width:56px;height:31px;border-radius:20px;background:var(--acc);position:relative;flex:none}
+.dtimer .sw i{position:absolute;top:3px;left:28px;width:25px;height:25px;border-radius:50%;background:var(--ink)}
+.dtimer .sw.off{background:var(--off)}
+.dtimer .sw.off i{left:3px;background:#6b7686}
+.dtimer .body{display:flex;align-items:center;gap:12px;margin-top:14px}
+.dtimer .body .b{width:52px;height:46px;border:1px solid var(--line);border-radius:11px;display:flex;align-items:center;justify-content:center;font:500 21px/1 Inter,sans-serif;color:var(--dim);background:var(--card2)}
+.dtimer .body .v{flex:1;text-align:center;font:600 26px/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.dtimer .body .v span{display:block;font:400 12px/1 Inter,sans-serif;color:var(--dim);margin-top:7px}
+.dtimer .cd{margin-top:12px;font:400 var(--f-sm)/1.4 Inter,sans-serif;color:var(--dim)}
+.dtimer .cd b{color:var(--acc);font-weight:600}
+
+.dright{flex:1;display:flex;flex-direction:column;gap:var(--gap);min-width:0}
+.blk{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;flex:1;min-height:0}
+.blk .k{margin-bottom:12px}
+.tiles{flex:1;display:grid;gap:10px;min-height:0}
+.t6{grid-template-columns:repeat(6,1fr)}
+.t4{grid-template-columns:repeat(4,1fr)}
+.tile{border:1px solid var(--line);background:var(--card2);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--dim);padding:6px;text-align:center;min-height:0}
+.tile svg{width:23px;height:23px}
+.tile span{font:500 var(--f-sm)/1.15 Inter,sans-serif}
+.tile.sel{background:var(--cool);border-color:var(--cool);color:#06202b;font-weight:600}
+.tile.sel svg{color:#06202b}
+.tile.sel.amber{background:var(--acc);border-color:var(--acc);color:var(--ink)}
+.tile.sel.amber svg{color:var(--ink)}
+.fan{display:flex;gap:8px;flex:1}
+.fanb{flex:1;border:1px solid var(--line);background:var(--card2);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--dim);font:500 var(--f-sm)/1.15 Inter,sans-serif;text-align:center;padding:4px}
+.fanb .bars{display:flex;align-items:flex-end;gap:3px;height:20px}
+.fanb .bars i{width:4px;background:#3f4a5a;border-radius:2px}
+.fanb.sel{background:var(--cool);border-color:var(--cool);color:#06202b;font-weight:600}
+.fanb.sel .bars i{background:#06202b}
+.seg{display:flex;gap:8px;flex:none;height:52px}
+.segb{flex:1;border:1px solid var(--line);background:var(--card2);border-radius:11px;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--dim);font:500 var(--f-sm)/1 Inter,sans-serif;text-align:center;padding:0 6px}
+.segb svg{width:17px;height:17px;flex:none}
+.segb.sel{background:var(--cool);border-color:var(--cool);color:#06202b;font-weight:600}
+.extra{display:flex;gap:10px;flex:none}
+.exb{flex:1;border:1px solid var(--line);background:var(--card2);border-radius:11px;height:56px;display:flex;align-items:center;justify-content:center;gap:9px;font:500 var(--f-sm)/1 Inter,sans-serif;color:var(--dim)}
+.exb svg{width:16px;height:16px}
+.exb.on{border-color:#4a3c1c;background:#221c0e;color:var(--acc)}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8V16h7.2v-2.2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="7" width="12" height="10" rx="2"/><path d="M14 10.5 21 7v10l-7-3.5z"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V9l9-5 9 5v11M3 20h18M7 20v-7h10v7M7 16.5h10"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9H4z"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1 2 2 0 1 1-4 0 1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 15a2 2 0 1 1 0-4 1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9.6 4.6a2 2 0 1 1 4 0 1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7 2 2 0 1 1 0 4 1.6 1.6 0 0 0-1.8 1.8z"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v9M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-1.6.6-2.8 1.6-4 .3 1 .9 1.7 1.7 2 .3-3 .9-5 1.7-7z"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10M12 6l-2.5-2.5M12 6l2.5-2.5M12 18l-2.5 2.5M12 18l2.5 2.5"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3.5c3.5 4.2 5.5 6.8 5.5 9.5a5.5 5.5 0 0 1-11 0c0-2.7 2-5.3 5.5-9.5z"/></symbol>
+  <symbol id="i-fan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-3 1-6 4-6s3 4 0 5.2M14 12c3 0 6 1 6 4s-4 3-5.2 0M12 14c0 3-1 6-4 6s-3-4 0-5.2M10 12c-3 0-6-1-6-4s4-3 5.2 0"/></symbol>
+  <symbol id="i-swing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 11c3 0 3 3 6 3s3-3 6-3M6 17c3 0 3 3 6 3s3-3 6-3"/></symbol>
+  <symbol id="i-swingv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18M8 9v10M8 19l-3-3M8 19l3-3M16 9v10M16 19l-3-3M16 19l3-3"/></symbol>
+  <symbol id="i-swingh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18M5 11h14M5 11l3-3M5 11l3 3M19 17H5M19 17l-3-3M19 17l-3 3"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5h18M5 12h14M7 19h10"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4.5l3 2M9 2h6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="6" width="18" height="8" rx="2"/><path d="M7 18h10"/></symbol>
+  <symbol id="i-quiet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M16 9.5a4 4 0 0 1 0 5"/></symbol>
+  <symbol id="i-air" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 8h11a3 3 0 1 0-3-3M4 12h14a3 3 0 1 1-3 3M4 16h9a2.5 2.5 0 1 1-2.5 2.5"/></symbol>
+</svg>
+
+<div class="shell">
+  <h1 class="tt">Clima — riscaldamento e condizionatori</h1>
+  <p class="sub">I due impianti hanno comandi diversi e vanno separati.</p>
+
+  <div class="grp" id="gr">
+    <span class="lb">Pannello</span>
+    <button data-p="p4" aria-pressed="true">10,1" · 1280×800</button>
+  </div>
+  <div class="grp" id="gs">
+    <span class="lb">Schermata</span>
+    <button data-s="risc" aria-pressed="true">Riscaldamento</button>
+    <button data-s="cond" aria-pressed="false">Condizionatori</button>
+    <button data-s="det" aria-pressed="false">Dettaglio condizionatore</button>
+  </div>
+
+  <div class="frame" id="frame"><div class="stage" id="stage"></div></div>
+  <p class="caption" id="cap"></p>
+</div>
+
+<script>
+const NAV=[['luci','Luci','i-bulb'],['clima','Clima','i-thermo'],['pv','Energia','i-sun'],['cam','Telecamere','i-cam'],['acc','Accessi','i-gate'],['ag','Agenda','i-cal'],['wifi','Wi-Fi','i-wifi']];
+function shell(r,ti,cr,corpo,back){
+  return `<section class="screen" data-r="${r}">
+    <nav class="mrail">
+      <div class="mhome"><svg><use href="#i-home"/></svg><span>HOME</span></div>
+      ${NAV.map(([id,lb,ic])=>`<div class="mitem ${id==='clima'?'sel':''}"><svg><use href="#${ic}"/></svg><span>${lb}</span></div>`).join('')}
+      <div class="mgear"><svg><use href="#i-gear"/></svg><span>Impost.</span></div>
+    </nav>
+    <div class="main">
+      <div class="mhead">${back?`<div class="back"><svg><use href="#i-arrow"/></svg>Zone</div>`:''}
+        <div><div class="ti">${ti}</div></div><div class="cr">${cr}</div><div class="clock">18:42</div></div>
+      <div class="content">${corpo}</div>
+    </div></section>`;
+}
+const TABS=(sel)=>`<div class="tabs">
+  <div class="tab ${sel==='risc'?'sel':''}"><svg><use href="#i-flame"/></svg>Riscaldamento<span class="n">12 zone</span></div>
+  <div class="tab ${sel==='cond'?'sel':''}"><svg><use href="#i-snow"/></svg>Condizionatori<span class="n">4</span></div>
+  <div class="ext"><svg><use href="#i-sun"/></svg>Esterno 30,4°</div>
+</div>`;
+
+const ZONE=[["Salotto","48","24,5","24,0","richiesta","heat"],["Cucina","51","24,8","24,0","raggiunta",""],
+ ["Camera","47","22,6","22,0","raggiunta",""],["Camera bambini","46","23,1","23,0","raggiunta",""],
+ ["Studio","45","23,4","23,0","raggiunta",""],["Bagno di servizio","58","24,1","25,0","richiesta","heat"],
+ ["Lavanderia","55","23,8","23,0","raggiunta",""],["Camera padronale","54","19,8","—","nessuna richiesta","off"]];
+
+function risc(r){
+  const n = 8;
+  return shell(r,'Clima','2 zone in richiesta',
+   TABS('risc')+`<div class="g4">${ZONE.slice(0,n).map(([nm,h,now,set,lb,cls])=>`
+    <div class="zone ${cls}"><div class="zt"><span class="nm">${nm}</span><span class="hum">${h}% um.</span></div>
+     <div class="now">${now}°</div>
+     <div class="set"><div class="b">−</div><div class="v">${set==='—'?'spenta':set+'°'}<small>${lb}</small></div><div class="b">+</div></div>
+    </div>`).join('')}</div>`);
+}
+
+const AC=[
+ ["Salotto","cool","Freddo","i-snow","30,0","28,0","Media","Oscilla centro","1h 30m",false],
+ ["Mansarda","cool","Freddo","i-snow","27,4","26,0","Auto","Fisso alto","—",false],
+ ["Camera bambini","spento","Spento","i-power","28,2","27,0","—","—","—",true],
+ ["Camera matr.","hot","Caldo","i-flame","21,6","22,5","Bassa","Tutta escursione","—",false]];
+
+function cond(r){
+  return shell(r,'Clima','2 in funzione · 1 con timer attivo',
+   TABS('cond')+`<div class="g4c">${AC.map(([nm,cls,md,ic,now,set,fan,sw,tm,off])=>`
+    <div class="ac ${cls}">
+      <div class="hd"><span class="nm">${nm}</span><span class="md"><svg><use href="#${ic}"/></svg>${md}</span></div>
+      <div class="now">${now}°<small>temperatura in stanza</small></div>
+      <div class="set"><div class="b">−</div><div class="v">${off?'—':set+'°'}</div><div class="b">+</div></div>
+      <div class="rows">
+        <div class="row"><svg><use href="#i-fan"/></svg>Ventilazione<b>${fan}</b></div>
+        <div class="row"><svg><use href="#i-swingv"/></svg>Deflettore<b>${sw}</b></div>
+        <div class="row ${tm!=='—'?'on':''}"><svg><use href="#i-timer"/></svg>Spegni al timer<b>${tm}</b></div>
+      </div>
+      <div class="more"><svg><use href="#i-gear"/></svg>Tutti i comandi</div>
+    </div>`).join('')}</div>`);
+}
+
+function det(r){
+  return shell(r,'Condizionatore Salotto','freddo · 28,0° · ventilazione media',
+  `<div class="det">
+    <div class="dleft">
+      <div class="dcard dnow">
+        <div class="lb">Temperatura in stanza</div>
+        <div class="v">30,0°</div>
+        <div class="st">in raffrescamento</div>
+      </div>
+      <div class="dcard dset">
+        <div class="b">−</div>
+        <div class="v"><b>28,0°</b><span>temperatura richiesta</span></div>
+        <div class="b">+</div>
+      </div>
+      <div class="dcard dtimer">
+        <div class="hd"><svg><use href="#i-timer"/></svg><span class="t">Spegni al timer</span><span class="sw"><i></i></span></div>
+        <div class="body"><div class="b">−</div><div class="v">1:30<span>ore e minuti</span></div><div class="b">+</div></div>
+        <div class="cd">si spegne alle <b>20:12</b> · mancano 1h 30m</div>
+      </div>
+    </div>
+    <div class="dright">
+      <div class="blk">
+        <div class="k">Modalità</div>
+        <div class="tiles t6">
+          <div class="tile"><svg><use href="#i-power"/></svg><span>Spento</span></div>
+          <div class="tile"><svg><use href="#i-flame"/></svg><span>Caldo</span></div>
+          <div class="tile sel"><svg><use href="#i-snow"/></svg><span>Freddo</span></div>
+          <div class="tile"><svg><use href="#i-auto"/></svg><span>Auto</span></div>
+          <div class="tile"><svg><use href="#i-drop"/></svg><span>Deumidifica</span></div>
+          <div class="tile"><svg><use href="#i-fan"/></svg><span>Ventilatore</span></div>
+        </div>
+      </div>
+      <div class="blk">
+        <div class="k">Ventilazione</div>
+        <div class="fan">
+          <div class="fanb"><span class="bars"><i style="height:8px"></i><i style="height:13px"></i><i style="height:18px"></i></span>Auto</div>
+          <div class="fanb"><span class="bars"><i style="height:8px"></i></span>Bassa</div>
+          <div class="fanb"><span class="bars"><i style="height:8px"></i><i style="height:12px"></i></span>Medio-bassa</div>
+          <div class="fanb sel"><span class="bars"><i style="height:8px"></i><i style="height:12px"></i><i style="height:16px"></i></span>Media</div>
+          <div class="fanb"><span class="bars"><i style="height:8px"></i><i style="height:12px"></i><i style="height:16px"></i><i style="height:20px"></i></span>Medio-alta</div>
+          <div class="fanb"><span class="bars"><i style="height:8px"></i><i style="height:12px"></i><i style="height:16px"></i><i style="height:20px"></i><i style="height:24px"></i></span>Alta</div>
+        </div>
+      </div>
+      <div class="blk">
+        <div class="k">Deflettore</div>
+        <div class="fan" style="margin-bottom:10px">
+          ${[['Alto',6],['Medio-alto',12],['Centro',18],['Medio-basso',24],['Basso',30]]
+            .map(([lb,y],i)=>`<div class="fanb ${i===2?'sel':''}">
+              <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                <rect x="6" y="4" width="28" height="32" rx="3" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+                <rect x="10" y="${y}" width="20" height="4" rx="2" fill="currentColor"/>
+              </svg>${lb}</div>`).join('')}
+        </div>
+        <div class="seg">
+          <div class="segb sel"><svg><use href="#i-swingv"/></svg>Oscillante</div>
+          <div class="segb"><svg><use href="#i-stop"/></svg>Fisso</div>
+          <div class="segb"><svg><use href="#i-swing"/></svg>Tutta l'escursione</div>
+          <div class="segb"><svg><use href="#i-auto"/></svg>Predefinito</div>
+        </div>
+      </div>
+      <div class="extra">
+        <div class="exb on"><svg><use href="#i-quiet"/></svg>Silenzioso</div>
+        <div class="exb"><svg><use href="#i-panel"/></svg>Luce pannello</div>
+        <div class="exb"><svg><use href="#i-air"/></svg>Aria fresca</div>
+        <div class="exb on"><svg><use href="#i-fan"/></svg>XFan</div>
+      </div>
+    </div>
+  </div>`,true);
+}
+
+const CAP={
+ risc:"<b>Riscaldamento.</b> La fascia superiore non contiene più modalità inventate (Auto/Comfort/Eco) ma i due <b>gruppi reali</b> del tuo impianto, con il conteggio delle zone. Le 12 zone di riscaldamento restano schede semplici: hanno solo il setpoint, e va bene così. Bordo e valore ambra dove l'impianto sta davvero chiamando calore.",
+ cond:"<b>Condizionatori.</b> Quattro colonne alte invece della griglia: ogni unità mostra modalità, temperatura in stanza, setpoint con − e +, e le tre righe di stato che contano — ventilazione, oscillazione, timer. Il colore segue la modalità: azzurro in raffrescamento, ambra in riscaldamento, spento attenuato. Le azioni frequenti si fanno da qui senza entrare nel dettaglio.",
+ det:"<b>Dettaglio.</b> A sinistra la lettura e il setpoint con tasti da 78 px, sotto il timer con il suo interruttore, la durata regolabile e l'ora esatta di spegnimento calcolata. A destra le sei modalità, le sei velocità di ventilazione con l'indicatore a barrette, il deflettore con le cinque posizioni più fisso/oscillante, e in fondo i quattro interruttori Gree già presenti in Home Assistant: silenzioso, luce pannello, aria fresca e XFan."
+};
+
+let prof='p4', scr='risc';
+const DIM={p4:[1280,800]};
+function render(){
+  const [w,h]=DIM[prof];
+  const st=document.getElementById('stage');
+  st.style.width=w+'px'; st.style.height=h+'px';
+  st.innerHTML=({risc:risc,cond:cond,det:det})[scr](prof);
+  document.getElementById('cap').innerHTML=CAP[scr];
+  document.querySelectorAll('#gr button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===prof)));
+  document.querySelectorAll('#gs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===scr)));
+  fit();
+}
+function fit(){
+  const [w,h]=DIM[prof];
+  const frame=document.getElementById('frame'),stage=document.getElementById('stage');
+  const s=Math.min(1,(frame.parentElement.clientWidth-24)/w);
+  stage.style.transform='scale('+s+')';
+  frame.style.width=(w*s+24)+'px';frame.style.height=(h*s+24)+'px';
+}
+document.querySelectorAll('#gr button').forEach(b=>b.onclick=()=>{prof=b.dataset.p;render()});
+document.querySelectorAll('#gs button').forEach(b=>b.onclick=()=>{scr=b.dataset.s;render()});
+addEventListener('resize',fit);
+render();
+</script>
+</body>
+</html>

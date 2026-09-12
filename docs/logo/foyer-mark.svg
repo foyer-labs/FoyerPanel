@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256" role="img" aria-label="Foyer">
+  <title>Foyer</title>
+  <polyline points="21,37 32,28 43,37" fill="none" stroke="#E8ECF2" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="14,31.5 32,17 50,31.5" fill="none" stroke="#E8ECF2" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  <polyline points="7,26 32,6 57,26" fill="none" stroke="#E8ECF2" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.32"/>
+  <rect x="26" y="47" width="12" height="10" fill="#F0A835"/>
+  <circle cx="32" cy="47" r="6" fill="#F0A835"/>
+  <polyline points="16,57 48,57" fill="none" stroke="#E8ECF2" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

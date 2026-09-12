@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Riscaldamento a piani · nove proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1560px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:15px;font-weight:600;margin:40px 0 4px;color:#e6e9ee;border-top:1px solid #262a31;padding-top:24px}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 18px;max-width:98ch;line-height:1.65}
+p.sub b{color:#e6e9ee}
+p.sub code,li code,td code{font-size:11.5px;background:#1e242d;padding:1px 4px;border-radius:3px}
+.riga{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.colw{flex:none;width:496px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.striscia{position:relative;background:#000;border:9px solid #24272d;border-radius:16px;overflow:hidden;width:496px;height:186px}
+.stage2{transform:scale(.62);transform-origin:top left;position:relative;width:800px;height:300px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:13px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap .si{color:#4fc39a}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+
+/* ── lo schermo ───────────────────────────────────────────────────── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;--ink:#1a1206;
+  --sel:#4a3c1c;--selbg:#1a1710;
+  --r:16px;--pad:18px;--gap:14px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+.nero{background:#000}
+.head{height:72px;flex:none;padding:0 var(--pad);display:flex;align-items:baseline;gap:14px}
+.head .t{font-size:30px;font-weight:600}
+.head .s{font-size:14px;color:var(--dim)}
+.head .p{margin-left:auto;font-size:14px;color:var(--dim)}
+.body{flex:1;padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+.nav{height:112px;flex:none;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);align-items:center}
+.nav .v{text-align:center;font:500 11px/1.4 Inter,sans-serif;letter-spacing:.06em;color:var(--dim);
+  height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nav .v.on{color:var(--acc);background:#241d0e}
+.nav .v .ic{font-size:22px;line-height:1}
+
+/* ── standby ──────────────────────────────────────────────────────── */
+.sb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8a8a8a}
+.sb .ora{font-size:115px;font-weight:300;line-height:1}
+.sb .data{font-size:19px;margin-top:6px}
+.sb hr{width:480px;border:0;border-top:1px solid #2a2a2a;margin:22px 0}
+.sb .tt{font-size:96px;font-weight:300;line-height:1;display:flex;align-items:center;gap:18px}
+.sb .tt .fi{font-size:44px}
+.sb .past{display:flex;gap:12px;margin-top:14px}
+.sb .past span{border:1px solid #4a3c1c;border-radius:99px;padding:6px 14px;font-size:15px;
+  display:inline-flex;align-items:center;gap:8px}
+.sb .dove{font-size:15px;margin-top:10px}
+.sb .fondo{position:absolute;left:0;right:0;bottom:36px;display:grid;grid-template-columns:1fr 1fr;
+  gap:20px 60px;padding:0 60px}
+.sb .fondo div{display:flex;align-items:center;gap:14px}
+.sb .fondo .v{font-size:30px}
+.sb .fondo .l{font-size:13px;display:block;margin-top:2px}
+.acceso{color:var(--acc)}
+.tenue{color:#5d5137}
+
+/* ── testata della home ───────────────────────────────────────────── */
+.hh{height:116px;flex:none;padding:0 var(--pad);display:flex;align-items:center;gap:20px}
+.hh .ora{font-size:52px;font-weight:300;line-height:1}
+.hh .data{font-size:13px;color:var(--dim);margin-top:5px}
+.hh .grp{display:flex;align-items:center;gap:10px}
+.hh .grp .ic{font-size:22px}
+.hh .v{font-size:34px;font-weight:300}
+.hh .lb{font-size:12px;color:var(--dim)}
+.hh .gear{width:64px;height:64px;border-radius:14px;background:var(--card);display:flex;
+  align-items:center;justify-content:center;font-size:24px;color:var(--dim);margin-left:auto}
+.finto{flex:1;background:var(--card);border-radius:var(--r);display:flex;align-items:center;
+  justify-content:center;color:var(--dim);font-size:14px;margin:0 var(--pad) var(--pad)}
+
+/* ── sezione clima ────────────────────────────────────────────────── */
+.tab{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none}
+.tab div{height:48px;border-radius:var(--r);background:var(--card);display:flex;align-items:center;
+  justify-content:center;gap:10px;font-size:19px}
+.tab div.on{background:var(--acc);color:var(--ink);font-weight:600}
+.tab3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--gap);flex:none}
+.tab3 div{height:48px;border-radius:var(--r);background:var(--card);display:flex;align-items:center;
+  justify-content:center;gap:8px;font-size:17px}
+.tab3 div.on{background:var(--acc);color:var(--ink);font-weight:600}
+.ext{height:44px;flex:none;border-radius:var(--r);background:var(--card);display:flex;align-items:center;
+  justify-content:center;gap:10px;font-size:19px}
+
+/* fascia di piano */
+.piano{flex:none;border-radius:var(--r);background:var(--card);padding:12px 16px;display:flex;
+  align-items:center;gap:14px}
+.piano .ic{font-size:24px;color:var(--dim)}
+.piano.on .ic{color:var(--acc)}
+.piano .nm{font-size:20px;font-weight:500}
+.piano .st{font-size:13px;color:var(--dim)}
+.piano .sw{width:64px;height:34px;border-radius:99px;background:var(--off);flex:none;position:relative;margin-left:auto}
+.piano.on .sw{background:var(--acc)}
+.piano .sw i{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#0d1014}
+.piano.on .sw i{left:33px}
+.occhiello{font:500 12px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:10px}
+.occhiello .sw{width:52px;height:28px;border-radius:99px;background:var(--off);position:relative;margin-left:auto}
+.occhiello .sw i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#0d1014}
+.occhiello.on .sw{background:var(--acc)} .occhiello.on .sw i{left:27px}
+.occhiello.on{color:var(--acc)}
+
+/* zone */
+.gz{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+/* 218 px: e l'altezza vera di una scheda zona nella schermata di oggi,
+   misurata sulla cattura. Un mockup che le disegna piu basse promette uno
+   spazio che sul vetro non c'e. */
+.z{background:var(--card);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;
+  justify-content:space-between;min-height:218px;border:1px solid transparent}
+.z .r1{display:flex;align-items:center}
+.z .nm{font-size:19px;flex:1}
+.z .um{font-size:13px;color:var(--dim)}
+.z .tp{font-size:38px;font-weight:300;line-height:1}
+.z .r3{display:flex;align-items:center;justify-content:space-between}
+.z .b{width:44px;height:38px;border-radius:10px;background:var(--card2);display:flex;align-items:center;
+  justify-content:center;color:var(--dim);font-size:19px}
+.z .sp{text-align:center;font-size:17px}
+.z .sp small{display:block;font-size:12px;color:var(--dim)}
+.z.chiama{border-color:var(--sel);background:var(--selbg)}
+.z.chiama .tp,.z.chiama .sp{color:var(--acc)}
+.z.spenta{opacity:.4}
+.avviso{flex:none;border-radius:12px;background:#271815;border:1px solid #5a2f28;color:#f3b5ac;
+  padding:10px 14px;font-size:14px;display:flex;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">Riscaldamento a piani — tre proposte per ciascuna schermata (<code>p4-800x1280</code>)</h1>
+<p class="sub">
+Deciso finora: <b>la fiamma segue l'interruttore del piano</b> (acceso / spento), e riguarda <b>solo il piano che quel
+pannello governa</b>. Le zone che stanno chiedendo calore restano <b>ambra</b>, rafforzando l'evidenziazione che c'è già —
+niente colore nuovo, e la schermata dei condizionatori non si tocca.
+</p>
+<p class="sub" style="border-left:2px solid #4a3c1c;padding-left:14px">
+<b>Una cosa che ho trovato guardando il codice e che cambia il disegno.</b> Due fiamme <i>esistono già</i>: la pastiglia
+«sta scaldando» nello standby e l'icona accanto ai gradi nella testata della home. Ma vogliono dire un'altra cosa —
+<b>«la zona di questo pannello sta chiedendo calore adesso»</b> (<code>hvac_action</code>), non «l'interruttore del piano
+è acceso». Sono due fatti diversi e tutti e due veri, e disegnarli con lo stesso simbolo senza deciderlo sarebbe il modo
+sicuro di renderli entrambi illeggibili. Le proposte qui sotto lo risolvono in tre modi diversi.
+</p>
+
+<!-- ══════════════════════ STANDBY ══════════════════════ -->
+<h2 class="tt2">Parte 1 — la schermata di standby</h2>
+<p class="sub">Stato disegnato: interruttore di piano 1 <b>acceso</b>, e la zona del salotto sta chiedendo calore.</p>
+
+<div class="riga">
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt"><span class="fi acceso">♨</span>20,8°C</div>
+    <div class="past"><span class="acceso">♨ sta scaldando</span><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span style="font-size:26px">☀</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span style="font-size:26px">▤</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span style="font-size:26px">⌂</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span style="font-size:26px">▮</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>S-A · La fiamma accanto ai gradi, e la pastiglia resta</h3>
+Esattamente quello che hai chiesto: una fiamma a sinistra del numero grande, accesa quando l'interruttore del piano è
+acceso. La pastiglia «sta scaldando» resta com'è.
+<ul>
+<li class="si">Nessuna informazione si perde: si vede <b>l'impianto abilitato</b> e <b>la stanza che chiede</b>, che sono due cose e restano due.</li>
+<li class="si">Cambiamento minimo: un'icona in più, tutto il resto invariato.</li>
+<li class="no"><b>Due fiamme identiche nella stessa schermata</b>, a venti pixel di distanza, che vogliono dire cose diverse. È il difetto che ho trovato guardando il codice, e questa proposta lo lascia in piedi.</li>
+</ul>
+</div>
+</div>
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt"><span class="fi acceso">♨</span>20,8°C</div>
+    <div class="past"><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span style="font-size:26px">☀</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span style="font-size:26px">▤</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span style="font-size:26px">⌂</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span style="font-size:26px">▮</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>S-B · Una fiamma sola, a due livelli</h3>
+La fiamma <b>compare</b> quando l'interruttore del piano è acceso, e <b>si accende di ambra piena</b> quando la stanza
+sta davvero chiedendo calore; con l'impianto acceso ma la stanza a temperatura, resta un contorno tenue. La pastiglia
+«sta scaldando» sparisce: lo dice la fiamma.
+<ul>
+<li class="si"><b>Un simbolo, un argomento.</b> La fiamma parla di riscaldamento e basta, e la sua intensità dice a che punto è.</li>
+<li class="si">Toglie una pastiglia dalla riga sotto la temperatura, che oggi ne ha due e ne guadagna in respiro.</li>
+<li class="si">È l'unica che regge il pannello di piano 0: la stessa fiamma, lo stesso significato, un altro interruttore.</li>
+<li class="no">Due livelli sullo stesso simbolo vanno imparati. Da spenta a contorno a piena sono tre stati di una cosa piccola, e di sera a tre metri il contorno tenue si distingue male dal niente.</li>
+</ul>
+</div>
+</div>
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen nero">
+  <div class="sb">
+    <div class="ora">18:41</div><div class="data">martedì 25 agosto</div>
+    <hr>
+    <div class="tt">20,8°C</div>
+    <div class="past"><span class="acceso">♨ impianto acceso</span><span class="acceso">sta scaldando</span><span>chiesti 21,0°</span></div>
+    <div class="dove">in salotto</div>
+  </div>
+  <div class="sb fondo">
+    <div><span style="font-size:26px">☀</span><div><span class="v">11,2°</span><span class="l">fuori · sereno</span></div></div>
+    <div><span style="font-size:26px">▤</span><div><span class="v">1,86 kW</span><span class="l">dal sole</span></div></div>
+    <div><span style="font-size:26px">⌂</span><div><span class="v">740 W</span><span class="l">la casa</span></div></div>
+    <div><span style="font-size:26px">▮</span><div><span class="v">64%</span><span class="l">batteria</span></div></div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>S-C · Tutto a parole, nelle pastiglie</h3>
+Il numero grande resta pulito. Sotto, le pastiglie dicono le cose per esteso: «impianto acceso», «sta scaldando»,
+«chiesti 21,0°». La fiamma sta solo sulla prima.
+<ul>
+<li class="si"><b>Niente da imparare</b>: c'è scritto. Nessun simbolo a due livelli, nessuna ambiguità fra le due fiamme.</li>
+<li class="si">Le pastiglie compaiono e spariscono da sole, quindi a impianto spento la riga si accorcia invece di mostrare uno stato negativo.</li>
+<li class="no">Tre pastiglie sono <b>tante</b> per una schermata che si guarda di sfuggita, e la riga cresce fino a quasi tutta la larghezza.</li>
+<li class="no">Va contro quello che hai chiesto — un'icona accanto alla temperatura — sostituendola con delle parole.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════ TESTATA ══════════════════════ -->
+<h2 class="tt2">Parte 2 — la testata delle schermate normali</h2>
+<p class="sub">
+La testata con le temperature è quella della <b>home</b>: ora e data a sinistra, temperatura interna con la fiamma,
+meteo, ingranaggio. È l'unica schermata che porta due temperature in alto. Stesso stato dello standby.
+</p>
+
+<div class="riga">
+
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic acceso">♨</span><div><div class="v">20,8°</div><div class="lb">chiesti 21,0°</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:26px">☀</span><div class="v">11°</div></div>
+    <div class="gear">⚙</div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap">
+<h3>T-A · La fiamma dov'è già, ma cambia significato</h3>
+L'icona resta dove sta oggi — a sinistra della temperatura interna — e passa a dire <b>«l'interruttore del piano è
+acceso»</b> invece di «la zona sta chiedendo».
+<ul>
+<li class="si">Zero movimento: chi guarda quella testata da settimane non deve reimparare dove guardare.</li>
+<li class="si">Coerente con lo standby S-A e S-B, che mettono la fiamma accanto alla stessa temperatura.</li>
+<li class="no"><b>Si perde un'informazione</b> che oggi c'è: «questa stanza sta chiedendo adesso». Sparisce dalla home e resta solo nella sezione Clima.</li>
+</ul>
+</div>
+</div>
+
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic acceso">♨</span><div><div class="v">20,8°</div><div class="lb acceso">sta scaldando</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:26px">☀</span><div class="v">11°</div></div>
+    <div class="gear">⚙</div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap">
+<h3>T-B · La fiamma è l'impianto, la riga sotto è la stanza</h3>
+La fiamma dice l'interruttore. La riga piccola sotto la temperatura — che oggi porta «chiesti 21,0°» — diventa <b>«sta
+scaldando»</b> in ambra quando la zona chiede, e torna a «chiesti 21,0°» quando non chiede.
+<ul>
+<li class="si"><b>Nessuna informazione persa e nessun simbolo nuovo</b>: due fatti, due posti, entrambi già occupati.</li>
+<li class="si">Il posto giusto per un dato che cambia spesso è una riga di testo, non un'icona: cambiando non fa saltare il layout.</li>
+<li class="no">«Chiesti 21,0°» sparisce proprio quando l'impianto lavora, cioè quando magari lo si vorrebbe leggere.</li>
+</ul>
+</div>
+</div>
+
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen">
+  <div class="hh">
+    <div><div class="ora">18:41</div><div class="data">martedì 25 agosto</div></div>
+    <div class="grp"><span class="ic">🌡</span><div><div class="v">20,8°</div><div class="lb">chiesti 21,0°</div></div></div>
+    <div class="grp"><span class="ic acceso" style="font-size:26px">☀</span><div class="v">11°</div></div>
+    <div class="grp" style="border:1px solid #4a3c1c;border-radius:99px;padding:7px 14px">
+      <span class="ic acceso">♨</span><span style="font-size:15px" class="acceso">Piano 1</span></div>
+    <div class="gear">⚙</div>
+  </div>
+  <div class="finto">↓ contenuto della home</div>
+</div></div></div>
+<div class="cap">
+<h3>T-C · Una pastiglia che dice anche <i>quale</i> piano</h3>
+Le temperature restano temperature. Lo stato dell'impianto diventa una pastiglia a sé, col nome del piano dentro:
+<b>«♨ Piano 1»</b>, che compare solo quando quell'interruttore è acceso.
+<ul>
+<li class="si"><b>Dice quale piano</b>, e il giorno che i pannelli sono due non c'è modo di confondersi su quale si sta guardando.</li>
+<li class="si">Separa i due argomenti: i numeri sono misure, la pastiglia è uno stato dell'impianto.</li>
+<li class="no">La testata è già piena — ora, data, due temperature, ingranaggio — e una pastiglia in più la stringe. Con nomi di piano lunghi si tronca.</li>
+<li class="no">Costa più di tutte: è un elemento nuovo, non un'icona che cambia significato.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════ RISCALDAMENTO ══════════════════════ -->
+<h2 class="tt2">Parte 3 — la sezione Riscaldamento</h2>
+<p class="sub">
+Dodici zone, divise per piano. La divisione <b>non esiste oggi</b>: le zone in configurazione hanno solo nome ed entità,
+quindi va aggiunto un campo <code>piano</code> a ciascuna. Qui l'ho ipotizzata — otto a piano 1, quattro al box — e la
+sistemerai tu dalla pagina web. Stato disegnato: <b>piano 1 acceso</b>, <b>box spento</b>, due zone che chiedono calore.
+</p>
+
+<div class="riga">
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Clima</div><div class="s">2 zone in richiesta</div><div class="p">1 / 2</div></div>
+  <div class="body">
+    <div class="tab"><div class="on">♨ Riscaldamento</div><div>❄ Condizionatori</div></div>
+    <div class="ext">☀ Esterno 11,2°</div>
+
+    <div class="piano on"><span class="ic">♨</span><div><div class="nm">Piano 1</div><div class="st">acceso · 2 zone in richiesta</div></div><span class="sw"><i></i></span></div>
+    <div class="gz">
+      <div class="z chiama"><div class="r1"><span class="nm">Salotto</span><span class="um">48% um.</span></div><div class="tp">24,5°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Cucina</span><span class="um">51% um.</span></div><div class="tp">24,8°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Camera</span><span class="um">47% um.</span></div><div class="tp">22,6°</div><div class="r3"><span class="b">−</span><span class="sp">22,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z chiama"><div class="r1"><span class="nm">Bagno di servizio</span><span class="um">58% um.</span></div><div class="tp">24,1°</div><div class="r3"><span class="b">−</span><span class="sp">25,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+    </div>
+
+    <div class="piano"><span class="ic">♨</span><div><div class="nm">Box · piano 0</div><div class="st">spento</div></div><span class="sw"><i></i></span></div>
+    <div class="gz">
+      <div class="z spenta"><div class="r1"><span class="nm">Camera padronale</span><span class="um">54% um.</span></div><div class="tp">19,8°</div><div class="r3"><span class="b">−</span><span class="sp">20,0°<small>piano spento</small></span><span class="b">+</span></div></div>
+      <div class="z spenta"><div class="r1"><span class="nm">Bagno grande</span><span class="um">52% um.</span></div><div class="tp">18,9°</div><div class="r3"><span class="b">−</span><span class="sp">19,0°<small>piano spento</small></span><span class="b">+</span></div></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v"><span class="ic">⏻</span>Interr.</div><div class="v on"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">⋯</span>Altro</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>R-A · Due fasce, una per piano, nella stessa pagina</h3>
+Ogni piano ha una fascia con nome, stato, conteggio e <b>il suo interruttore</b>; sotto, le sue zone. Le zone di un piano
+spento si attenuano e il loro sottotitolo dice «piano spento» invece di «raggiunta».
+<ul>
+<li class="si"><b>Tutta la casa in una schermata.</b> Si vede che il box è spento senza doverci andare, ed è proprio l'informazione che si cerca quando qualcuno dice che ha freddo.</li>
+<li class="si">Le zone attenuate <b>dicono la verità</b>: con l'interruttore spento quella valvola non scalda, qualunque cosa chieda.</li>
+<li class="no">La paginazione diventa complicata: dodici zone più due fasce non stanno in una pagina, e una pagina che spezza un piano a metà si legge male.</li>
+<li class="no">Più si scorre, meno si vede la fascia del piano a cui appartiene la zona che si sta guardando.</li>
+</ul>
+</div>
+</div>
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Clima</div><div class="s">Piano 1 · 2 in richiesta</div><div class="p">1 / 1</div></div>
+  <div class="body">
+    <div class="tab3"><div class="on">♨ Piano 1</div><div>♨ Box</div><div>❄ Condiz.</div></div>
+    <div class="piano on" style="background:var(--card2)"><span class="ic">♨</span><div><div class="nm">Riscaldamento piano 1</div><div class="st">acceso · esterno 11,2°</div></div><span class="sw"><i></i></span></div>
+
+    <div class="gz">
+      <div class="z chiama"><div class="r1"><span class="nm">Salotto</span><span class="um">48% um.</span></div><div class="tp">24,5°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Cucina</span><span class="um">51% um.</span></div><div class="tp">24,8°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Camera</span><span class="um">47% um.</span></div><div class="tp">22,6°</div><div class="r3"><span class="b">−</span><span class="sp">22,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Camera bambini</span><span class="um">46% um.</span></div><div class="tp">23,1°</div><div class="r3"><span class="b">−</span><span class="sp">23,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Studio</span><span class="um">45% um.</span></div><div class="tp">23,4°</div><div class="r3"><span class="b">−</span><span class="sp">23,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z chiama"><div class="r1"><span class="nm">Bagno di servizio</span><span class="um">58% um.</span></div><div class="tp">24,1°</div><div class="r3"><span class="b">−</span><span class="sp">25,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Lavanderia</span><span class="um">55% um.</span></div><div class="tp">23,8°</div><div class="r3"><span class="b">−</span><span class="sp">23,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Termostato p1</span><span class="um">49% um.</span></div><div class="tp">23,0°</div><div class="r3"><span class="b">−</span><span class="sp">23,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v"><span class="ic">⏻</span>Interr.</div><div class="v on"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">⋯</span>Altro</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>R-B · Un piano per volta, come già si fa coi due gruppi</h3>
+La coppia «Riscaldamento / Condizionatori» diventa una terna: <b>Piano 1 · Box · Condizionatori</b>. Ogni piano è una
+vista sua, con il proprio interruttore in una fascia sotto le linguette.
+<ul>
+<li class="si"><b>Non si inventa niente</b>: è la stessa grammatica delle linguette che la sezione ha già, e il pannello sa già passare da una vista all'altra.</li>
+<li class="si"><b>Otto zone stanno in una pagina.</b> Piano 1 non si impagina più, e il box nemmeno — la paginazione sparisce invece di complicarsi.</li>
+<li class="si">L'interruttore del piano è grande e sta in cima, dove si guarda per primo: è il gesto del termostato.</li>
+<li class="no">Per sapere se il box è acceso bisogna <b>cambiare linguetta</b>. È un tocco, ma è la domanda che ci si fa più spesso.</li>
+<li class="no">Tre linguette su 800 px stanno a 257 px l'una: «Condizionatori» va abbreviato.</li>
+</ul>
+</div>
+</div>
+
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Clima</div><div class="s">2 zone in richiesta</div><div class="p">1 / 2</div></div>
+  <div class="body">
+    <div class="tab"><div class="on">♨ Riscaldamento</div><div>❄ Condizionatori</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none">
+      <div class="piano on"><span class="ic">♨</span><div><div class="nm">Piano 1</div><div class="st">2 in richiesta</div></div><span class="sw"><i></i></span></div>
+      <div class="piano"><span class="ic">♨</span><div><div class="nm">Box</div><div class="st">spento</div></div><span class="sw"><i></i></span></div>
+    </div>
+    <div class="avviso">⚠ Il box è spento: le sue zone non scaldano, anche se chiedono</div>
+
+    <div class="occhiello">Piano 1</div>
+    <div class="gz">
+      <div class="z chiama"><div class="r1"><span class="nm">Salotto</span><span class="um">48% um.</span></div><div class="tp">24,5°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Cucina</span><span class="um">51% um.</span></div><div class="tp">24,8°</div><div class="r3"><span class="b">−</span><span class="sp">24,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z"><div class="r1"><span class="nm">Camera</span><span class="um">47% um.</span></div><div class="tp">22,6°</div><div class="r3"><span class="b">−</span><span class="sp">22,0°<small>raggiunta</small></span><span class="b">+</span></div></div>
+      <div class="z chiama"><div class="r1"><span class="nm">Bagno di servizio</span><span class="um">58% um.</span></div><div class="tp">24,1°</div><div class="r3"><span class="b">−</span><span class="sp">25,0°<small>richiesta</small></span><span class="b">+</span></div></div>
+    </div>
+    <div class="occhiello">Box · piano 0</div>
+    <div class="gz">
+      <div class="z spenta"><div class="r1"><span class="nm">Camera padronale</span><span class="um">54% um.</span></div><div class="tp">19,8°</div><div class="r3"><span class="b">−</span><span class="sp">20,0°<small>piano spento</small></span><span class="b">+</span></div></div>
+      <div class="z spenta"><div class="r1"><span class="nm">Bagno grande</span><span class="um">52% um.</span></div><div class="tp">18,9°</div><div class="r3"><span class="b">−</span><span class="sp">19,0°<small>piano spento</small></span><span class="b">+</span></div></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v"><span class="ic">⏻</span>Interr.</div><div class="v on"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">⋯</span>Altro</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>R-C · I due interruttori affiancati in cima, le zone sotto</h3>
+Entrambi i piani in una fascia sola, affiancati e sempre visibili. Sotto, le zone raggruppate da un occhiello. E quando
+un piano è spento ma le sue zone chiedono calore, <b>il pannello lo dice</b>.
+<ul>
+<li class="si"><b>I due comandi sono sempre lì</b>, senza cambiare vista e senza scorrere: è la risposta più rapida a «perché ho freddo di sotto».</li>
+<li class="si">L'avviso è la cosa che nessuna delle altre due proposte ha: la contraddizione fra «la zona chiede» e «il piano è spento» oggi <b>non si vede da nessuna parte</b>, e si scopre toccando i termosifoni.</li>
+<li class="no">La fascia costa 60 px di altezza <b>sempre</b>, anche quando entrambi i piani sono accesi e non c'è niente da decidere.</li>
+<li class="no">Due interruttori piccoli affiancati: quello sbagliato è a due centimetri da quello giusto.</li>
+<li class="no">Resta la paginazione di R-A, e con essa il rischio di una pagina che comincia a metà di un piano.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="cap" style="max-width:98ch;margin-top:26px;border-top:1px solid #262a31;padding-top:20px">
+<h3>Le cose che chiedevi di valutare, e che non avevi elencato</h3>
+<ul>
+<li><b>Il piano va aggiunto a ogni zona.</b> Oggi una zona ha nome ed entità e basta. Serve un elenco di piani in
+configurazione — nome e interruttore — e un campo <code>piano</code> su ciascuna delle dodici zone. Le zone senza piano
+non spariscono: finiscono in un gruppo loro, perché una zona che si smette di vedere è peggio di una zona in un gruppo
+sbagliato.</li>
+<li><b>Quale piano governa questo pannello</b> è una voce sola in configurazione, e da lì discendono la fiamma dello
+standby, quella della testata e quale interruttore comanda il gesto del termostato. Il pannello del box avrà lo stesso
+firmware e una riga diversa.</li>
+<li><b>L'interruttore può non rispondere.</b> `unavailable` non è «spento»: la fascia lo dirà invece di disegnare uno
+stato che non conosce, e l'interruttore non si potrà premere — come già fanno le righe della sezione Interruttori.</li>
+<li><b>La contraddizione</b> — piano spento e zone che chiedono — è l'unica cosa in tutto questo che oggi non si può
+sapere da nessuna parte del pannello. È disegnata solo in R-C, ma si può aggiungere a qualunque proposta.</li>
+<li class="no"><b>Quello che non farei:</b> spegnere il piano dal solo standby, o mettere l'interruttore nella home. Un
+comando che spegne il riscaldamento di tutta la casa non va su una schermata che si tocca per svegliarla.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>

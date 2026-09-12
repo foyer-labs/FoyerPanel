@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · pagina di configurazione (pannello.local)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1340px;margin:0 auto;padding:18px 14px 60px}
+h1.tt{font-size:15px;font-weight:600;margin:0 0 2px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 14px}
+.grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.grp .lb{font:500 11px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6d747f;margin-right:4px}
+.grp button{appearance:none;border:1px solid #2c3038;background:#1c1f25;color:#aeb5c0;font:500 12.5px/1 Inter,sans-serif;padding:9px 12px;border-radius:8px;cursor:pointer}
+.grp button:hover{border-color:#3d434e;color:#e6e9ee}
+.grp button[aria-pressed="true"]{background:#e6e9ee;color:#15171b;border-color:#e6e9ee}
+.grp .sep{width:1px;height:22px;background:#2c3038;margin:0 8px}
+.caption{font-size:12.5px;color:#9aa1ad;margin:12px 2px 0;line-height:1.6;max-width:940px}
+.caption b{color:#e6e9ee;font-weight:600}
+
+/* finestra browser */
+.browser{margin:0 auto;background:#d7dade;border-radius:12px 12px 10px 10px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45);transform-origin:top left}
+.chrome{height:46px;background:#e8eaed;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #cdd1d6}
+.chrome .dots{display:flex;gap:6px}
+.chrome .dots i{width:11px;height:11px;border-radius:50%;background:#c3c8ce}
+.chrome .url{flex:1;height:28px;background:#fff;border-radius:14px;display:flex;align-items:center;padding:0 14px;font:500 12.5px/1 "JetBrains Mono",monospace;color:#4a5058;gap:8px}
+.chrome .url svg{width:13px;height:13px;color:#8b929e}
+.page{height:760px;overflow:hidden;background:#f4f5f6;color:#171b20;display:flex;flex-direction:column}
+
+/* ---- intestazione app ---- */
+.apphead{background:#fff;border-bottom:1px solid #e2e5e8;padding:14px 22px;display:flex;align-items:center;gap:14px;flex:none}
+.apphead .brand{display:flex;align-items:center;gap:11px}
+.apphead .brand .sq{width:34px;height:34px;border-radius:9px;background:#171b20;display:flex;align-items:center;justify-content:center}
+.apphead .brand .sq svg{width:18px;height:18px;color:#f0a835}
+.apphead .brand .t{font:600 15px/1.2 Inter,sans-serif}
+.apphead .brand .s{font:400 12px/1.2 Inter,sans-serif;color:#6b737d;margin-top:3px}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:20px;padding:6px 11px;font:500 12px/1 Inter,sans-serif}
+.pill.ok{background:#e8f5ee;color:#1c6b42}
+.pill.ok i{width:7px;height:7px;border-radius:50%;background:#25a05f}
+.pill.warn{background:#fdf1dd;color:#8a5a11}
+.apphead .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+/* barra sessione */
+.session{background:#fdf1dd;border-bottom:1px solid #f0dcb6;padding:9px 22px;display:flex;align-items:center;gap:10px;font:500 12.5px/1.4 Inter,sans-serif;color:#8a5a11;flex:none}
+.session svg{width:16px;height:16px;flex:none}
+.session .cd{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
+
+.body{flex:1;display:flex;min-height:0}
+.nav{width:214px;flex:none;background:#fff;border-right:1px solid #e2e5e8;padding:12px 10px;overflow:auto}
+.nav .gl{font:600 10.5px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#98a0aa;padding:12px 10px 7px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font:500 13.5px/1 Inter,sans-serif;color:#404952;text-decoration:none}
+.nav a svg{width:16px;height:16px;color:#8b939d}
+.nav a.sel{background:#171b20;color:#fff}
+.nav a.sel svg{color:#f0a835}
+.nav a .n{margin-left:auto;font:500 11px/1 Inter,sans-serif;color:#98a0aa}
+.nav a.sel .n{color:#9aa3ad}
+
+.pane{flex:1;overflow:auto;padding:22px 26px 90px;min-width:0}
+.pane h2{font:600 20px/1.2 Inter,sans-serif;margin:0 0 5px}
+.pane .lead{font:400 13.5px/1.6 Inter,sans-serif;color:#6b737d;margin:0 0 20px;max-width:660px}
+
+.card{background:#fff;border:1px solid #e2e5e8;border-radius:12px;margin-bottom:14px}
+.card .ch{padding:14px 18px;border-bottom:1px solid #edeff1;display:flex;align-items:center;gap:10px}
+.card .ch .t{font:600 14px/1 Inter,sans-serif}
+.card .ch .s{font:400 12.5px/1 Inter,sans-serif;color:#828a94;margin-left:auto}
+.card .cb{padding:16px 18px}
+
+.field{margin-bottom:15px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font:500 12.5px/1 Inter,sans-serif;color:#4a525b;margin-bottom:7px}
+.field .hint{font:400 12px/1.45 Inter,sans-serif;color:#8b939d;margin-top:6px}
+.inp{width:100%;height:42px;border:1px solid #d5d9de;border-radius:9px;background:#fff;display:flex;align-items:center;padding:0 12px;font:400 14px/1 Inter,sans-serif;color:#171b20;gap:8px}
+.inp.mono{font-family:"JetBrains Mono",monospace;font-size:13px}
+.inp.sel::after{content:"▾";margin-left:auto;color:#98a0aa;font-size:13px}
+.inp.err{border-color:#d9584a;background:#fdf3f2}
+.inp.dis{background:#f4f5f6;color:#8b939d}
+.errmsg{font:500 12px/1.4 Inter,sans-serif;color:#c0402f;margin-top:6px;display:flex;align-items:center;gap:6px}
+.errmsg svg{width:13px;height:13px}
+.warnmsg{font:500 12px/1.4 Inter,sans-serif;color:#8a5a11;margin-top:6px;display:flex;align-items:center;gap:6px}
+.warnmsg svg{width:13px;height:13px}
+.row2{display:flex;gap:12px}
+.row2>*{flex:1;min-width:0}
+.row3{display:flex;gap:12px}
+.row3>*{flex:1;min-width:0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:9px;font:600 13.5px/1 Inter,sans-serif;border:1px solid #d5d9de;background:#fff;color:#171b20;white-space:nowrap}
+.btn svg{width:15px;height:15px}
+.btn.pri{background:#171b20;border-color:#171b20;color:#fff}
+.btn.acc{background:#f0a835;border-color:#f0a835;color:#171b20}
+.btn.danger{border-color:#e6b7b1;color:#c0402f;background:#fff}
+.btn.sm{height:36px;padding:0 12px;font-size:12.5px}
+
+.sw{width:44px;height:25px;border-radius:14px;background:#d5d9de;position:relative;flex:none}
+.sw i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:#f0a835}
+.sw.on i{left:22px}
+.swrow{display:flex;align-items:center;gap:12px}
+.swrow .tx{font:500 13.5px/1.35 Inter,sans-serif}
+.swrow .tx small{display:block;font:400 12px/1.4 Inter,sans-serif;color:#8b939d;margin-top:3px}
+.swrow .sw{margin-left:auto}
+
+/* righe elenco (accessi, luci) */
+.lrow{border:1px solid #e2e5e8;border-radius:10px;padding:13px 14px;margin-bottom:10px;background:#fff}
+.lrow .top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.lrow .grab{width:16px;color:#c3c8ce;cursor:grab;font-size:14px;line-height:1}
+.lrow .idx{font:600 12px/1 Inter,sans-serif;color:#98a0aa;width:18px}
+.lrow .nm{font:600 14px/1 Inter,sans-serif}
+.lrow .del{margin-left:auto;color:#98a0aa;border:1px solid #e2e5e8;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.lrow .del svg{width:14px;height:14px}
+.lrow.warn{border-color:#f0dcb6;background:#fffdf8}
+
+.compact{display:flex;align-items:center;gap:11px;border:1px solid #e2e5e8;border-radius:9px;padding:9px 12px;margin-bottom:8px;background:#fff}
+.compact .grab{color:#c3c8ce;font-size:14px}
+.compact .nm{font:500 13.5px/1 Inter,sans-serif;width:132px;flex:none}
+.compact .ent{flex:1;min-width:0;font:400 12.5px/1 "JetBrains Mono",monospace;color:#5b636d;border:1px solid #e2e5e8;border-radius:7px;height:34px;display:flex;align-items:center;padding:0 10px;background:#fafbfc;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.compact .dim{font:500 12px/1 Inter,sans-serif;color:#6b737d;display:flex;align-items:center;gap:7px;flex:none}
+.compact .del{color:#b3bac2;flex:none}
+.compact .del svg{width:14px;height:14px}
+
+.pagenote{background:#f0f6fb;border:1px solid #d3e4f2;border-radius:9px;padding:11px 13px;font:400 12.5px/1.5 Inter,sans-serif;color:#2c5876;display:flex;gap:9px;align-items:flex-start;margin-top:4px}
+.pagenote svg{width:15px;height:15px;flex:none;margin-top:1px}
+
+.empty{border:1px dashed #d5d9de;border-radius:10px;padding:22px;text-align:center}
+.empty .t{font:600 13.5px/1.4 Inter,sans-serif;color:#4a525b}
+.empty .s{font:400 12.5px/1.55 Inter,sans-serif;color:#8b939d;margin:7px auto 14px;max-width:420px}
+
+/* upload firmware */
+.drop{border:2px dashed #d5d9de;border-radius:12px;padding:26px;text-align:center;background:#fafbfc}
+.drop svg{width:30px;height:30px;color:#b3bac2}
+.drop .t{font:600 14px/1.4 Inter,sans-serif;margin-top:11px}
+.drop .s{font:400 12.5px/1.5 Inter,sans-serif;color:#8b939d;margin-top:6px}
+.check{display:flex;gap:10px;align-items:flex-start;font:400 13px/1.5 Inter,sans-serif;color:#4a525b;margin-top:11px}
+.check svg{width:15px;height:15px;color:#25a05f;flex:none;margin-top:2px}
+.meta{display:flex;gap:26px;flex-wrap:wrap}
+.meta .m .k{font:500 11px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#98a0aa}
+.meta .m .v{font:600 15px/1 Inter,sans-serif;margin-top:7px;font-variant-numeric:tabular-nums}
+.danger{border-color:#eccec9}
+.danger .ch{border-color:#f5e2df}
+
+/* barra salvataggio */
+.savebar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e2e5e8;padding:12px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 -6px 22px rgba(0,0,0,.06)}
+.savebar .st{font:500 13px/1.4 Inter,sans-serif;color:#8a5a11;display:flex;align-items:center;gap:8px}
+.savebar .st svg{width:15px;height:15px}
+.savebar .sp{margin-left:auto;display:flex;gap:10px}
+.wrap{position:relative;flex:1;display:flex;min-height:0}
+
+/* ---- adattamento telefono ---- */
+.mob .nav{display:none}
+.mob .navchips{display:flex;gap:7px;overflow:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #e2e5e8;flex:none}
+.mob .navchips span{white-space:nowrap;font:500 12.5px/1 Inter,sans-serif;color:#404952;border:1px solid #e2e5e8;border-radius:16px;padding:8px 12px}
+.mob .navchips span.sel{background:#171b20;color:#fff;border-color:#171b20}
+.mob .pane{padding:16px 14px 96px}
+.mob .apphead{padding:12px 14px;flex-wrap:wrap}
+.mob .apphead .right{width:100%;margin-left:0}
+.mob .session{padding:8px 14px;font-size:12px}
+.mob .row2,.mob .row3{flex-direction:column}
+.mob .compact{flex-wrap:wrap}
+.mob .compact .nm{width:auto;flex:1}
+.mob .compact .ent{flex-basis:100%;order:5}
+.mob .savebar{padding:10px 14px}
+.mob .savebar .st{font-size:12px}
+.navchips{display:none}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9H4z"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8V16h7.2v-2.2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2" y="7" width="12" height="10" rx="2"/><path d="M14 10.5 21 7v10l-7-3.5z"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V9l9-5 9 5v11M3 20h18M7 20v-7h10v7M7 16.5h10"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+  <symbol id="i-screen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.5l3.5 2"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5M12 17.5h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V6M6 12l6-6 6 6M4 20h16"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></symbol>
+</svg>
+
+<div class="shell">
+  <h1 class="tt">Pagina di configurazione — servita dal pannello</h1>
+  <p class="sub">Si apre da telefono o computer, solo quando la configurazione è stata sbloccata dal pannello.</p>
+
+  <div class="grp">
+    <span class="lb">Sezione</span>
+    <button data-s="ha" aria-pressed="true">Home Assistant</button>
+    <button data-s="acc" aria-pressed="false">Accessi</button>
+    <button data-s="luci" aria-pressed="false">Luci</button>
+    <button data-s="fw" aria-pressed="false">Firmware</button>
+    <span class="sep"></span>
+    <span class="lb">Vista</span>
+    <button data-v="desk" aria-pressed="true">Computer</button>
+    <button data-v="mob" aria-pressed="false">Telefono</button>
+  </div>
+
+  <div class="browser" id="browser"><div id="root"></div></div>
+  <p class="caption" id="cap"></p>
+</div>
+
+<script>
+const NAV=[
+ ['rete','Rete','i-wifi',''],
+ ['ha','Home Assistant','i-home',''],
+ ['luci','Luci','i-bulb','11'],
+ ['clima','Clima','i-thermo','6'],
+ ['energia','Energia','i-sun',''],
+ ['cam','Telecamere','i-cam','4'],
+ ['acc','Accessi','i-gate','3'],
+ ['agenda','Agenda','i-cal','3'],
+ ['schermo','Schermo','i-screen',''],
+ ['fw','Firmware','i-chip','']
+];
+
+/* ---------------- sezioni ---------------- */
+const HA = `
+<h2>Home Assistant</h2>
+<p class="lead">Il pannello si collega via WebSocket e resta in ascolto degli aggiornamenti. Il token non viene mai restituito dalla pagina: si può solo sostituire.</p>
+
+<div class="card">
+  <div class="ch"><span class="t">Connessione</span><span class="pill ok"><i></i>connesso · 412 entità</span></div>
+  <div class="cb">
+    <div class="row3">
+      <div class="field"><label>Indirizzo</label><div class="inp mono">192.0.2.10</div>
+        <div class="hint">IP o nome host, senza http://</div></div>
+      <div class="field"><label>Porta</label><div class="inp mono">8123</div></div>
+      <div class="field"><label>Attesa massima</label><div class="inp mono">8 s</div></div>
+    </div>
+    <div class="field">
+      <div class="swrow"><div class="tx">Usa HTTPS<small>Sconsigliato in rete locale: il pannello non può verificare i certificati e il collegamento diventa più lento senza guadagno reale.</small></div><div class="sw"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch"><span class="t">Token di accesso</span><span class="s">impostato il 13/08/2026</span></div>
+  <div class="cb">
+    <div class="field">
+      <label>Token a lunga durata</label>
+      <div class="inp dis mono">•••••••••••••••••••••••••••••••••• &nbsp;(conservato nel pannello)</div>
+      <div class="hint">Si crea in Home Assistant: Profilo → Sicurezza → Token di accesso a lunga durata. Creane uno dedicato, così puoi revocarlo senza toccare gli altri.</div>
+    </div>
+    <div style="display:flex;gap:10px"><div class="btn">Sostituisci token</div><div class="btn">Prova la connessione</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch"><span class="t">Sensori aggregati</span><span class="s">creati dal pacchetto YAML</span></div>
+  <div class="cb">
+    <div class="row2">
+      <div class="field"><label>Agenda</label><div class="inp sel mono">sensor.pannello_agenda</div></div>
+      <div class="field"><label>Presenza</label><div class="inp sel mono">sensor.panel_presence</div></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Finestre aperte</label><div class="inp sel mono">sensor.pannello_finestre_aperte</div></div>
+      <div class="field"><label>Energia</label><div class="inp sel err mono">sensor.panel_energy</div>
+        <div class="errmsg"><svg><use href="#i-warn"/></svg>Entità non trovata in Home Assistant. La sezione Fotovoltaico resterà nascosta finché non esiste.</div></div>
+    </div>
+  </div>
+</div>`;
+
+const ACC = `
+<h2>Accessi</h2>
+<p class="lead">Ogni voce diventa una riga nella schermata Accessi del pannello, nell'ordine in cui compare qui. Trascina per riordinare.</p>
+
+<div class="lrow">
+  <div class="top"><span class="grab">⠿</span><span class="idx">1</span><span class="nm">Cancello pedonale</span><span class="del"><svg><use href="#i-trash"/></svg></span></div>
+  <div class="row3">
+    <div class="field"><label>Nome mostrato</label><div class="inp">Cancello pedonale</div></div>
+    <div class="field"><label>Entità</label><div class="inp sel mono">switch.cancello_pedonale</div></div>
+    <div class="field"><label>Telecamera associata</label><div class="inp sel">Cancello pedonale</div></div>
+  </div>
+  <div class="row3">
+    <div class="field"><label>Icona</label><div class="inp sel">Cancello</div></div>
+    <div class="field"><label>Durata impulso</label><div class="inp mono">600 ms</div></div>
+    <div class="field"><label>Conferma prima di aprire</label>
+      <div class="swrow" style="height:42px"><div class="tx" style="font-weight:400;color:#6b737d">Apre al primo tocco</div><div class="sw"></div></div></div>
+  </div>
+</div>
+
+<div class="lrow">
+  <div class="top"><span class="grab">⠿</span><span class="idx">2</span><span class="nm">Cancello carraio</span><span class="del"><svg><use href="#i-trash"/></svg></span></div>
+  <div class="row3">
+    <div class="field"><label>Nome mostrato</label><div class="inp">Cancello carraio</div></div>
+    <div class="field"><label>Entità</label><div class="inp sel mono">switch.cancello_carraio</div></div>
+    <div class="field"><label>Telecamera associata</label><div class="inp sel">Cancello carraio</div></div>
+  </div>
+  <div class="row3">
+    <div class="field"><label>Icona</label><div class="inp sel">Cancello</div></div>
+    <div class="field"><label>Durata impulso</label><div class="inp mono">600 ms</div></div>
+    <div class="field"><label>Conferma prima di aprire</label>
+      <div class="swrow" style="height:42px"><div class="tx" style="font-weight:400;color:#171b20">Chiede conferma</div><div class="sw on"></div></div></div>
+  </div>
+</div>
+
+<div class="lrow warn">
+  <div class="top"><span class="grab">⠿</span><span class="idx">3</span><span class="nm">Porta del garage</span><span class="del"><svg><use href="#i-trash"/></svg></span></div>
+  <div class="row3">
+    <div class="field"><label>Nome mostrato</label><div class="inp">Porta del garage</div></div>
+    <div class="field"><label>Entità</label><div class="inp sel mono">switch.porta_garage</div>
+      <div class="warnmsg"><svg><use href="#i-warn"/></svg>Al momento non risponde. Il comando resterà disattivato finché non torna disponibile.</div></div>
+    <div class="field"><label>Telecamera associata</label><div class="inp sel">Garage</div></div>
+  </div>
+</div>
+
+<div class="btn" style="width:100%"><svg><use href="#i-plus"/></svg>Aggiungi un accesso</div>
+<div class="pagenote" style="margin-top:12px"><svg><use href="#i-info"/></svg>
+  Massimo 6 accessi: oltre, la colonna dei comandi non ci starebbe accanto alla telecamera.</div>`;
+
+const LUCI = `
+<h2>Luci</h2>
+<p class="lead">Una riga per zona. Il pannello le dispone in griglie da sei per pagina, nell'ordine scelto qui.</p>
+
+<div class="card">
+  <div class="ch"><span class="t">Zone</span><span class="s">11 configurate</span></div>
+  <div class="cb">
+    ${[['Soggiorno','light.soggiorno',1],['Cucina','light.cucina',1],['Studio','light.studio',0],
+       ['Camera','light.camera_matrimoniale',1],['Portico','light.portico',0],['Vialetto','light.vialetto',0],
+       ['Mansarda','light.mansarda',0],['Lavanderia','light.lavanderia',0],['Corridoio','light.corridoio',1],
+       ['Bagno','light.bagno_piano_terra',0],['Giardino','light.giardino',0]]
+      .map(([n,e,d])=>`<div class="compact"><span class="grab">⠿</span><span class="nm">${n}</span>
+        <span class="ent">${e}</span>
+        <span class="dim">Dimmer<span class="sw ${d?'on':''}" style="width:38px;height:22px"><i style="width:16px;height:16px;left:${d?'19px':'3px'}"></i></span></span>
+        <span class="del"><svg><use href="#i-trash"/></svg></span></div>`).join('')}
+    <div class="btn sm" style="width:100%;margin-top:4px"><svg><use href="#i-plus"/></svg>Aggiungi una zona</div>
+    <div class="pagenote"><svg><use href="#i-info"/></svg>
+      11 zone occupano <b>2 pagine</b> sul pannello: le prime sei nella pagina 1, le restanti cinque nella pagina 2. Riordina per decidere cosa vedere per primo.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch"><span class="t">Scene</span><span class="s">facoltative</span></div>
+  <div class="cb">
+    <div class="empty">
+      <div class="t">Nessuna scena configurata</div>
+      <div class="s">Senza scene la fascia superiore della schermata Luci non viene mostrata e le zone occupano tutto lo spazio. Puoi aggiungerle in seguito creandole in Home Assistant.</div>
+      <div class="btn sm"><svg><use href="#i-plus"/></svg>Aggiungi una scena</div>
+    </div>
+  </div>
+</div>`;
+
+const FW = `
+<h2>Firmware</h2>
+<p class="lead">Il pannello tiene due copie del firmware e può tornare indietro da solo se la nuova non parte.</p>
+
+<div class="card">
+  <div class="ch"><span class="t">Versione installata</span><span class="pill ok"><i></i>avvio confermato</span></div>
+  <div class="cb">
+    <div class="meta">
+      <div class="m"><div class="k">Versione</div><div class="v">1.0.4</div></div>
+      <div class="m"><div class="k">Partizione attiva</div><div class="v">ota_0</div></div>
+      <div class="m"><div class="k">Copia precedente</div><div class="v">1.0.3</div></div>
+      <div class="m"><div class="k">Acceso da</div><div class="v">6 g 14 h</div></div>
+      <div class="m"><div class="k">Memoria libera</div><div class="v">4,9 MB</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch"><span class="t">Installa un aggiornamento</span></div>
+  <div class="cb">
+    <div class="drop"><svg><use href="#i-up"/></svg>
+      <div class="t">Trascina qui il file .bin</div>
+      <div class="s">oppure tocca per sceglierlo · il caricamento richiede la password di configurazione</div>
+    </div>
+    <div class="field" style="margin-top:15px"><label>Password di configurazione</label>
+      <div class="inp"><svg style="width:15px;height:15px;color:#98a0aa"><use href="#i-lock"/></svg>••••••••</div></div>
+    <div class="check"><svg><use href="#i-check"/></svg>La firma del file viene verificata prima della scrittura: un binario non firmato viene rifiutato.</div>
+    <div class="check"><svg><use href="#i-check"/></svg>La nuova versione viene dichiarata valida solo dopo un avvio riuscito con Wi-Fi, Home Assistant e schermo funzionanti. Altrimenti riparte da sola la 1.0.3.</div>
+    <div class="check"><svg><use href="#i-check"/></svg>La configurazione e le credenziali non vengono toccate: stanno in partizioni separate.</div>
+    <div class="btn pri" style="margin-top:16px">Installa e riavvia</div>
+  </div>
+</div>
+
+<div class="card danger">
+  <div class="ch"><span class="t" style="color:#c0402f">Operazioni delicate</span></div>
+  <div class="cb">
+    <div class="swrow" style="margin-bottom:14px"><div class="tx">Esporta la configurazione<small>Scarica config.json per conservarne una copia. Non contiene password né token.</small></div>
+      <div class="btn sm">Scarica</div></div>
+    <div class="swrow"><div class="tx">Ripristino di fabbrica<small>Cancella configurazione e credenziali. Il pannello riparte dalla procedura di primo avvio e va riconfigurato da capo, davanti allo schermo.</small></div>
+      <div class="btn sm danger">Ripristina</div></div>
+  </div>
+</div>`;
+
+const SEZ={ha:HA,acc:ACC,luci:LUCI,fw:FW};
+const CAP={
+ ha:"<b>Home Assistant.</b> Il token si può sostituire ma non rileggere: la pagina mostra solo che esiste e da quando. L'errore in basso è il caso realistico — un'entità configurata che non esiste (ancora): non blocca il salvataggio, ma dice esattamente quale conseguenza avrà sul pannello.",
+ acc:"<b>Accessi.</b> Ogni voce è una riga del pannello, riordinabile per trascinamento. La conferma è un interruttore per singolo accesso, non globale: il cancello pedonale apre al primo tocco, il carraio chiede conferma. Il riquadro giallo distingue «entità sbagliata» da «entità momentaneamente giù».",
+ luci:"<b>Luci.</b> Righe compatte, perché qui la quantità conta più del dettaglio. Il riquadro azzurro traduce la configurazione in conseguenza visiva: 11 zone fanno 2 pagine, e l'ordine decide cosa si vede per primo. Le scene sono in stato vuoto, con scritto cosa succede a lasciarle così.",
+ fw:"<b>Firmware.</b> Caricamento diretto del file, senza server da mantenere. Le tre righe con la spunta sono promesse esplicite: firma verificata, ritorno automatico alla versione precedente se la nuova non si avvia, configurazione intoccata. Le operazioni distruttive stanno in fondo, in un riquadro separato."
+};
+
+let sez='ha', vista='desk';
+function render(){
+  const mob = vista==='mob';
+  const W = mob?390:1280, H = mob?760:760;
+  document.getElementById('root').innerHTML = `
+  <div class="chrome"><span class="dots"><i></i><i></i><i></i></span>
+    <span class="url"><svg><use href="#i-lock"/></svg>pannello.local/config</span></div>
+  <div class="page ${mob?'mob':''}">
+    <div class="apphead">
+      <div class="brand"><span class="sq"><svg><use href="#i-home"/></svg></span>
+        <span><span class="t">Pannello Ingresso</span><span class="s">firmware 1.0.4 · 192.0.2.20</span></span></div>
+      <div class="right"><span class="pill ok"><i></i>Home Assistant connesso</span></div>
+    </div>
+    <div class="session"><svg><use href="#i-clock"/></svg>
+      Configurazione sbloccata dal pannello. Al termine si richiude da sola e questa pagina non sarà più raggiungibile.
+      <span class="cd">12:41</span></div>
+    ${mob?`<div class="navchips">${NAV.map(([id,lb])=>`<span class="${id===sez?'sel':''}">${lb}</span>`).join('')}</div>`:''}
+    <div class="wrap">
+      <nav class="nav">
+        <div class="gl">Collegamenti</div>
+        ${NAV.slice(0,2).map(([id,lb,ic,n])=>`<a class="${id===sez?'sel':''}"><svg><use href="#${ic}"/></svg>${lb}${n?`<span class="n">${n}</span>`:''}</a>`).join('')}
+        <div class="gl">Contenuti</div>
+        ${NAV.slice(2,8).map(([id,lb,ic,n])=>`<a class="${id===sez?'sel':''}"><svg><use href="#${ic}"/></svg>${lb}${n?`<span class="n">${n}</span>`:''}</a>`).join('')}
+        <div class="gl">Pannello</div>
+        ${NAV.slice(8).map(([id,lb,ic,n])=>`<a class="${id===sez?'sel':''}"><svg><use href="#${ic}"/></svg>${lb}${n?`<span class="n">${n}</span>`:''}</a>`).join('')}
+      </nav>
+      <div class="pane">${SEZ[sez]}</div>
+      <div class="savebar">
+        <span class="st"><svg><use href="#i-warn"/></svg>3 modifiche non salvate</span>
+        <span class="sp"><span class="btn">Annulla</span><span class="btn acc">Salva e applica</span></span>
+      </div>
+    </div>
+  </div>`;
+  const br=document.getElementById('browser');
+  br.style.width=W+'px'; br.style.height=(H+46)+'px';
+  document.querySelector('.page').style.height=H+'px';
+  document.getElementById('cap').innerHTML=CAP[sez];
+  document.querySelectorAll('[data-s]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===sez)));
+  document.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===vista)));
+  fit();
+}
+function fit(){
+  const br=document.getElementById('browser');
+  const avail=br.parentElement.clientWidth;
+  const w=parseInt(br.style.width), h=parseInt(br.style.height);
+  const s=Math.min(1,avail/w);
+  br.style.transform='scale('+s+')';
+  br.style.marginBottom=(h*s-h)+'px';
+}
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sez=b.dataset.s;render()});
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{vista=b.dataset.v;render()});
+addEventListener('resize',fit);
+render();
+</script>
+</body>
+</html>

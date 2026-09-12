@@ -1,0 +1,55 @@
+# ----------------------------------------------------------------------------
+# Partizioni — 05-architettura-firmware.md §1, flash da 16 MB.
+#
+# **Sedici megabyte, non trentadue.** Questa tabella e stata scritta prima di
+# avere la scheda in mano, sulla documentazione della famiglia, e diceva
+# trentadue: c'erano tre partizioni da 5 MB, `storage` da 8 e dieci MB
+# lasciati liberi in fondo. La scheda vera ne ha sedici — `esptool flash_id`
+# lo dice in una riga — e quella tabella non ci sarebbe entrata.
+#
+# Non e un errore di calcolo: e la differenza fra un numero dedotto e un
+# numero misurato, ed e la ragione per cui in scheda_p4.h i valori
+# ricostruiti portano scritto **[da confermare]**.
+#
+# Tre cose da sapere, e nessuna e cosmetica.
+#
+# **C'e `c6_fw`.** Il P4 non ha radio: il Wi-Fi passa da un ESP32-C6
+# collegato via SDIO, e quel chip ha un firmware suo che va aggiornato
+# **insieme** all'applicazione. Una versione del P4 che si aspetta un
+# protocollo diverso da quello del C6 non si connette, e su un pannello
+# incassato a muro non c'e modo di accorgersene se non dal fatto che la rete
+# non sale. Per questo l'immagine del C6 sta in una partizione sua, e per
+# questo il pacchetto OTA le contiene tutte e due.
+#
+# **Le partizioni di applicazione sono 3,5 MB.** Erano 5, ma con sedici
+# megabyte tre partizioni da 5 piu il firmware del C6 non ci stanno. Tre e
+# mezzo restano generosi: il binario di oggi ne occupa due e mezzo.
+#
+# Tre partizioni **uguali** resta la regola: una `factory` che non contiene
+# l'immagine che stai per installare non e una partizione di recupero, e lo
+# si scoprirebbe nel momento peggiore.
+#
+# **Non resta niente libero in fondo**, e va bene cosi: `storage` arriva
+# esattamente all'ultimo byte. Lasciare spazio non assegnato su una flash
+# stretta non e prudenza, e spazio che non si potra piu dare a nessuno senza
+# spostare LittleFS — e spostarlo, il giorno che qualcuno aggiorna un
+# pannello configurato, gli cancella la configurazione.
+# ----------------------------------------------------------------------------
+# **La tabella non sta a 0x8000**, dove la mette ESP-IDF, ma a 0xC000, e
+# con lei scendono le prime tre partizioni. Il bootloader del P4 e 0x6140
+# byte, e nei 0x6000 che restano prima di 0x8000 non ci sta. Non e un dettaglio da sistemare a occhio — la compilazione si ferma
+# e lo dice — ma va scritto qui perche gli indirizzi che seguono sembrano
+# arbitrari e non lo sono.
+#
+# `factory` resta a 0x20000: le partizioni di applicazione vogliono
+# l'allineamento a 64 kB, e lo spazio fra 0x18000 e 0x20000 resta vuoto.
+# Trentaduemila byte, contro il costo di far tornare i conti a mano.
+# Nome,     Tipo, Sottotipo, Offset,    Dimensione, Bandiere
+nvs,        data, nvs,       0xD000,   0x8000,
+otadata,    data, ota,       0x15000,  0x2000,
+phy_init,   data, phy,       0x17000,  0x1000,
+factory,    app,  factory,   0x20000,  0x380000,
+ota_0,      app,  ota_0,     0x3A0000, 0x380000,
+ota_1,      app,  ota_1,     0x720000, 0x380000,
+c6_fw,      data, 0x40,      0xAA0000, 0x200000,
+storage,    data, littlefs,  0xCA0000, 0x360000,

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · pannelli in verticale · stati e flussi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1400px;margin:0 auto;padding:18px 14px 60px}
+h1.tt{font-size:15px;font-weight:600;margin:0 0 2px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 14px}
+.grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px;align-items:center}
+.grp .lb{font:500 11px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6d747f;margin-right:4px}
+.grp button{appearance:none;border:1px solid #2c3038;background:#1c1f25;color:#aeb5c0;font:500 12.5px/1 Inter,sans-serif;padding:9px 12px;border-radius:8px;cursor:pointer}
+.grp button:hover{border-color:#3d434e;color:#e6e9ee}
+.grp button[aria-pressed="true"]{background:#e6e9ee;color:#15171b;border-color:#e6e9ee}
+.wrap{display:flex;gap:26px;align-items:flex-start;margin-top:14px}
+.frame{position:relative;background:#000;border:12px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;flex:none}
+.stage{transform-origin:top left;position:relative;overflow:hidden}
+.caption{font-size:12.5px;color:#9aa1ad;line-height:1.65;flex:1;min-width:260px;padding-top:6px}
+.caption b{color:#e6e9ee;font-weight:600}
+.caption h3{font:600 13px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--ink:#0d1014;--off:#232b35;
+  --r:16px;--pad:18px;--gap:14px;--bar:112px;--head:72px;
+  --f-ti:26px;--f-nm:17px;--f-val:38px;--f-s:14px;--f-lb:12px;
+  background:var(--bg);color:var(--txt)}
+
+.navbar{height:var(--bar);flex:none;display:flex;background:var(--card2);border-top:1px solid var(--line)}
+.nb{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#6f7b8c;border-right:1px solid rgba(255,255,255,.03)}
+.nb:last-child{border-right:none}
+.nb svg{width:23px;height:23px;flex:none}
+.nb span{font:500 10.5px/1 Inter,sans-serif;white-space:nowrap}
+.nb.home{color:var(--acc);background:var(--card)}
+.nb.sel{background:#221c0e;color:var(--acc);box-shadow:inset 0 2px 0 var(--acc)}
+.nb.dis{opacity:.32}
+
+.sh{height:var(--head);flex:none;display:flex;align-items:center;padding:0 var(--pad);gap:14px;border-bottom:1px solid var(--line)}
+.sh .ti{font:600 var(--f-ti)/1 Inter,sans-serif}
+.sh .cr{font:400 var(--f-s)/1 Inter,sans-serif;color:var(--dim)}
+.sh .clock{margin-left:auto;font:400 20px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--dim)}
+.content{flex:1;min-height:0;padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap)}
+.k{font:600 var(--f-lb)/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;display:flex;flex-direction:column;min-width:0}
+.spin{width:19px;height:19px;border-radius:50%;border:2px solid rgba(240,168,53,.28);border-top-color:var(--acc);animation:sp .9s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes bl{50%{opacity:.25}}
+
+/* banner riconnessione */
+.banner{flex:none;display:flex;align-items:center;gap:12px;padding:14px var(--pad);background:#251d0e;border-bottom:1px solid #4a3c1c;color:#f0c987;font:500 var(--f-s)/1.4 Inter,sans-serif}
+
+/* accessi verticale */
+.camtop{flex:none;position:relative;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#05070a;aspect-ratio:16/9}
+.camtop svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.camtop .ov{position:absolute;left:13px;top:12px;display:flex;align-items:center;gap:9px;font:600 12px/1 Inter,sans-serif;color:#fff}
+.camtop .live{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.55);padding:6px 9px;border-radius:6px}
+.camtop .live i{width:7px;height:7px;border-radius:50%;background:#e2664f;animation:bl 1.6s infinite}
+.camtop .ts{position:absolute;right:13px;bottom:11px;font:500 12px/1 Inter,sans-serif;color:#e6eaf0;background:rgba(0,0,0,.55);padding:6px 9px;border-radius:6px}
+.camdead{flex:none;aspect-ratio:16/9;border:1px solid var(--line);border-radius:var(--r);background:#0a0e14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.camdead svg{width:40px;height:40px;color:#3f4a5a}
+.camdead .t{font:500 var(--f-nm)/1 Inter,sans-serif;color:var(--dim)}
+.camdead .s{font:400 13px/1 Inter,sans-serif;color:#5d6878}
+.thumbs{flex:none;display:flex;gap:10px}
+.th{flex:1;border:1px solid var(--line);border-radius:11px;overflow:hidden;position:relative;background:#0a0e14;aspect-ratio:16/9}
+.th.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.th svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.th span{position:absolute;left:8px;bottom:6px;font:500 11.5px/1 Inter,sans-serif;color:#dfe5ee;text-shadow:0 1px 3px #000}
+.skel{position:absolute;inset:0;background:linear-gradient(90deg,#12171e 20%,#1b222c 40%,#12171e 60%);background-size:200% 100%;animation:sk 1.4s linear infinite}
+@keyframes sk{0%{background-position:120% 0}100%{background-position:-20% 0}}
+.arow{background:var(--card);border:1px solid var(--line);border-radius:var(--r);flex:1;display:flex;align-items:center;gap:14px;padding:0 16px;min-height:0}
+.arow>svg{width:23px;height:23px;color:var(--dim);flex:none}
+.arow .nm{font:500 var(--f-nm)/1.15 Inter,sans-serif}
+.arow .st{font:400 12.5px/1.3 Inter,sans-serif;color:var(--dim);margin-top:5px}
+.arow.active{border-color:#4a3c1c;background:#181c1a}
+.arow.luce{border-color:#3a2f1a}
+.btn{margin-left:auto;flex:none;background:var(--acc);color:var(--ink);border-radius:11px;padding:15px 22px;font:600 16px/1 Inter,sans-serif;text-align:center;min-width:132px;display:flex;align-items:center;justify-content:center;gap:9px}
+.btn small{display:block;font:500 10px/1 Inter,sans-serif;color:rgba(0,0,0,.55);margin-top:5px}
+.btn.wait{background:#2a2313;color:#f0c987;border:1px solid #4a3c1c}
+.btn.done{background:#16301f;color:#7ddba6;border:1px solid #2c5a3d}
+.btn.fail{background:#2e1a17;color:#f09287;border:1px solid #5a2f28}
+.btn svg{width:18px;height:18px}
+.btn .spin{width:16px;height:16px}
+.swbig{margin-left:auto;width:58px;height:32px;border-radius:20px;background:var(--acc);position:relative;flex:none}
+.swbig i{position:absolute;top:3px;left:29px;width:26px;height:26px;border-radius:50%;background:var(--ink)}
+
+/* avviso */
+.toast{flex:none;border-radius:14px;display:flex;align-items:flex-start;gap:14px;padding:16px 18px;font:500 var(--f-nm)/1.35 Inter,sans-serif}
+.toast svg{width:23px;height:23px;flex:none;margin-top:1px}
+.toast .s{font:400 13px/1.4 Inter,sans-serif;opacity:.75;margin-top:5px}
+.toast .act{margin-left:auto;border:1px solid currentColor;border-radius:10px;padding:13px 19px;font:600 15px/1 Inter,sans-serif;flex:none}
+.toast.ok{background:#13251c;border:1px solid #2c5a3d;color:#a9e3c3}
+.toast.ok svg{color:#4fc39a}
+.toast.err{background:#271815;border:1px solid #5a2f28;color:#f3b5ac}
+.toast.err svg{color:var(--warn)}
+
+/* modale */
+.veil{position:absolute;inset:0;background:rgba(5,7,10,.76);display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{width:100%;background:var(--card);border:1px solid #2b323d;border-radius:20px;padding:28px 26px 24px;text-align:center}
+.modal .ic{width:62px;height:62px;border-radius:50%;background:#221c0e;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.modal .ic svg{width:31px;height:31px;color:var(--acc)}
+.modal .t{font:600 25px/1.25 Inter,sans-serif}
+.modal .s{font:400 14.5px/1.5 Inter,sans-serif;color:var(--dim);margin-top:11px}
+.modal .btns{display:flex;gap:12px;margin-top:24px}
+.modal .b{flex:1;border-radius:13px;padding:19px 0;font:600 17px/1 Inter,sans-serif}
+.modal .b.no{border:1px solid var(--line);color:var(--txt);background:var(--card2)}
+.modal .b.yes{background:var(--acc);color:var(--ink)}
+.modal .cdw{font:400 13px/1 Inter,sans-serif;color:#5d6878;margin-top:15px}
+
+/* PIN verticale */
+.pinwrap{width:100%;background:var(--card);border:1px solid #2b323d;border-radius:20px;padding:26px 24px}
+.pinwrap .ic{width:52px;height:52px;border-radius:50%;background:#221c0e;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.pinwrap .ic svg{width:26px;height:26px;color:var(--acc)}
+.pinwrap .t{font:600 23px/1.3 Inter,sans-serif;text-align:center}
+.pinwrap .s{font:400 14px/1.5 Inter,sans-serif;color:var(--dim);margin-top:9px;text-align:center}
+.pindots{display:flex;gap:15px;margin:22px auto 6px;justify-content:center}
+.pindots i{width:19px;height:19px;border-radius:50%;border:2px solid #3a434f}
+.pindots i.f{background:var(--acc);border-color:var(--acc)}
+.pinwrap .att{font:400 12.5px/1 Inter,sans-serif;color:#6f7b8c;text-align:center;margin-bottom:20px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad .p{height:76px;background:var(--card2);border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font:500 27px/1 Inter,sans-serif}
+.pad .p.f{font-size:14px;color:var(--dim)}
+
+/* avvio */
+.boot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 var(--pad)}
+.boot .logo{width:82px;height:82px;border-radius:22px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.boot .logo svg{width:38px;height:38px;color:var(--acc)}
+.boot .nm{font:300 34px/1 Inter,sans-serif}
+.boot .vr{font:400 13.5px/1 Inter,sans-serif;color:#5d6878;margin-top:11px}
+.boot .list{width:100%;margin-top:34px;display:flex;flex-direction:column;gap:2px}
+.bl{display:flex;align-items:center;gap:13px;padding:13px 4px;font:400 var(--f-nm)/1 Inter,sans-serif;color:var(--dim)}
+.bl .ic{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center}
+.bl .ic svg{width:19px;height:19px}
+.bl.done{color:#9fb0a8}.bl.done .ic svg{color:var(--ok)}
+.bl.now{color:var(--txt)}
+.bl .rs{margin-left:auto;font:400 13px/1 Inter,sans-serif;color:#5d6878;font-variant-numeric:tabular-nums}
+.bl.wait{opacity:.42}
+.bl .dw{width:8px;height:8px;border-radius:50%;background:#3f4a5a}
+.boot .pb{width:100%;height:6px;border-radius:4px;background:var(--off);margin-top:26px;overflow:hidden;position:relative}
+.boot .pb i{position:absolute;inset:0 auto 0 0;width:64%;background:var(--acc);border-radius:4px}
+.boot .hint{font:400 13px/1.45 Inter,sans-serif;color:#5d6878;margin-top:18px;text-align:center}
+
+/* HA giù */
+.offwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 26px}
+.offwrap .ic{width:86px;height:86px;border-radius:50%;background:#2a1a16;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+.offwrap .ic svg{width:41px;height:41px;color:var(--warn)}
+.offwrap .t{font:600 28px/1.3 Inter,sans-serif}
+.offwrap .s{font:400 15.5px/1.6 Inter,sans-serif;color:var(--dim);margin-top:14px}
+.offwrap .btns{display:flex;flex-direction:column;gap:12px;margin-top:26px;width:100%}
+.offwrap .b{border-radius:13px;padding:18px 0;font:600 16px/1 Inter,sans-serif;background:var(--acc);color:var(--ink)}
+.offwrap .b.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.offtop{flex:none;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);color:var(--dim);font:400 13.5px/1 Inter,sans-serif}
+.offtop .cl{font:500 22px/1 Inter,sans-serif;color:var(--txt);font-variant-numeric:tabular-nums}
+
+/* standby */
+.sb{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);opacity:.62}
+.sb .t{font:200 150px/1 Inter,sans-serif;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.sb .d{font:400 20px/1.4 Inter,sans-serif;color:var(--dim);margin-top:14px}
+.sb .row{display:flex;flex-direction:column;gap:20px;margin-top:44px}
+.sb .row .i{display:flex;align-items:center;gap:13px;font:400 17px/1 Inter,sans-serif;color:#aab3c1}
+.sb .row .i svg{width:21px;height:21px;color:#6f7b8c}
+.sb .row .i b{color:var(--txt);font-weight:500}
+
+/* impostazioni e diagnostica */
+.srow{display:flex;align-items:center;gap:15px;padding:16px 0;border-top:1px solid var(--line)}
+.srow:first-of-type{border-top:none;padding-top:4px}
+.srow .nm{font:500 var(--f-nm)/1.2 Inter,sans-serif}
+.srow .st{font:400 13px/1.35 Inter,sans-serif;color:var(--dim);margin-top:5px}
+.srow .act{margin-left:auto;flex:none;border:1px solid var(--line);border-radius:10px;padding:13px 17px;font:500 14.5px/1 Inter,sans-serif;color:var(--txt);background:var(--card2)}
+.srow .act.acc{background:var(--acc);border-color:var(--acc);color:var(--ink);font-weight:600}
+.srow .val{margin-left:auto;font:500 var(--f-nm)/1 Inter,sans-serif;font-variant-numeric:tabular-nums}
+.sw2{margin-left:auto;width:58px;height:32px;border-radius:20px;background:var(--off);position:relative;flex:none}
+.sw2 i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#6b7686}
+.sw2.on{background:var(--acc)}.sw2.on i{left:29px;background:var(--ink)}
+.slider{flex:1;max-width:220px;margin-left:auto;height:11px;border-radius:6px;background:var(--off);position:relative}
+.slider i{position:absolute;inset:0 auto 0 0;width:62%;background:var(--acc);border-radius:6px}
+.slider u{position:absolute;top:50%;left:62%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:#fff}
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.mcell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.mcell .kk{font:400 11.5px/1 Inter,sans-serif;color:var(--dim)}
+.mcell .vv{font:500 var(--f-nm)/1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:8px}
+.mcell.warn{border-color:#4a3c1c;background:#221c0e}
+.mcell.warn .vv{color:var(--acc)}
+.logf{display:flex;gap:8px;flex:none;margin-top:2px}
+.logf .lf{flex:1;height:44px;border:1px solid var(--line);background:var(--card2);border-radius:10px;display:flex;align-items:center;justify-content:center;font:500 13px/1 Inter,sans-serif;color:var(--dim)}
+.logf .lf.sel{background:var(--acc);border-color:var(--acc);color:var(--ink);font-weight:600}
+.loglist{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:1px;margin-top:10px}
+.lg{display:flex;gap:11px;padding:10px 2px;border-bottom:1px solid rgba(255,255,255,.04);font:400 12.5px/1.35 "JetBrains Mono",monospace}
+.lg .tm{color:#5d6878;flex:none}
+.lg .lv{flex:none;font-weight:500;width:52px}
+.lg.err .lv{color:var(--warn)}
+.lg.avv .lv{color:var(--acc)}
+.lg.inf .lv{color:#5d6878}
+.lg .ms{color:#b6bfcd;min-width:0}
+
+/* primo avvio e tastiera */
+.first{flex:1;display:flex;flex-direction:column;padding:var(--pad)}
+.first .top{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.first .top .t{font:600 27px/1 Inter,sans-serif}
+.steps{margin-left:auto;display:flex;gap:9px}
+.steps i{width:10px;height:10px;border-radius:50%;background:var(--off)}
+.steps i.on{background:var(--acc)}
+.wifis{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px 6px;display:flex;flex-direction:column;overflow:hidden}
+.wf{display:flex;align-items:center;gap:14px;padding:0 15px;flex:1;border-radius:11px}
+.wf svg{width:21px;height:21px;color:var(--dim);flex:none}
+.wf .nm{font:500 var(--f-nm)/1 Inter,sans-serif}
+.wf .lock{margin-left:auto;font:400 12.5px/1 Inter,sans-serif;color:var(--dim)}
+.wf.sel{background:#221c0e;box-shadow:inset 0 0 0 1px #4a3c1c}
+.wf.sel svg{color:var(--acc)}
+.qrsm{flex:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:16px;margin-top:14px}
+.qrsm .q{width:130px;height:130px;background:#fff;border-radius:10px;padding:8px;flex:none}
+.qrsm .tx{font:400 13.5px/1.55 Inter,sans-serif;color:var(--dim)}
+.qrsm .tx b{display:block;color:var(--txt);font:500 15px/1.3 Inter,sans-serif;margin-bottom:6px}
+.kb{flex:1;display:flex;flex-direction:column;padding:var(--pad)}
+.kbtop .t{font:600 21px/1 Inter,sans-serif}
+.kbtop .s{font:400 13.5px/1 Inter,sans-serif;color:var(--dim);margin-top:8px}
+.kbfield{flex:none;height:78px;background:var(--card);border:1px solid var(--line);border-radius:13px;display:flex;align-items:center;padding:0 18px;gap:14px;margin:14px 0 12px}
+.kbfield .vv{font:500 24px/1 Inter,sans-serif;letter-spacing:.2em}
+.kbfield .car{width:2px;height:28px;background:var(--acc);animation:bl2 1.1s infinite}
+@keyframes bl2{50%{opacity:0}}
+.kbfield .eye{margin-left:auto;font:500 13px/1 Inter,sans-serif;color:var(--dim);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+.kbrows{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
+.kbrow{flex:1;max-height:96px;display:flex;gap:7px}
+.key{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font:500 21px/1 Inter,sans-serif;color:var(--txt)}
+.key.wide{flex:1.5;font-size:13px;color:var(--dim)}
+.key.ok{flex:2.2;background:var(--acc);border-color:var(--acc);color:var(--ink);font-weight:600;font-size:16px}
+.key.sp{flex:4}
+
+/* wifi privata */
+.qcard{flex:none;background:#fff;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.qcard .q{width:100%;max-width:380px;aspect-ratio:1}
+.qcard .cap{font:600 13.5px/1.3 Inter,sans-serif;color:#171b20;margin-top:12px;text-align:center}
+.wbox .v{font:600 32px/1.15 Inter,sans-serif;margin-top:11px;word-break:break-all}
+.wbox .v.mono{font-family:"JetBrains Mono",monospace;font-size:26px;font-weight:500}
+.wbox .hd{display:flex;align-items:center;gap:12px}
+.wbox .hd .act{margin-left:auto;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font:500 13px/1 Inter,sans-serif;color:var(--txt);background:var(--card2)}
+.wnote{flex:none;border-radius:var(--r);padding:14px 16px;display:flex;gap:11px;font:400 13px/1.55 Inter,sans-serif;background:#251d0e;border:1px solid #4a3c1c;color:#f0c987}
+.wnote svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--acc)}
+.cd{margin-left:auto;font:500 14px/1 Inter,sans-serif;color:var(--acc);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8V16h7.2v-2.2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="7" width="12" height="10" rx="2"/><path d="M14 10.5 21 7v10l-7-3.5z"/></symbol>
+  <symbol id="i-camoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 7h9v10H2zM14 10.5 21 7v10l-7-3.5z"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V9l9-5 9 5v11M3 20h18M7 20v-7h10v7M7 16.5h10"/></symbol>
+  <symbol id="i-fence" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l3-3 3 3v13M14 21V8l3-3 3 3v13M2 12h20M2 16h20"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9H4z"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1 2 2 0 1 1-4 0 1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 15a2 2 0 1 1 0-4 1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9.6 4.6a2 2 0 1 1 4 0 1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7 2 2 0 1 1 0 4 1.6 1.6 0 0 0-1.8 1.8z"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5M12 17.5h.01"/></symbol>
+  <symbol id="i-cloudoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .4-8 6 6 0 0 0-9.3-3"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-screen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+
+<div class="shell">
+  <h1 class="tt">Stati e flussi in verticale</h1>
+  <p class="sub">Profilo <code>p4-800x1280</code>.</p>
+
+  <div class="grp" id="gr">
+    <span class="lb">Pannello</span>
+    <button data-p="p4" aria-pressed="true">10,1" · 800×1280</button>
+  </div>
+  <div class="grp" id="g1">
+    <span class="lb">Comandi</span>
+    <button data-s="inv" aria-pressed="true">In corso</button>
+    <button data-s="ok" aria-pressed="false">Riuscito</button>
+    <button data-s="ko" aria-pressed="false">Fallito</button>
+    <button data-s="conf" aria-pressed="false">Conferma</button>
+  </div>
+  <div class="grp" id="g2">
+    <span class="lb">Errori e attesa</span>
+    <button data-s="avvio" aria-pressed="false">Avvio</button>
+    <button data-s="ric" aria-pressed="false">Riconnessione</button>
+    <button data-s="haoff" aria-pressed="false">HA irraggiungibile</button>
+    <button data-s="camoff" aria-pressed="false">Telecamera offline</button>
+    <button data-s="sb" aria-pressed="false">Standby</button>
+  </div>
+  <div class="grp" id="g3">
+    <span class="lb">Configurazione</span>
+    <button data-s="set" aria-pressed="false">Impostazioni</button>
+    <button data-s="diag" aria-pressed="false">Sistema e registro</button>
+    <button data-s="first" aria-pressed="false">Primo avvio</button>
+    <button data-s="kb" aria-pressed="false">Tastiera</button>
+    <button data-s="pin" aria-pressed="false">PIN</button>
+    <button data-s="priv" aria-pressed="false">Rete privata</button>
+  </div>
+
+  <div class="wrap">
+    <div class="frame" id="frame"><div class="stage" id="stage"></div></div>
+    <div class="caption" id="cap"></div>
+  </div>
+</div>
+
+<script>
+function scene(id){return `
+<svg class="scene" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="sk${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3a4d"/><stop offset="1" stop-color="#151d27"/></linearGradient>
+  <radialGradient id="lm${id}" cx="50%" cy="50%"><stop offset="0" stop-color="rgba(255,214,150,.5)"/><stop offset="1" stop-color="rgba(255,214,150,0)"/></radialGradient></defs>
+  <rect width="640" height="360" fill="url(#sk${id})"/>
+  <rect y="150" width="640" height="210" fill="#171d25"/>
+  <path d="M0 360 L250 168 L390 168 L640 360 Z" fill="#20272f"/>
+  <path d="M60 360 L268 176 L372 176 L580 360 Z" fill="#262e37"/>
+  <rect x="0" y="120" width="150" height="130" fill="#1b222b"/><rect x="490" y="120" width="150" height="130" fill="#1b222b"/>
+  <circle cx="150" cy="128" r="70" fill="url(#lm${id})"/>
+  <g stroke="#39434f" stroke-width="5">
+    <path d="M150 150v100M186 150v100M222 150v100M258 152v96M294 154v92M148 160h150M148 236h150"/>
+    <path d="M350 154v92M386 152v96M422 150v100M458 150v100M494 150v100M346 160h150M346 236h150"/></g>
+  <rect x="300" y="140" width="44" height="120" fill="#2c343d"/></svg>`}
+function qr(seed){
+  let s=seed,N=25,m=[];
+  const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+  for(let y=0;y<N;y++){m[y]=[];for(let x=0;x<N;x++)m[y][x]=rnd()>0.52?1:0}
+  const fp=(ox,oy)=>{for(let y=0;y<7;y++)for(let x=0;x<7;x++){
+    const b=(x===0||x===6||y===0||y===6)||(x>1&&x<5&&y>1&&y<5);m[oy+y][ox+x]=b?1:0}
+    for(let y=-1;y<8;y++)for(let x=-1;x<8;x++){const px=ox+x,py=oy+y;
+      if(px>=0&&py>=0&&px<N&&py<N&&(x<0||x>6||y<0||y>6))m[py][px]=0}};
+  fp(0,0);fp(N-7,0);fp(0,N-7);
+  for(let i=8;i<N-8;i++){m[6][i]=i%2?0:1;m[i][6]=i%2?0:1}
+  let r=`<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" style="width:100%;height:100%"><rect width="${N}" height="${N}" fill="#fff"/><g fill="#0d1014">`;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(m[y][x])r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  return r+'</g></svg>';
+}
+const NAV=[['luci','Luci','i-bulb'],['clima','Clima','i-thermo'],['pv','Energia','i-sun'],
+           ['cam','Camere','i-cam'],['acc','Accessi','i-gate'],['ag','Agenda','i-cal'],['wifi','Wi-Fi','i-wifi']];
+const bar=(sel,dis)=>`<nav class="navbar">
+  <div class="nb home"><svg><use href="#i-home"/></svg><span>HOME</span></div>
+  ${NAV.map(([id,lb,ic])=>`<div class="nb ${id===sel?'sel':''} ${dis&&id!==sel?'dis':''}"><svg><use href="#${ic}"/></svg><span>${lb}</span></div>`).join('')}
+</nav>`;
+const sh=(ti,cr,right)=>`<div class="sh"><div class="ti">${ti}</div><div class="cr">${cr}</div>${right||'<div class="clock">18:42</div>'}</div>`;
+const wrap=(r,corpo,sel,dis,extra)=>`<section class="screen" data-r="${r}">${corpo}${bar(sel,dis)}${extra||''}</section>`;
+
+/* ---- accessi con stato del comando ---- */
+function accessi(r, stato, extra, toast){
+  const B={idle:'<div class="btn">Apri</div>',
+   wait:'<div class="btn wait"><span class="spin"></span>Invio…</div>',
+   done:'<div class="btn done"><svg><use href="#i-check"/></svg>Inviato</div>',
+   fail:'<div class="btn fail"><svg><use href="#i-x"/></svg>Non riuscito</div>'};
+  const cr={idle:'4 telecamere in diretta',wait:'comando in corso',
+            done:'impulso inviato alle 18:42:11',fail:'nessuna risposta da Home Assistant'};
+  return wrap(r, sh('Accessi',cr[stato])+`
+<div class="content">
+  <div class="camtop">${scene('m'+stato)}
+    <div class="ov"><span class="live"><i></i>DIRETTA</span><span>Cancello esterno</span></div>
+    <div class="ts">18:42:11</div></div>
+  <div class="thumbs">
+    <div class="th">${scene('u1'+stato)}<span>Pedonale</span></div>
+    <div class="th sel">${scene('u2'+stato)}<span>Carraio</span></div>
+    <div class="th">${scene('u3'+stato)}<span>Garage</span></div>
+    <div class="th">${scene('u4'+stato)}<span>Portico</span></div>
+  </div>
+  <div class="arow"><svg><use href="#i-fence"/></svg>
+    <div><div class="nm">Cancello pedonale</div><div class="st">ultimo impulso 17:58</div></div>
+    <div class="btn">Apri</div></div>
+  <div class="arow ${stato!=='idle'?'active':''}"><svg><use href="#i-gate"/></svg>
+    <div><div class="nm">Cancello esterno</div><div class="st">${stato==='fail'?'riprova o usa il telecomando':'conferma richiesta'}</div></div>
+    ${B[stato]}</div>
+  <div class="arow"><svg><use href="#i-home"/></svg>
+    <div><div class="nm">Porta del garage</div><div class="st">chiusa</div></div>
+    <div class="btn">Apri</div></div>
+  <div class="arow luce"><svg><use href="#i-bulb"/></svg>
+    <div><div class="nm">Luci giardino</div><div class="st" style="color:#f0a835">accese</div></div>
+    <div class="swbig"><i></i></div></div>
+  ${toast||''}
+</div>`,'acc',false,extra);
+}
+const TOK=`<div class="toast ok"><svg><use href="#i-check"/></svg>
+  <div>Impulso inviato al cancello esterno<div class="s">Home Assistant ha accettato il comando · verifica dalla telecamera</div></div></div>`;
+const TKO=`<div class="toast err"><svg><use href="#i-warn"/></svg>
+  <div>Comando non riuscito<div class="s">Nessuna risposta entro 8 secondi · il cancello potrebbe non essersi mosso</div></div>
+  <div class="act">Riprova</div></div>`;
+const MODAL=`<div class="veil"><div class="modal">
+  <div class="ic"><svg><use href="#i-gate"/></svg></div>
+  <div class="t">Aprire il cancello esterno?</div>
+  <div class="s">Il pannello invia l'impulso di apertura. Non riceve conferma dello stato: verifica dalla telecamera.</div>
+  <div class="btns"><div class="b no">Annulla</div><div class="b yes">Apri</div></div>
+  <div class="cdw">si annulla da sola tra 8 secondi</div></div></div>`;
+
+/* ---- riconnessione ---- */
+const Z=[['Soggiorno','on','65'],['Sala da pranzo','on','100'],['Divano','off',''],['Camera bambini','off',''],
+ ['Corridoio notte','on','40'],['Giardino','on','30'],['Mansarda','off',''],['Ripostiglio','off','']];
+const ric=(r)=>wrap(r,
+ `<div class="banner"><span class="spin"></span>Riconnessione a Home Assistant · tentativo 3<br>
+   <span style="color:#a2865a;font-weight:400">dati fermi alle 18:39 · i comandi sono sospesi</span></div>`+
+ sh('Luci','valori non aggiornati')+
+`<div class="content">
+  <div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap);min-height:0">
+   ${Z.slice(0, 8).map(([n,s,p])=>`
+    <div class="card" style="opacity:.45;justify-content:space-between;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg style="width:21px;height:21px;color:#8a95a6"><use href="#i-bulb"/></svg>
+        <span style="font:500 var(--f-nm)/1 Inter,sans-serif">${n}</span>
+        <span style="margin-left:auto;width:56px;height:31px;border-radius:20px;background:${s==='on'?'#f0a835':'#232b35'};position:relative">
+          <i style="position:absolute;top:3px;left:${s==='on'?'28px':'3px'};width:25px;height:25px;border-radius:50%;background:${s==='on'?'#0d1014':'#6b7686'}"></i></span>
+      </div>
+      <div style="font:600 var(--f-val)/1 Inter,sans-serif">${p?p+'<span style="font-size:16px;color:#8a95a6">%</span>':'spenta'}</div>
+      <div style="height:9px;border-radius:6px;background:#232b35;position:relative;overflow:hidden">
+        <i style="position:absolute;left:0;top:0;bottom:0;width:${p||0}%;background:#f0a835;border-radius:6px"></i></div>
+    </div>`).join('')}
+  </div>
+</div>`,'luci',true);
+
+/* ---- telecamera offline ---- */
+const camoff=(r)=>wrap(r, sh('Accessi','una telecamera non risponde')+`
+<div class="content">
+  <div class="camdead"><svg><use href="#i-camoff"/></svg>
+    <div class="t">Cancello pedonale non raggiungibile</div>
+    <div class="s">ultimo fotogramma valido alle 18:39</div></div>
+  <div class="thumbs">
+    <div class="th"><div class="skel"></div><span style="color:#8a95a6">Pedonale</span></div>
+    <div class="th">${scene('d2')}<span>Carraio</span></div>
+    <div class="th">${scene('d3')}<span>Garage</span></div>
+    <div class="th">${scene('d4')}<span>Portico</span></div>
+  </div>
+  <div class="arow"><svg><use href="#i-fence"/></svg>
+    <div><div class="nm">Cancello pedonale</div><div class="st">comando disponibile</div></div>
+    <div class="btn">Apri</div></div>
+  <div class="arow"><svg><use href="#i-gate"/></svg>
+    <div><div class="nm">Cancello esterno</div><div class="st">comando disponibile</div></div>
+    <div class="btn">Apri</div></div>
+  <div class="card" style="flex:none;font:400 13px/1.5 Inter,sans-serif;color:#8a95a6">
+    L'apertura funziona anche senza immagine: il comando passa da Home Assistant, non dalla telecamera.</div>
+</div>`,'acc');
+
+/* ---- avvio ---- */
+const avvio=(r)=>`<section class="screen" data-r="${r}"><div class="boot">
+  <div class="logo"><svg><use href="#i-home"/></svg></div>
+  <div class="nm">Ingresso</div>
+  <div class="vr">firmware 1.0.4 · avvio in corso</div>
+  <div class="list">
+    <div class="bl done"><span class="ic"><svg><use href="#i-check"/></svg></span>Rete Wi-Fi<span class="rs">1,2 s</span></div>
+    ${r==='p4'?'<div class="bl done"><span class="ic"><svg><use href="#i-check"/></svg></span>Co-processore C6<span class="rs">0,3 s</span></div>':''}
+    <div class="bl done"><span class="ic"><svg><use href="#i-check"/></svg></span>Orologio<span class="rs">0,4 s</span></div>
+    <div class="bl now"><span class="ic"><span class="spin"></span></span>Home Assistant<span class="rs">…</span></div>
+    <div class="bl wait"><span class="ic"><span class="dw"></span></span>Telecamere</div>
+    <div class="bl wait"><span class="ic"><span class="dw"></span></span>Primo aggiornamento</div>
+  </div>
+  <div class="pb"><i></i></div>
+  <div class="hint">se qualcosa non risponde, il pannello parte<br>lo stesso in sola lettura</div>
+</div></section>`;
+
+/* ---- HA giù ---- */
+const haoff=(r)=>`<section class="screen" data-r="${r}">
+  <div class="offtop"><span>Wi-Fi connesso · 192.0.2.21</span><span class="cl">18:42</span></div>
+  <div class="offwrap">
+    <div class="ic"><svg><use href="#i-cloudoff"/></svg></div>
+    <div class="t">Home Assistant<br>non risponde</div>
+    <div class="s">I comandi non sono disponibili. Gli ultimi dati risalgono alle 18:39, tre minuti fa. Il pannello riprova da solo ogni 15 secondi.</div>
+    <div class="btns"><div class="b">Riprova ora</div><div class="b ghost">Impostazioni</div></div>
+  </div></section>`;
+
+/* ---- standby ---- */
+const sb=(r)=>`<section class="screen" data-r="${r}"><div class="sb">
+  <div class="t">18:42</div>
+  <div class="d">giovedì 13 agosto<br>27° sereno</div>
+  <div class="row">
+    <div class="i"><svg><use href="#i-person"/></svg>In casa <b>2</b></div>
+    <div class="i"><svg><use href="#i-bolt"/></svg>Sole <b>3,42 kW</b></div>
+    <div class="i"><svg><use href="#i-bulb"/></svg><b>4</b> luci accese</div>
+    <div class="i"><svg><use href="#i-cal"/></svg><b>19:30</b> cena da amici</div>
+  </div></div></section>`;
+
+/* ---- impostazioni ---- */
+const set=(r)=>wrap(r, sh('Impostazioni','pannello ingresso · 1.0.4')+`
+<div class="content">
+  <div class="card">
+    <div class="k">Rete</div>
+    <div class="srow"><div><div class="nm">CasaWiFi</div><div class="st">segnale −48 dBm</div></div><div class="act">Cambia</div></div>
+    <div class="srow"><div><div class="nm">Indirizzo IP</div><div class="st">assegnato da DHCP</div></div><div class="val">192.0.2.21</div></div>
+  </div>
+  <div class="card">
+    <div class="k">Home Assistant</div>
+    <div class="srow"><div><div class="nm">Connesso</div><div class="st">ultimo aggiornamento 2 s fa</div></div><div class="act">Riprova</div></div>
+  </div>
+  <div class="card">
+    <div class="k">Schermo</div>
+    <div class="srow"><div><div class="nm">Luminosità</div><div class="st">al minimo dopo 2 min, spenta dopo 10</div></div><div class="slider"><i></i><u></u></div></div>
+  </div>
+  <div class="card">
+    <div class="k">Sistema</div>
+    <div class="srow"><div><div class="nm">Consenti configurazione</div><div class="st">apre pannello.local per 15 minuti</div></div><div class="sw2"><i></i></div></div>
+    <div class="srow"><div><div class="nm">Registro e diagnostica</div><div class="st">3 errori nelle ultime 24 ore</div></div>
+      <div class="act">Apri</div></div>
+    <div class="srow"><div><div class="nm">Riavvia</div><div class="st">nessuna impostazione viene persa</div></div><div class="act acc">Riavvia</div></div>
+  </div>
+</div>`,'');
+
+/* ---- diagnostica ---- */
+const diag=(r)=>wrap(r, sh('Sistema','registro e contatori')+`
+<div class="content">
+  <div class="card" style="flex:none">
+    <div class="k">Contatori</div>
+    <div class="mgrid">
+      <div class="mcell"><div class="kk">Acceso da</div><div class="vv">6 g 3 h</div></div>
+      <div class="mcell"><div class="kk">Riavvii</div><div class="vv">3</div></div>
+      <div class="mcell" style="grid-column:span 2"><div class="kk">Motivo ultimo riavvio</div><div class="vv">alimentazione</div></div>
+      <div class="mcell"><div class="kk">Heap libero</div><div class="vv">84,1 KB</div></div>
+      <div class="mcell warn"><div class="kk">Heap minimo</div><div class="vv">39,8 KB</div></div>
+      <div class="mcell"><div class="kk">fps</div><div class="vv">24</div></div>
+      <div class="mcell"><div class="kk">Wi-Fi</div><div class="vv">−48 dBm</div></div>
+    </div>
+  </div>
+  <div class="logf"><div class="lf sel">Tutti</div><div class="lf">Errori</div><div class="lf">Avvisi</div><div class="lf">Info</div></div>
+  <div class="loglist">
+    <div class="lg err"><span class="tm">18:39:02</span><span class="lv">ERRORE</span><span class="ms">ha: websocket chiuso dal server</span></div>
+    <div class="lg avv"><span class="tm">18:39:17</span><span class="lv">AVVISO</span><span class="ms">ha: riconnessione, tentativo 1</span></div>
+    <div class="lg inf"><span class="tm">18:39:19</span><span class="lv">INFO</span><span class="ms">ha: autenticato, 47 entità</span></div>
+    <div class="lg avv"><span class="tm">18:40:55</span><span class="lv">AVVISO</span><span class="ms">cam pedonale: timeout, 1 di 3</span></div>
+    <div class="lg inf"><span class="tm">18:41:02</span><span class="lv">INFO</span><span class="ms">cam pedonale: rientrata</span></div>
+    <div class="lg inf"><span class="tm">18:42:11</span><span class="lv">INFO</span><span class="ms">cmd switch.cancello_carraio ok 128 ms</span></div>
+    <div class="lg err"><span class="tm">18:42:40</span><span class="lv">ERRORE</span><span class="ms">heap sotto soglia: 39,8 KB</span></div>
+  </div>
+  <div style="flex:none;display:flex;gap:10px">
+    <div class="act" style="flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:15px;font:500 14.5px/1 Inter,sans-serif;background:var(--card2)">Mostra come QR</div>
+    <div class="act" style="flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:15px;font:500 14.5px/1 Inter,sans-serif;background:var(--card2)">Svuota registro</div>
+  </div>
+</div>`,'');
+
+/* ---- primo avvio ---- */
+const first=(r)=>`<section class="screen" data-r="${r}"><div class="first">
+  <div class="top"><div class="t">Scegli la rete</div><div class="steps"><i class="on"></i><i></i><i></i></div></div>
+  <div class="wifis">
+    ${[['CasaWiFi','protetta',1],['CasaWiFi_5G','protetta',0],['CasaOspiti','protetta',0],
+       ['FRITZ!Box 7530','protetta',0],['Vicini-2.4','protetta',0],['Altra rete…','manuale',0]]
+      .map(([n,l,s])=>`<div class="wf ${s?'sel':''}"><svg><use href="#i-wifi"/></svg><span class="nm">${n}</span><span class="lock">${l}</span></div>`).join('')}
+  </div>
+  <div class="qrsm"><div class="q">${qr(11)}</div>
+    <div class="tx"><b>Oppure dal telefono</b>Inquadra il codice: la configurazione prosegue lì, con la tastiera vera.</div></div>
+</div></section>`;
+
+/* ---- tastiera ---- */
+const R1='qwertyuiop'.split(''),R2='asdfghjkl'.split(''),R3='zxcvbnm'.split('');
+const kb=(r)=>`<section class="screen" data-r="${r}"><div class="kb">
+  <div class="kbtop"><div class="t">Password della rete</div><div class="s">passo 1 di 3 · CasaWiFi</div></div>
+  <div class="kbfield"><span class="vv">••••••••••</span><span class="car"></span><span class="eye">Mostra</span></div>
+  <div class="kbrows">
+    <div class="kbrow">${R1.map(c=>`<div class="key">${c}</div>`).join('')}</div>
+    <div class="kbrow">${R2.map(c=>`<div class="key">${c}</div>`).join('')}</div>
+    <div class="kbrow"><div class="key wide">MAIUSC</div>${R3.map(c=>`<div class="key">${c}</div>`).join('')}<div class="key wide">CANC</div></div>
+    <div class="kbrow"><div class="key wide">123</div><div class="key sp">spazio</div><div class="key ok">Connetti</div></div>
+  </div>
+</div></section>`;
+
+/* ---- PIN ---- */
+const pin=(r)=>wrap(r, sh('Wi-Fi','rete privata')+
+`<div class="content" style="justify-content:center">
+  <div class="pinwrap">
+    <div class="ic"><svg><use href="#i-lock"/></svg></div>
+    <div class="t">Rete privata</div>
+    <div class="s">Inserisci il PIN per mostrare il codice di collegamento.</div>
+    <div class="pindots"><i class="f"></i><i class="f"></i><i></i><i></i></div>
+    <div class="att">3 tentativi rimasti prima del blocco di 5 minuti</div>
+    <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<div class="p">${n}</div>`).join('')}
+      <div class="p f">Annulla</div><div class="p">0</div><div class="p f">Canc</div></div>
+  </div>
+</div>`,'wifi');
+
+/* ---- rete privata sbloccata ---- */
+const priv=(r)=>wrap(r, sh('Wi-Fi privata','visibile temporaneamente','<div class="cd">si nasconde tra 0:42</div>')+
+`<div class="content">
+  <div class="qcard"><div class="q">${qr(19)}</div><div class="cap">Inquadra con la fotocamera del telefono</div></div>
+  <div class="card wbox"><div class="k">Nome rete</div><div class="v">CasaWiFi</div></div>
+  <div class="card wbox"><div class="hd"><div class="k">Password</div><div class="act">Mostra</div></div>
+    <div class="v mono" style="color:#8a95a6">•••••••••••••</div></div>
+  <div class="wnote"><svg><use href="#i-warn"/></svg>
+    Questa è la rete di casa: chi si collega raggiunge telecamere, Home Assistant e tutti i dispositivi.</div>
+</div>`,'wifi');
+
+const S={
+ inv:(r)=>accessi(r,'wait'), ok:(r)=>accessi(r,'done',null,TOK), ko:(r)=>accessi(r,'fail',null,TKO),
+ conf:(r)=>accessi(r,'idle',MODAL), avvio, ric, haoff, camoff, sb, set, diag, first, kb, pin, priv};
+
+const CAP={
+ inv:`<h3>Comando in corso</h3>Il riscontro sta nel pulsante toccato: rotellina e "Invio…", riga evidenziata. In verticale le righe dei comandi sono <b>larghe quanto lo schermo</b>, quindi il pulsante è enorme e il testo accanto sta comodo.`,
+ ok:`<h3>Comando riuscito</h3>Pulsante verde per tre secondi. L'avviso non galleggia sopra il contenuto ma <b>si aggiunge in fondo alla colonna</b>: in verticale c'è spazio, e un avviso che copre i comandi mentre stai aprendo un cancello è la cosa da evitare.`,
+ ko:`<h3>Comando fallito</h3>Pulsante rosso e avviso persistente con "Riprova" a portata di pollice. Resta finché non lo tocchi: chi è davanti al cancello deve accorgersene.`,
+ conf:`<h3>Conferma di apertura</h3>Riquadro modale a tutta larghezza meno i margini. La telecamera resta visibile dietro il velo: vedi chi stai facendo entrare mentre confermi.`,
+ avvio:`<h3>Avvio</h3>Elenco dei passi con esito e tempi, centrato verticalmente. Sul pannello grande c'è un passo in più per il co-processore C6, che può fallire per conto suo. In fondo la promessa: se un pezzo non risponde, si parte comunque in sola lettura.`,
+ ric:`<h3>Riconnessione</h3>Fascia ambra in testa, sopra la testata di sezione. I valori restano visibili al 45% — sono veri, solo vecchi — e le voci della barra in basso si attenuano, tranne quella dove sei.`,
+ haoff:`<h3>Home Assistant irraggiungibile</h3>Schermata piena senza barra di navigazione: non c'è nulla da navigare. In verticale i due pulsanti si impilano invece di affiancarsi, e diventano larghi quanto lo schermo. In alto restano rete e orologio, perché l'ora viene da NTP.`,
+ camoff:`<h3>Telecamera offline</h3>Il riquadro morto mantiene il <b>rapporto 16:9</b> invece di collassare, così il layout non salta quando la telecamera rientra. La miniatura in attesa usa l'animazione di caricamento; i comandi restano attivi.`,
+ sb:`<h3>Standby</h3>Orologio da 150 px e le quattro informazioni <b>impilate</b> invece che in riga: in verticale si leggono meglio una sotto l'altra, e da lontano si scandiscono con lo sguardo.`,
+ set:`<h3>Impostazioni</h3>Il menu laterale sparisce: in verticale diventa <b>un elenco unico con intestazioni</b>, che si scorre. Più semplice e più adatto al formato. C'è anche la voce che apre il registro.`,
+ diag:`<h3>Sistema e registro</h3>Contatori in una griglia 2×2 in alto, con i valori fuori soglia in ambra — qui l'heap minimo. Sotto, il registro filtrabile per livello, in carattere monospaziato. In fondo "Mostra come QR": inquadri e continui a leggere il registro dal telefono.`,
+ first:`<h3>Primo avvio</h3>L'elenco delle reti si prende tutta l'altezza disponibile, con righe alte e comode. Il codice QR passa da riquadro laterale a <b>fascia orizzontale in fondo</b>.`,
+ kb:`<h3>Tastiera</h3>È il punto dolente della verticale: dieci tasti su 800 px fanno tasti da 72 px di larghezza, contro i 116 dell'orizzontale. Restano alti, quindi usabili, ma è stretto: un motivo in più per configurare dal telefono col QR.`,
+ pin:`<h3>PIN</h3>In verticale il tastierino sta <b>sotto</b> i pallini invece che di fianco: tasti da 76 px di altezza e un pollice che non deve attraversare lo schermo.`,
+ priv:`<h3>Rete privata</h3>Password nascosta anche dopo il PIN, conto alla rovescia in testata, avviso ambra su cosa raggiunge chi si collega. Il QR resta grande.`
+};
+
+let prof='p4', scr='inv';
+const DIM={p4:[800,1280]};
+function render(){
+  const [w,h]=DIM[prof];
+  const st=document.getElementById('stage');
+  st.style.width=w+'px'; st.style.height=h+'px';
+  st.innerHTML=S[scr](prof);
+  document.getElementById('cap').innerHTML=CAP[scr];
+  document.querySelectorAll('#gr button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===prof)));
+  document.querySelectorAll('#g1 button,#g2 button,#g3 button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===scr)));
+  fit();
+}
+function fit(){
+  const [w,h]=DIM[prof];
+  const frame=document.getElementById('frame');
+  const disp=Math.min(760, window.innerHeight-160);
+  const s=Math.min(1, disp/h);
+  document.getElementById('stage').style.transform='scale('+s+')';
+  frame.style.width=(w*s+24)+'px'; frame.style.height=(h*s+24)+'px';
+}
+document.querySelectorAll('#gr button').forEach(b=>b.onclick=()=>{prof=b.dataset.p;render()});
+document.querySelectorAll('#g1 button,#g2 button,#g3 button').forEach(b=>b.onclick=()=>{scr=b.dataset.s;render()});
+addEventListener('resize',fit);
+render();
+</script>
+</body>
+</html>

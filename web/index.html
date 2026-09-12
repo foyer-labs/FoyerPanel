@@ -1,0 +1,2903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · configuration</title>
+<!-- logo-favicon:start -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%22256%22%20height%3D%22256%22%20role%3D%22img%22%20aria-label%3D%22Foyer%22%3E%0A%20%20%3Ctitle%3EFoyer%3C/title%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230D1014%22/%3E%0A%20%20%3Cpolyline%20points%3D%2221%2C37%2032%2C28%2043%2C37%22%20fill%3D%22none%22%20stroke%3D%22%23E8ECF2%22%20stroke-width%3D%223.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%0A%20%20%3Cpolyline%20points%3D%2214%2C31.5%2032%2C17%2050%2C31.5%22%20fill%3D%22none%22%20stroke%3D%22%23E8ECF2%22%20stroke-width%3D%223.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%220.6%22/%3E%0A%20%20%3Cpolyline%20points%3D%227%2C26%2032%2C6%2057%2C26%22%20fill%3D%22none%22%20stroke%3D%22%23E8ECF2%22%20stroke-width%3D%223.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%220.32%22/%3E%0A%20%20%3Crect%20x%3D%2226%22%20y%3D%2247%22%20width%3D%2212%22%20height%3D%2210%22%20fill%3D%22%23F0A835%22/%3E%0A%20%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2247%22%20r%3D%226%22%20fill%3D%22%23F0A835%22/%3E%0A%20%20%3Cpolyline%20points%3D%2216%2C57%2048%2C57%22%20fill%3D%22none%22%20stroke%3D%22%23E8ECF2%22%20stroke-width%3D%223.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%0A%3C/svg%3E">
+<!-- logo-favicon:end -->
+<!--
+  Pagina di configurazione — 03-config-contratto.md §6.
+
+  La serve il pannello, dalla propria flash, e quindi non puo chiedere
+  niente a nessuno: niente CDN, niente font scaricati, niente librerie. Un
+  pannello a muro deve potersi configurare anche il giorno che la linea e
+  giu, che e proprio il giorno in cui si va a vedere cosa non va.
+
+  Niente localStorage, per regola di progetto: la verita sta nel pannello.
+  Se questa pagina si ricordasse qualcosa fra due aperture, ci sarebbero due
+  idee di come e configurato l'impianto — e quella sbagliata sarebbe sempre
+  quella che si guarda.
+
+  I campi non sono scritti a mano uno per uno: li genera config.schema.json,
+  che il pannello serve su /api/schema. Tipi, intervalli, enumerazioni e
+  campi obbligatori vengono da li, e quindi non possono divergere dal
+  firmware. Quello che il file non sa e come si chiamano le cose per un
+  essere umano e in che ordine si guardano: quello sta in SEZIONI, qui
+  sotto, ed e l'unica parte scritta a mano.
+-->
+<style>
+:root{
+  --sf:#f4f5f7; --card:#fff; --line:#e2e5e8; --line2:#edeff1;
+  --txt:#171b20; --dim:#6b737d; --dim2:#8b939d; --lbl:#4a525b;
+  --acc:#f0a835; --ok:#25a05f; --err:#c0402f; --err-bg:#fdf3f2;
+  --err-line:#d9584a; --warn:#8a6412; --warn-bg:#fdf6e6; --warn-line:#e8cf94;
+  --nav-sel:#171b20;
+}
+*{box-sizing:border-box}
+/* `hidden` has to win over the display of a class: `.btn` and `.bar` say
+   inline-flex and flex, and without this line a hidden button stays. */
+[hidden]{display:none !important}
+html,body{margin:0;height:100%}
+body{
+  background:var(--sf); color:var(--txt);
+  font:400 14px/1.5 Inter,-apple-system,"Segoe UI",Roboto,sans-serif;
+  display:flex; flex-direction:column;
+}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+
+/* ---- intestazione ---- */
+.apphead{
+  background:var(--card); border-bottom:1px solid var(--line);
+  padding:14px 22px; display:flex; align-items:center; gap:14px; flex:none;
+}
+/* Foyer's mark, written by tools/gen_logo.py between the two comments
+   below in the page's body: the waves take the text colour. */
+.apphead .marchio{width:38px; height:38px; flex:none; color:var(--txt)}
+.brand{min-width:0}
+.brand .t{font:600 15px/1.2 inherit; white-space:nowrap; overflow:hidden;
+          text-overflow:ellipsis}
+.apphead .right{margin-left:auto; display:flex; align-items:center; gap:10px}
+.pill{
+  display:inline-flex; align-items:center; gap:7px; height:28px;
+  padding:0 12px; border-radius:14px; border:1px solid var(--line);
+  font:500 12px/1 inherit; color:var(--dim); background:var(--card);
+}
+.pill i{width:8px; height:8px; border-radius:50%; background:var(--dim2)}
+.pill.ok i{background:var(--ok)}
+.pill.ok{color:var(--ok)}
+/* The page's language, next to the connection: a small select, not the
+   42-pixel one of the fields. */
+.apphead select.lingua{
+  width:auto; height:28px; padding:0 10px; border-radius:14px;
+  font:500 12px/1 inherit; color:var(--dim);
+}
+
+/* ---- warning bands: the trial of a new Wi-Fi network ---- */
+.bar{
+  display:flex; align-items:center; gap:10px; padding:11px 22px;
+  background:var(--warn-bg); border-bottom:1px solid var(--warn-line);
+  color:var(--warn); font:500 12.5px/1.4 inherit; flex:none;
+}
+/* A label with a long and a short form: the short one only on a phone. */
+.corto{display:none}
+
+/* ---- corpo ---- */
+.wrap{flex:1; display:flex; min-height:0}
+.nav{
+  width:214px; flex:none; background:var(--card);
+  border-right:1px solid var(--line); padding:12px 10px; overflow:auto;
+}
+.nav .gl{
+  font:600 10.5px/1 inherit; letter-spacing:.16em; text-transform:uppercase;
+  color:#98a0aa; padding:12px 10px 7px;
+}
+.nav button{
+  display:flex; width:100%; align-items:center; gap:10px; padding:9px 10px;
+  border:0; border-radius:8px; background:none; text-align:left;
+  font:500 13.5px/1 inherit; color:#404952; cursor:pointer;
+}
+.nav button:hover{background:#f2f3f5}
+.nav button.sel{background:var(--nav-sel); color:#fff}
+.nav button .n{margin-left:auto; font:500 11px/1 inherit; color:#98a0aa}
+
+.pane{flex:1; overflow:auto; padding:22px 26px 96px; min-width:0}
+.pane h2{font:600 20px/1.2 inherit; margin:0 0 5px}
+.pane .lead{font:400 13.5px/1.6 inherit; color:var(--dim); margin:0 0 20px; max-width:660px}
+
+.card{background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px}
+.card>.ch{
+  padding:14px 18px; border-bottom:1px solid var(--line2);
+  display:flex; align-items:center; gap:10px;
+}
+.card>.ch .t{font:600 14px/1 inherit}
+.card>.ch .s{font:400 12.5px/1 inherit; color:#828a94; margin-left:auto}
+.card>.cb{padding:16px 18px}
+
+.field{margin-bottom:15px}
+.field:last-child{margin-bottom:0}
+.field>label{display:block; font:500 12.5px/1 inherit; color:var(--lbl); margin-bottom:7px}
+.field .hint{font:400 12px/1.45 inherit; color:var(--dim2); margin-top:6px}
+.field .errmsg{font:500 12px/1.45 inherit; color:var(--err); margin-top:6px}
+
+input[type=text],input[type=number],input[type=password],select{
+  width:100%; height:42px; border:1px solid #d5d9de; border-radius:9px;
+  background:var(--card); padding:0 12px; font:400 14px/1 inherit;
+  color:var(--txt);
+}
+input.mono{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:13px}
+input:focus,select:focus{outline:2px solid var(--acc); outline-offset:-1px}
+input.err,select.err{border-color:var(--err-line); background:var(--err-bg)}
+input:disabled{background:#f4f5f6; color:var(--dim2)}
+
+.sw{display:flex; align-items:center; gap:10px}
+.sw input{width:auto; height:auto; margin:0}
+.griglia{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px}
+
+/* <ICONE-FONT> */
+/* GENERATO da tools/genera_icone.py — non si scrive a mano */
+@font-face{font-family:"IconePannello";font-display:block;
+  src:url(data:font/woff2;base64,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) format("woff2")}
+/* </ICONE-FONT> */
+
+/* ---- la scelta di un colore ----
+   La tavolozza e quella del sistema: `input type=color` apre il quadrato
+   con i cursori senza che questa pagina debba disegnarlo, senza una
+   libreria e senza rete. Conta: la pagina la serve il pannello dalla
+   propria flash. */
+.concolore{display:flex; gap:10px; align-items:center}
+.concolore input[type=color]{
+  width:52px; height:38px; flex:none; padding:2px; cursor:pointer;
+  border:1px solid var(--line); border-radius:9px; background:#fff;
+}
+.concolore input[type=text]{flex:1; min-width:0}
+/* Il campo di testo accanto non e un doppione: un colore si copia e si
+   incolla — da un'altra stanza, da una nota, dal pannello di qualcun
+   altro — e da una tavolozza non si incolla niente. */
+
+/* ---- il contrasto ---- */
+.contr{width:100%; border-collapse:collapse; font-size:13px}
+.contr td{padding:7px 8px; border-bottom:1px solid var(--line)}
+.contr td:last-child{text-align:right; font-variant-numeric:tabular-nums}
+.contr .campione{
+  display:inline-block; padding:4px 12px; border-radius:7px;
+  border:1px solid rgba(0,0,0,.25); min-width:120px; text-align:center;
+}
+.contr .male{color:#c0392b; font-weight:600}
+.contr .cosi{color:#b8860b; font-weight:600}
+.contr .bene{color:#1d7a4c}
+.provino{
+  margin-top:12px; padding:16px; border-radius:12px;
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.provino .scheda{padding:12px 16px; border-radius:10px; border:1px solid}
+.provino .pulsante{padding:8px 18px; border-radius:9px; font-weight:600}
+
+/* ---- l'anteprima di un'icona ----
+   Il carattere-icona sta **dentro questo file**, sottoinsieme delle sole
+   ventotto che si possono scegliere: quattro kilobyte. Non e un vezzo — un
+   elenco di nomi come `mode_fan` o `heat_pump` chiede di indovinare cosa si
+   vedra sul vetro, e l'unico modo di scoprirlo era salvare e andare a
+   guardare il pannello.
+
+   Niente CDN, come per tutto il resto: la pagina la serve il pannello dalla
+   propria flash, e deve funzionare il giorno che la linea e giu. */
+.icoprev{
+  width:42px; height:42px; flex:none; display:flex; align-items:center;
+  justify-content:center; border:1px solid var(--line); border-radius:9px;
+  background:#fafbfc; color:var(--txt);
+  font:400 24px/1 "IconePannello"; -webkit-font-smoothing:antialiased;
+}
+/* Un nome che il font non ha: si vede che manca invece di lasciare un
+   quadrato vuoto che sembra un difetto della pagina. */
+.icoprev.vuota{color:var(--dim2); font:500 11px/1.2 inherit; letter-spacing:.02em}
+.conicona{display:flex; gap:10px; align-items:center}
+.conicona select{flex:1; min-width:0}
+
+/* ---- righe ripetibili ---- */
+.riga{
+  display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+  border-bottom:1px solid var(--line2); flex-wrap:wrap;
+}
+.riga:last-of-type{border-bottom:0}
+.riga .idx{
+  width:26px; flex:none; text-align:center; color:var(--dim2);
+  font:500 12px/42px inherit;
+}
+.riga .campi{flex:1; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; min-width:0}
+.ord{display:flex;gap:4px;margin-left:auto}
+.ord .btn{min-width:2rem;padding:.25rem .4rem}
+.riga .del{flex:none}
+.vuoto{color:var(--dim2); font:400 13px/1.6 inherit; padding:6px 0}
+
+/* ---- righe che contengono altri elenchi ----
+   Chiuse sono una barra alta 52 px con nome e riassunto; aperte si allargano
+   e mostrano i campi piu gli elenchi dentro, rientrati e con un filetto che
+   dice a chi appartengono. */
+.rg{border:1px solid var(--line); border-radius:11px; margin-bottom:10px; background:#fcfcfd}
+.rg:last-child{margin-bottom:0}
+.rg>.rt{display:flex; align-items:center; gap:11px; padding:11px 13px; cursor:pointer}
+.rg>.rt .idx{width:22px; flex:none; text-align:center; color:var(--dim2); font:500 12px/1 inherit}
+.rg>.rt .nm{font:600 13.5px/1.35 inherit; min-width:0; overflow:hidden; text-overflow:ellipsis}
+.rg>.rt .nm .s{display:block; font:400 12px/1.35 inherit; color:var(--dim2); margin-top:3px}
+.rg>.rt .ord{margin-left:auto}
+.rg>.rt .chev{min-width:30px; padding:0; height:30px; flex:none; color:var(--dim)}
+.rg.aperta>.rt{border-bottom:1px solid var(--line2); background:var(--card); border-radius:11px 11px 0 0}
+.rg>.rb{padding:14px 13px 13px}
+.dentro{margin-top:14px; border-left:3px solid #e6e9ec; padding-left:13px}
+.dentro>.dt{
+  font:600 11.5px/1 inherit; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim2); margin-bottom:9px; display:flex; align-items:baseline;
+  gap:9px; flex-wrap:wrap;
+}
+.dentro>.dt .n{font:400 11.5px/1.4 inherit; letter-spacing:0; text-transform:none; color:#a8afb8}
+.dentro .riga{padding:7px 0}
+.dentro .riga .idx{line-height:38px}
+.dentro input[type=text],.dentro input[type=number],.dentro select{height:38px}
+.dentro .btn.sm{height:31px}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:42px; padding:0 16px; border-radius:9px; font:600 13.5px/1 inherit;
+  border:1px solid #d5d9de; background:var(--card); color:var(--txt);
+  cursor:pointer;
+}
+.btn:hover{background:#f7f8f9}
+.btn.acc{background:var(--acc); border-color:var(--acc); color:var(--txt)}
+.btn.acc:hover{filter:brightness(1.04)}
+.btn.danger{border-color:#e6b7b1; color:var(--err)}
+.btn.sm{height:34px; padding:0 11px; font-size:12.5px}
+.btn:disabled{opacity:.5; cursor:default}
+
+/* ---- translations ----
+   One row per text: its key, the English it translates, the box. Long
+   texts get a taller box by themselves; nothing here is a table, so a
+   phone gets the same rows one under the other. */
+.trbar{display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end}
+.trbar .field{margin:0; flex:1; min-width:150px}
+.tract{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:14px}
+.tract .quanti{font:500 12.5px/1.4 inherit; color:var(--warn)}
+.trmsg{font:500 12.5px/1.45 inherit; color:var(--dim); margin-top:10px}
+.trmsg.ok{color:var(--ok)} .trmsg.ko{color:var(--err)}
+.trcount{font:500 12px/1 inherit; color:var(--dim2); margin-bottom:6px}
+.trr{padding:12px 0; border-bottom:1px solid var(--line2)}
+.trr:last-of-type{border-bottom:0}
+.trr .trk{display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  font:500 11.5px/1.3 "JetBrains Mono",ui-monospace,monospace; color:var(--dim2)}
+.trr .trk .tag{font:600 10.5px/1 Inter,sans-serif; padding:3px 7px; border-radius:6px;
+  background:var(--warn-bg); color:var(--warn)}
+.trr .trk .tag.ko{background:var(--err-bg); color:var(--err)}
+.trr .trk .btn{margin-left:auto}
+.trr .forma{font:600 11px/1 inherit; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--lbl); margin:10px 0 5px}
+.trr .tren{font:400 12.5px/1.45 inherit; color:var(--dim); margin:5px 0 6px;
+  white-space:pre-wrap}
+.trr .base{font:400 12px/1.45 inherit; color:var(--dim2); margin-top:5px; white-space:pre-wrap}
+.trr textarea{width:100%; border:1px solid #d5d9de; border-radius:9px;
+  padding:9px 12px; font-family:inherit; font-size:14px; line-height:1.45;
+  color:var(--txt); resize:vertical}
+.trr textarea:focus{outline:2px solid var(--acc); outline-offset:-1px}
+.trr textarea.err{border-color:var(--err-line); background:var(--err-bg)}
+
+/* ---- piede fisso ---- */
+.piede{
+  position:fixed; left:0; right:0; bottom:0; background:var(--card);
+  border-top:1px solid var(--line); padding:12px 22px;
+  display:flex; align-items:center; gap:12px;
+}
+.piede .stato{font:500 13px/1.4 inherit; color:var(--dim)}
+.piede .stato.mod{color:var(--warn)}
+.piede .stato.ko{color:var(--err)}
+.piede .stato.ok{color:var(--ok)}
+.piede .destra{margin-left:auto; display:flex; gap:10px; flex:none}
+/* Two buttons only, and bigger: they are the only two things done from the
+   footer, and Save is the one looked for with the thumb. Export and Import
+   are in «Status and log», which is where one goes for the once-in-a-while
+   things. */
+.piede .btn{height:46px; padding:0 22px; font-size:14.5px}
+.piede .btn.acc{min-width:170px}
+
+/* ---- registro ---- */
+table.log{width:100%; border-collapse:collapse; font-size:13px}
+table.log td{padding:6px 8px; border-bottom:1px solid var(--line2); vertical-align:top}
+table.log td.ora{white-space:nowrap; color:var(--dim2); font-family:"JetBrains Mono",monospace; font-size:12px}
+table.log td.liv{white-space:nowrap; font-weight:600; font-size:12px}
+table.log tr.errore td.liv{color:var(--err)}
+table.log tr.avviso td.liv{color:var(--warn)}
+table.log tr.info td.liv,table.log tr.debug td.liv{color:var(--dim2)}
+dl.stato{display:grid; grid-template-columns:auto 1fr; gap:6px 16px; margin:0; font-size:13px}
+dl.stato dt{color:var(--dim)}
+dl.stato dd{margin:0; font-family:"JetBrains Mono",monospace; font-size:12.5px}
+
+/* Dal telefono si configura in piedi in corridoio, con una mano sola: le
+   colonne diventano una, la navigazione una striscia che scorre, e i
+   pulsanti del piede non devono mai andare a capo — "Salva e applica" su
+   tre righe e un pulsante che non si capisce piu cosa fa. */
+@media (max-width:760px){
+  /* One line: mark, name, Home Assistant's state. It wrapped three times
+     and took a third of the screen before the first item. */
+  .apphead{padding:10px 14px; gap:10px}
+  .apphead .marchio{width:30px; height:30px}
+  .apphead .right{margin-left:auto; flex:none}
+  .pill .lungo{display:none}
+  .bar{padding:10px 14px; align-items:flex-start}
+  .wrap{flex-direction:column}
+  .nav{width:auto; border-right:0; border-bottom:1px solid var(--line);
+       display:flex; gap:6px; overflow-x:auto; padding:8px}
+  .nav .gl{display:none}
+  .nav button{width:auto; white-space:nowrap}
+  .pane{padding:16px 14px 110px}
+  .card>.cb{padding:14px}
+  .riga{gap:8px}
+  .riga .idx{line-height:20px}
+  .rg>.rt{padding:10px}
+  .rg>.rb{padding:12px 10px}
+  .dentro{padding-left:8px; border-left-width:2px}
+  /* One line: the state on the left, on two lines at most, and the two
+     buttons on the right. With four buttons «Save and apply» went off the
+     screen; with two they fit, and Save stays the biggest target. */
+  .piede{padding:8px 12px; gap:10px}
+  .piede .stato{
+    flex:1 1 auto; font-size:12px; line-height:1.3; min-width:0;
+    overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+  }
+  .piede .btn{height:46px; padding:0 16px; font-size:14px; white-space:nowrap}
+  .piede .btn.acc{min-width:0; padding:0 20px}
+  .piede .lungo{display:none}
+  .piede .corto{display:inline}
+}
+</style>
+</head>
+<body>
+
+<header class="apphead">
+  <!-- logo-mark:start -->
+  <svg class="marchio" viewBox="0 0 64 64" aria-hidden="true"><polyline points="21,37 32,28 43,37" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14,31.5 32,17 50,31.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/><polyline points="7,26 32,6 57,26" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.32"/><rect x="26" y="47" width="12" height="10" fill="#F0A835"/><circle cx="32" cy="47" r="6" fill="#F0A835"/><polyline points="16,57 48,57" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <!-- logo-mark:end -->
+  <div class="brand">
+    <div class="t" id="nome-pannello">Foyer Panel</div>
+  </div>
+  <div class="right">
+    <select class="lingua" id="lingua-pagina" hidden></select>
+    <span class="pill" id="stato-ha"><i></i><span><span class="lungo">Home Assistant </span><span id="stato-ha-testo">—</span></span></span>
+  </div>
+</header>
+
+<div class="bar" id="barra-rete" hidden>
+  <span id="testo-rete"></span>
+</div>
+
+<div class="wrap">
+  <nav class="nav" id="nav"></nav>
+  <main class="pane" id="pane"></main>
+</div>
+
+<footer class="piede">
+  <span class="stato" id="stato">…</span>
+  <span class="destra">
+    <input type="file" id="file" accept=".json,application/json" hidden>
+    <button class="btn" id="annulla" data-t="page.undo" disabled>Undo</button>
+    <button class="btn acc" id="salva" disabled><span class="lungo" data-t="page.save">Save and apply</span><span class="corto" data-t="page.save_short">Save</span></button>
+  </span>
+</footer>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------------
+ * The page's texts.
+ *
+ * None is written in this file: they come from the panel (/api/texts), in
+ * the panel's language or in the one chosen at the top, with the edits
+ * made in «Translations» on top of the built-in ones. In the project they
+ * live in i18n/<code>.json, section "web"; tools/check_page_texts.py
+ * checks that every key asked for here is there, and that every field of
+ * the schema has its label.
+ *
+ * {name} in a text is filled by name: a translation may move it, not
+ * rename it — gen_texts.py and the panel both refuse that.
+ * --------------------------------------------------------------------- */
+let TEXTS = {};
+let LANG = "en";
+let LANGS = [];
+/* The language chosen at the top. In the address and not in localStorage:
+   the page remembers nothing between two openings (see the head of this
+   file), but a reload keeps what the address says. Empty: the panel's. */
+let chosenLang = new URLSearchParams(location.search).get("lang") || "";
+
+/* The two things that can be said before the texts arrive — or when they
+   cannot, because the panel stopped answering. English, like every
+   message with no language to speak. */
+const BEFORE_TEXTS = {
+  "state.loading": "Loading…",
+  "state.unreachable": "The panel is not answering, or the configuration is not unlocked. Tap “Allow configuration” in Settings → System.",
+};
+
+function fill(s, values) {
+  return values ? s.replace(/\{([a-z_][a-z0-9_]*)\}/g,
+    (m, k) => (k in values ? String(values[k]) : m)) : s;
+}
+
+/* The text of `key`. A missing one shows its key: a label that reads
+   "field.robot.name.label" says where to look, an empty one says nothing. */
+function t(key, values) {
+  let s = TEXTS[key];
+  if (s && typeof s === "object") s = s.other;
+  if (typeof s !== "string") s = BEFORE_TEXTS[key] || key;
+  return fill(s, values);
+}
+
+/* The form that goes with n, by the rule of i18n.c form(): French says
+   "0 chose", the others "0 things". {n} is always available. */
+function tn(key, n, values) {
+  const s = TEXTS[key];
+  const one = LANG === "fr" ? Math.abs(n) <= 1 : Math.abs(n) === 1;
+  const text = s && typeof s === "object" ? s[one ? "one" : "other"]
+             : typeof s === "string" ? s : key;
+  return fill(text, Object.assign({ n }, values));
+}
+
+/* A text that may not exist: most fields have no hint. */
+function tIf(key) {
+  const s = TEXTS[key];
+  return typeof s === "string" ? s : null;
+}
+
+async function loadTexts() {
+  const q = chosenLang ? "?lang=" + encodeURIComponent(chosenLang) : "";
+  const r = await fetch("/api/texts" + q);
+  if (!r.ok) throw new Error(String(r.status));
+  const j = await r.json();
+  TEXTS = j.web || {};
+  LANG = j.lang || "en";
+  LANGS = Array.isArray(j.languages) ? j.languages : [];
+  document.documentElement.lang = LANG;
+  staticTexts();
+}
+
+/* What is written in the HTML, and the header. Called again when the
+   language changes, like everything else that draws. */
+function staticTexts() {
+  document.title = t("page.title");
+  for (const e of document.querySelectorAll("[data-t]")) e.textContent = t(e.dataset.t);
+  const sel = document.getElementById("lingua-pagina");
+  sel.textContent = "";
+  for (const l of LANGS) {
+    const o = document.createElement("option");
+    o.value = l.code;
+    o.textContent = l.name;
+    sel.append(o);
+  }
+  sel.value = LANG;
+  sel.title = t("page.language");
+  sel.hidden = LANGS.length < 2;
+  drawHeader();
+}
+
+/* ------------------------------------------------------------------------
+ * Cosa si vede e in che ordine.
+ *
+ * L'unica parte scritta a mano: config.schema.json sa i tipi e gli
+ * intervalli ma non sa come si chiamano le cose per un essere umano, ne che
+ * la porta va accanto all'indirizzo e non in fondo alla pagina.
+ *
+ * `chiavi` sono percorsi di primo o secondo livello nel documento. Una
+ * chiave che lo schema non conosce viene saltata invece di far saltare la
+ * pagina: cosi un firmware piu vecchio di questa pagina mostra quello che
+ * ha, invece di niente.
+ * --------------------------------------------------------------------- */
+const SEZIONI = [
+  { id:"network", gruppo:"links", chiavi:["system"], segreti:["wifi_pw"] },
+  { id:"home_assistant", gruppo:"links", chiavi:["home_assistant"], segreti:["ha_token"] },
+  { id:"standby", gruppo:"content", chiavi:["standby"] },
+  { id:"lights", gruppo:"content", conta:"lights.zones", chiavi:["lights"] },
+  { id:"climate", gruppo:"content", conta:"climate.heating", chiavi:["climate"] },
+  { id:"energy", gruppo:"content", chiavi:["energy"] },
+  { id:"access", gruppo:"content", conta:"access", chiavi:["access"] },
+  { id:"schedules", gruppo:"content", conta:"schedules", chiavi:["schedules"] },
+  { id:"robot", gruppo:"content", conta:"robot.rooms", chiavi:["robot"] },
+  { id:"switches", gruppo:"content", conta:"switches", chiavi:["switches"] },
+  { id:"appliances", gruppo:"content", conta:"appliances", chiavi:["appliances"] },
+  { id:"calendar", gruppo:"content", conta:"calendar.calendars", chiavi:["calendar"] },
+  { id:"home", gruppo:"content", chiavi:["presence","house_state","weather"] },
+  { id:"wifi", gruppo:"content", chiavi:["wifi_sharing"],
+    segreti:["wifi_share1_pw","wifi_share2_pw","wifi_share3_pw","wifi_share4_pw",
+             "wifi_share5_pw"] },
+  { id:"screen", gruppo:"panel", chiavi:["display","home","sections"] },
+  { id:"appearance", gruppo:"panel", chiavi:["appearance"], contrasto:true },
+  { id:"diagnostics", gruppo:"panel", chiavi:["diagnostics"] },
+  { id:"translations", gruppo:"panel", speciale:"traduzioni" },
+  { id:"status", gruppo:"panel", speciale:"stato" },
+];
+
+/* Title and introduction of a section, from its id. */
+const titoloSezione = s => t(`section.${s.id}.title`);
+
+/* <ICONE-GLIFI> */
+/* GENERATO da tools/genera_icone.py */
+const GLIFI = {"ac_unit":"\ueb3b","bolt":"\uea0b","cable":"\uefe6","coffee":"\uefef","door_front":"\ueffd","garage":"\uf011","grass":"\uf205","heat_pump":"\uec18","kitchen":"\ueb47","lightbulb":"\ue0f0","local_fire_department":"\uea05","mode_fan":"\uf168","outlet":"\uf1d4","pool":"\ueb48","power_settings_new":"\ue8ac","router":"\ue328","sensors":"\ue51e","shower":"\uf061","speaker":"\ue32d","speed":"\ue9e4","storage":"\ue1db","sunny":"\ue81a","timer":"\ue425","tv":"\ue333","valve":"\ue224","videocam":"\ue04b","water_drop":"\ue798","wind_power":"\uec0c"};
+/* </ICONE-GLIFI> */
+
+/* --- stato della pagina, tutto in memoria ------------------------------- */
+let schema = null;
+let doc = null;          /* il documento che si sta modificando */
+let originale = "";      /* com'era quando e arrivato, per contare e annullare */
+let statoSegreti = {};
+/* The section in the address, after the '#': a reload stays where one was,
+   and a link can open a given section (the README's screenshots do). In
+   the address and not in localStorage, like the language. */
+const sezioneDaIndirizzo = () => {
+  const h = decodeURIComponent(location.hash.slice(1));
+  return SEZIONI.some(s => s.id === h) ? h : null;
+};
+let sezioneCorrente = sezioneDaIndirizzo() || SEZIONI[0].id;
+let erroriDalPannello = {};   /* campo -> motivo, da una risposta 422 */
+let avvisiDalPannello = {};   /* stessi campi, ma non bloccano */
+
+const $ = (s, d=document) => d.querySelector(s);
+const el = (tag, cls, testo) => {
+  const o = document.createElement(tag);
+  if (cls) o.className = cls;
+  if (testo !== undefined) o.textContent = testo;
+  return o;
+};
+
+/* The field a path is, without the row numbers: inside a list the path
+   carries the index of the row — `wifi_sharing.networks.2.ssid` — and a
+   label per row makes no sense: it is the same field three times. */
+function campoDi(percorso) { return percorso.replace(/\.\d+(?=\.|$)/g, ""); }
+
+/* Every field has its label in the texts: field.<path>.label. The name of
+   the key is only the fallback of a firmware newer than its texts. */
+function etichetta(percorso, chiave) {
+  const s = tIf(`field.${campoDi(percorso)}.label`);
+  if (s) return s;
+  const x = String(chiave).replace(/_/g, " ");
+  return x.charAt(0).toUpperCase() + x.slice(1);
+}
+
+/* The hint under a field, if it has one. */
+function aiuto(percorso) { return tIf(`field.${campoDi(percorso)}.hint`); }
+
+/* What a choice of a list is called. The value is what goes in the file;
+   this is what is read. Values without a text — icon names, numbers — are
+   shown as they are. */
+function voce(percorso, valore) {
+  const c = campoDi(percorso);
+  if (c === "system.language") {
+    const l = LANGS.find(x => x.code === valore);
+    if (l) return l.name;
+  }
+  const k = String(valore).toLowerCase().replace(/[^a-z0-9_]/g, "_");
+  return tIf(`field.${c}.option.${k}`) || String(valore);
+}
+
+/* --- accesso al documento per percorso ---------------------------------- */
+function leggi(oggetto, percorso) {
+  return percorso.split(".").reduce((o, k) => (o == null ? o : o[k]), oggetto);
+}
+function scrivi(oggetto, percorso, valore) {
+  const p = percorso.split(".");
+  const ultimo = p.pop();
+  let o = oggetto;
+  for (const k of p) {
+    /* Un ramo che non c'e si crea: e il caso normale di un campo nuovo. Ma
+       un ramo che c'e ed **e un valore semplice** — `ospiti: "***"` dove lo
+       schema vuole un oggetto — non si attraversa, e infilarci dentro una
+       proprieta e un errore fatale in modalita strict. Prima moriva li
+       tutta la sezione: la configurazione era storta in un punto e
+       sparivano le reti, le password e il PIN, senza dire niente.
+
+       Non lo si aggiusta d'ufficio sovrascrivendolo con un oggetto vuoto:
+       quel valore e un dato di chi configura, e buttarlo via per far
+       contento il disegno e il modo peggiore di cavarsela. Si dice cos'e e
+       dove sta, e chi legge decide. */
+    if (o[k] == null) o[k] = {};
+    else if (typeof o[k] !== "object") {
+      const guaio = new Error(t("valid.not_object",
+        { key: k, value: JSON.stringify(o[k]), path: percorso }));
+      /* Il ramo rotto viaggia con l'errore: chi lo raccoglie puo offrire di
+         ripararlo, invece di lasciare l'utente davanti a un vicolo cieco
+         con l'unica uscita di riscrivere il file a mano. */
+      guaio.ramo = p.slice(0, p.indexOf(k) + 1).join(".");
+      throw guaio;
+    }
+    o = o[k];
+  }
+  if (valore === undefined) delete o[ultimo]; else o[ultimo] = valore;
+}
+/* Un campo facoltativo, nello schema, si scrive `anyOf: [{...}, {null}]`:
+   e il modo di dire "questo tipo, oppure niente". Il guaio e che cosi il
+   **tipo sparisce** dal livello di sopra — `s.type` diventa undefined — e
+   tutto quello che guarda `s.type` smette di vederlo.
+
+   Costava caro e in silenzio. `elettrodomestici[].potenza_massima` e un
+   intero facoltativo: la pagina non lo riconosceva come numero, gli metteva
+   davanti un campo di testo e salvava **"1000"** con le virgolette. Il
+   pannello lo legge con cfg_intero_in(), che di una stringa non sa che
+   farsene e ripiega su zero, e con zero la barretta del consumo non si
+   disegna. Nessun errore da nessuna parte: solo una barra che non compare.
+
+   Lo stesso valeva per i ventotto campi entita facoltativi, di cui la
+   pagina non controllava piu il formato.
+
+   Si appiattisce qui, in un posto solo, perche qui passano sia il disegno
+   del campo sia la validazione: se il ramo non-null e uno — e nello schema
+   di oggi lo e sempre — le sue proprieta salgono di livello. Con piu rami
+   si lascia com'e, che e il caso che dominioDaSchema() sa gia trattare. */
+function appiattisci(s) {
+  if (!s || !s.anyOf) return s;
+  const rami = s.anyOf.filter(a => a && a.type !== "null");
+  if (rami.length !== 1) return s;
+  const fuori = Object.assign({}, s);
+  delete fuori.anyOf;
+  /* Le chiavi di fuori vincono: `description` sta sul contenitore e il ramo
+     non ce l'ha, ma se un giorno ce l'avesse comanderebbe quella scritta
+     dove si legge. */
+  return Object.assign({}, rami[0], fuori);
+}
+
+function sottoschema(percorso) {
+  let s = schema;
+  for (const k of percorso.split(".")) {
+    if (!s) return null;
+    if (s.type === "array") s = s.items;
+    if (!s || !s.properties) return null;
+    s = appiattisci(s.properties[k]);
+  }
+  return s;
+}
+
+/* --- il documento che arriva, raddrizzato una volta sola -----------------
+ *
+ * Le versioni precedenti di questa pagina hanno salvato numeri come testo —
+ * `"1000"` con le virgolette — perche' non riconoscevano come numerici i
+ * campi facoltativi. Qui si rimettono a posto.
+ *
+ * **All'ingresso e non quando si disegna il campo.** La prima versione
+ * convertiva dentro la casella numerica, cioe' solo se qualcuno apriva
+ * quella sezione. Ma la validazione guarda **tutto** il documento: un campo
+ * storto in una sezione mai aperta teneva il pulsante «Salva» spento, e la
+ * riga rossa stava in una scheda chiusa che nessuno aveva motivo di aprire.
+ * Chi ci si trovava davanti vedeva un pulsante rotto, non un campo da
+ * correggere — ed e' esattamente quello che e' successo.
+ *
+ * Non tocca niente che non sia esattamente un numero scritto fra
+ * virgolette: "1000 W" resta com'e' e la validazione lo dira. */
+function raddrizza(s, v) {
+  s = appiattisci(s);
+  if (!s || v == null) return v;
+
+  if ((s.type === "integer" || s.type === "number")
+      && typeof v === "string" && v.trim() !== "" && Number.isFinite(Number(v)))
+    return Number(v);
+
+  if (s.type === "object" && s.properties && typeof v === "object")
+    for (const [k, sub] of Object.entries(s.properties))
+      if (k in v) v[k] = raddrizza(sub, v[k]);
+
+  if (s.type === "array" && Array.isArray(v))
+    v.forEach((e, n) => { v[n] = raddrizza(s.items, e); });
+
+  return v;
+}
+
+/* --- validazione, dallo schema ------------------------------------------
+ * Le stesse regole che applica il firmware, perche vengono dallo stesso
+ * file. Il pannello valida comunque: questa serve a non far fare il viaggio
+ * a una configurazione che si sa gia essere sbagliata, non a fidarsi del
+ * browser.
+ */
+function validaValore(s, v, percorso) {
+  if (s == null || v == null || v === "") return null;
+  if (s.type === "integer" || s.type === "number") {
+    if (typeof v !== "number" || Number.isNaN(v)) return t("valid.number");
+    if (s.type === "integer" && !Number.isInteger(v)) return t("valid.integer");
+    if (s.minimum !== undefined && v < s.minimum) return t("valid.min", { min: s.minimum });
+    if (s.maximum !== undefined && v > s.maximum) return t("valid.max", { max: s.maximum });
+  }
+  if (s.type === "string") {
+    if (typeof v !== "string") return t("valid.text");
+    if (s.minLength !== undefined && v.length < s.minLength) return tn("valid.min_length", s.minLength);
+    if (s.maxLength !== undefined && v.length > s.maxLength) return tn("valid.max_length", s.maxLength);
+    if (s.pattern && !new RegExp(s.pattern).test(v)) return t("valid.pattern", { pattern: s.pattern });
+    if (s.enum && !s.enum.includes(v))
+      return t("valid.enum", { values: s.enum.map(x => voce(percorso, x)).join(", ") });
+  }
+  return null;
+}
+
+function validaTutto() {
+  const errori = {};
+  const scendi = (s, v, base) => {
+    if (!s || v == null) return;
+    if (s.type === "object" && s.properties) {
+      for (const k of (s.required || []))
+        if (v[k] === undefined || v[k] === null || v[k] === "")
+          errori[base ? `${base}.${k}` : k] = t("valid.required");
+      for (const [k, grezzo] of Object.entries(s.properties)) {
+        /* Appiattito anche qui: questa discesa non passa da sottoschema(),
+           e senza, i campi facoltativi resterebbero senza tipo proprio nel
+           punto che dovrebbe accorgersene. */
+        const sub = appiattisci(grezzo);
+        const p = base ? `${base}.${k}` : k;
+        const m = validaValore(sub, v[k], p);
+        if (m) errori[p] = m;
+        scendi(sub, v[k], p);
+      }
+    } else if (s.type === "array" && Array.isArray(v)) {
+      v.forEach((e, n) => scendi(s.items, e, `${base}.${n}`));
+    }
+  };
+  scendi(schema, doc, "");
+  return errori;
+}
+
+/* --- disegno dei campi -------------------------------------------------- */
+
+/* --- le entita di Home Assistant, per non batterle a mano ----------------
+ *
+ * Un identificatore sbagliato non protesta: il pannello segue un'entita che
+ * non esiste e mostra un trattino. Chi guarda pensa che sia rotta la sonda.
+ *
+ * La tendina e un `datalist` e non un `select`: il campo resta libero.
+ * Un'entita puo esistere in Home Assistant senza stare nel registro — i
+ * template, per esempio — e un menu chiuso la renderebbe impossibile da
+ * scrivere. Cosi invece si suggerisce e basta.
+ *
+ * Una lista per dominio: davanti a un campo `light.*` non servono i
+ * trecento sensori. Il dominio si legge dal `pattern` dello schema, che e
+ * gia li e gia dice quale forma accetta quel campo. */
+let ENTITA = [];
+const listeEntita = new Map();
+
+/* --- le stanze del robot ------------------------------------------------
+ *
+ * I numeri delle stanze non si scrivono a memoria: il robot li conosce e il
+ * pannello glieli chiede. E non e una comodita — i numeri che l'applicazione
+ * del robot mostra sulla mappa **non sono** i segmenti che accetta, e
+ * copiarli lo fa uscire dalla base e rientrare senza pulire, senza nessun
+ * errore da nessuna parte. E' costato una serata.
+ *
+ * Tendina di suggerimenti e non menu chiuso, come per le entita: chi ha una
+ * mappa che il pannello non riesce a leggere deve poter scrivere il numero
+ * lo stesso. */
+let STANZE_ROBOT = [];
+
+function listaStanze() {
+  const id = "stanze-robot";
+  let l = document.getElementById(id);
+  if (!l) {
+    l = document.createElement("datalist");
+    l.id = id;
+    document.body.append(l);
+  }
+  l.textContent = "";
+  for (const s of STANZE_ROBOT) {
+    const o = document.createElement("option");
+    o.value = s.number;
+    o.label = s.name;
+    o.textContent = s.name;
+    l.append(o);
+  }
+  return id;
+}
+
+async function caricaStanzeRobot() {
+  try {
+    const r = await fetch("/api/robot-rooms");
+    const j = await r.json();
+    STANZE_ROBOT = Array.isArray(j.rooms) ? j.rooms : [];
+    /* La prima chiamata sveglia la richiesta e torna vuota: si ripassa una
+       volta sola dopo un attimo, come fa l'elenco delle entita. */
+    if (!STANZE_ROBOT.length && j.state === "on its way")
+      setTimeout(caricaStanzeRobot, 1500);
+    else if (STANZE_ROBOT.length) { listaStanze(); disegna(); }
+  } catch (e) { /* senza stanze il campo resta un numero da scrivere */ }
+}
+
+/* --- i piani, presi dal documento che si sta modificando -----------------
+ *
+ * L'elenco non arriva dal pannello come quello delle stanze del robot: e'
+ * **dentro il documento aperto**, e cambia mentre lo si compila. Chi aggiunge
+ * un piano deve trovarlo subito nella tendina delle zone, senza salvare e
+ * ricaricare — se no l'unico modo di assegnare le zone e' salvare a meta',
+ * che e' esattamente quello che non si vuole chiedere.
+ *
+ * Per questo le opzioni si ricostruiscono **quando si apre la tendina** e non
+ * quando si disegna il campo: cosi sono sempre quelle di adesso, senza dover
+ * ridisegnare mezza pagina a ogni tasto premuto nel campo «nome». */
+function pianiNelDocumento() {
+  const p = (doc && doc.climate && doc.climate.floors) || [];
+  return p.filter(x => x && x.id).map(x => ({ id: x.id, nome: x.name || x.id }));
+}
+
+/* Da «Box · piano 0» a «box_piano_0». Serve a non far inventare un id a chi
+   sta configurando: e' una chiave interna, non un nome, e l'unica cosa che
+   conta e' che sia la stessa nei due posti. */
+function slugDaNome(s) {
+  return (s || "").toLowerCase()
+    .replace(/[àáâä]/g, "a").replace(/[èéêë]/g, "e").replace(/[ìíîï]/g, "i")
+    .replace(/[òóôö]/g, "o").replace(/[ùúûü]/g, "u")
+    .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 16);
+}
+
+function dominioDaSchema(s) {
+  const p = s && (s.pattern || (s.anyOf || []).map(a => a.pattern).find(Boolean));
+  if (!p) return null;
+  /* "^light\.[a-z0-9_]+$" -> "light"; "^(light|switch)\." -> "light|switch";
+     "^[a-z_]+\.[a-z0-9_]+$" -> "" per dire "un'entita qualsiasi".
+
+     I domini alternativi servono alle luci, che possono essere `light.`
+     oppure `switch.`: senza questo ramo la tendina non riconosceva il
+     pattern, tornava null e non suggeriva niente — e chi configura si
+     ritrovava un campo libero davanti a trecento entita. */
+  const alt = /^\^\(([a-z_|]+)\)\\./.exec(p);
+  if (alt) return alt[1];
+  const m = /^\^(\[a-z_\]\+|[a-z_]+)\\./.exec(p);
+  if (!m) return null;
+  return m[1].startsWith("[") ? "" : m[1];
+}
+
+function datalistEntita(dominio) {
+  const id = "ent-" + (dominio || "tutte");
+  let l = listeEntita.get(id);
+  if (!l) {
+    l = document.createElement("datalist");
+    l.id = id;
+    document.body.append(l);
+    listeEntita.set(id, l);
+  }
+  riempiLista(l, dominio);
+  return id;
+}
+
+function riempiLista(l, dominio) {
+  l.textContent = "";
+  /* Il dominio puo essere piu d'uno, separati da barra: una luce sta fra le
+     `light.` e le `switch.`, e la tendina deve mostrarle tutte e due. */
+  const domini = dominio ? dominio.split("|").filter(Boolean) : [];
+  for (const e of ENTITA) {
+    if (domini.length && !domini.some(d => e.startsWith(d + "."))) continue;
+    const o = document.createElement("option");
+    o.value = e;
+    l.append(o);
+  }
+}
+
+/* Quasi sempre la prima domanda torna vuota con «in arrivo»: chiederlo a
+   Home Assistant vuol dire un giro sul WebSocket, e il pannello risponde
+   senza aspettare nessuno. Si richiede una volta, non in un ciclo: se al
+   secondo tentativo non c'e, si resta a campi di testo — che e come si
+   stava prima, e nessuno se ne accorge in male. */
+async function caricaEntita(secondoGiro) {
+  let r;
+  try { r = await (await fetch("/api/entities")).json(); } catch (e) { return; }
+
+  if (Array.isArray(r.entities) && r.entities.length) {
+    ENTITA = r.entities;
+    for (const [id, l] of listeEntita)
+      riempiLista(l, id === "ent-tutte" ? "" : id.slice(4));
+    return;
+  }
+  if (r.state === "on its way" && !secondoGiro)
+    setTimeout(() => caricaEntita(true), 1200);
+}
+
+function campoSemplice(percorso, s, contenitore) {
+  /* Un elenco non e un campo, e disegnarlo come tale non e "brutto": e
+     **distruttivo**. Finiva nell'ultimo ramo qui sotto, cioe in una casella
+     di testo, con dentro l'array coercito a stringa; al primo carattere
+     digitato `scrivi()` sostituiva l'elenco con quella stringa, e la
+     configurazione perdeva un pezzo senza dire niente.
+     Chi disegna gli elenchi e righeArray(), che sa anche annidarsi. */
+  if (s && (s.type === "array" || (s.type === "object" && s.properties)))
+    return;
+
+  /* Appiattito **qui**, che e' il collo di bottiglia di ogni campo: le
+     righe di un elenco arrivano con `s.items.properties[k]` diretto, senza
+     passare da sottoschema(), e per loro l'anyOf restava intero. Effetto:
+     `interruttori[].icona` — un enum facoltativo — perdeva l'elenco e
+     diventava una casella di testo vuota, in cui non c'e' modo di sapere
+     cosa scrivere. */
+  s = appiattisci(s);
+  const chiave = percorso.split(".").pop();
+  const f = el("div", "field");
+  /* `let` e non `const`: un numero ereditato come stringa si sana piu giu,
+     e da li in avanti vale il numero. */
+  let v = leggi(doc, percorso);
+
+  if (s.type === "boolean") {
+    const riga = el("label", "sw");
+    const i = document.createElement("input");
+    i.type = "checkbox";
+    /* Assente non vuol dire spento: il firmware ripiega sul valore
+       dichiarato nello schema, e una casella che si vede vuota
+       mentre la funzione gira e il modo piu diretto di far perdere
+       fiducia a chi configura. */
+    i.checked = v === undefined || v === null ? s.default === true
+                                              : v === true;
+    i.onchange = () => { scrivi(doc, percorso, i.checked); cambiato(); };
+    riga.append(i, el("span", null, etichetta(percorso, chiave)));
+    f.append(riga);
+  } else {
+    f.append(el("label", null, etichetta(percorso, chiave)));
+    let i;
+    if (s.enum) {
+      i = document.createElement("select");
+      for (const opt of s.enum) {
+        const o = document.createElement("option");
+        o.value = opt;
+        o.textContent = voce(percorso, opt);
+        i.append(o);
+      }
+      /* Se il campo non c'e, la tendina mostra la prima voce — e allora
+         quella voce **va scritta**, non solo mostrata. Prima non lo era, e
+         con un'enumerazione a una sola voce il difetto diventava un muro:
+         niente da scegliere, quindi onchange non scattava mai, quindi il
+         documento restava senza il campo e la pagina lo segnava come
+         obbligatorio mancante. L'utente vedeva "it" selezionato e gli si
+         diceva che non l'aveva compilato.
+         Vale per tutte le enumerazioni, non solo per quelle a una voce:
+         chiunque accettasse il valore proposto senza toccarlo aveva lo
+         stesso problema. Una pagina che mostra una cosa e ne salva
+         un'altra e sempre un difetto, anche quando si nota di rado. */
+      if (v == null) scrivi(doc, percorso, s.enum[0]);
+      i.value = v == null ? s.enum[0] : v;
+      i.onchange = () => { scrivi(doc, percorso, i.value); cambiato(); };
+    } else if (s.format === "colore") {
+      /* --- precompilato con quello che il pannello sta usando -----------
+       *
+       * Un colore assente vale il predefinito dello schema, e il pannello
+       * ripiega **sullo stesso valore**: lo tiene fermo
+       * tools/verifica_palette.py, che confronta i tre posti in cui quel
+       * colore e scritto. Quindi mostrarlo senza scriverlo nel documento
+       * non e mostrare una cosa e salvarne un'altra: e mostrare quella
+       * vera.
+       *
+       * E si scrive solo cio che si cambia: cosi togliere il blocco
+       * `aspetto` riporta tutto com'era, che e il modo piu semplice di
+       * tornare indietro. */
+      const predefinito = s.default || "#000000";
+      const attuale = (v == null || v === "") ? predefinito : String(v);
+
+      const box = el("div", "concolore");
+      i = document.createElement("input");
+      i.type = "color";
+      i.value = attuale.toLowerCase();
+
+      const scritto = document.createElement("input");
+      scritto.type = "text";
+      scritto.className = "mono";
+      scritto.value = attuale.toUpperCase();
+      scritto.spellcheck = false;
+
+      const salva = (valore, chi) => {
+        const pulito = valore.trim().toUpperCase();
+        if (!/^#[0-9A-F]{6}$/.test(pulito)) return;
+        if (chi !== i) i.value = pulito.toLowerCase();
+        if (chi !== scritto) scritto.value = pulito;
+        scrivi(doc, percorso, pulito);
+        cambiato();
+        aggiornaContrasto();
+      };
+      i.oninput = () => salva(i.value, i);
+      scritto.onchange = () => salva(scritto.value, scritto);
+
+      box.append(i, scritto);
+      f.append(box);
+    } else if (/^climate\.heating\.\d+\.floor$/.test(percorso)
+               || percorso === "climate.panel_floor") {
+      /* Il piano si **sceglie**, non si scrive. Era un campo di testo che
+         voleva l'id di un piano definito in un'altra scheda della stessa
+         pagina: per compilarlo bisognava ricordarselo a memoria, e sbagliarlo
+         di una lettera non da errore — manda la zona nel gruppo «senza
+         piano», che si nota solo guardando il pannello.
+
+         Un `select` e non un elenco di suggerimenti come per le stanze del
+         robot: li un numero puo' esistere anche fuori dall'elenco, qui no —
+         un id che non e' fra quelli dichiarati non vuol dire niente. */
+      i = document.createElement("select");
+      const riempi = () => {
+        const scelto = leggi(doc, percorso);
+        const piani = pianiNelDocumento();
+        i.textContent = "";
+
+        const vuoto = document.createElement("option");
+        vuoto.value = "";
+        /* Il vuoto e' una scelta legittima e va detto cosa vuol dire, non
+           lasciato in bianco: una zona senza piano finisce in un gruppo suo,
+           e un pannello senza piano non mostra l'icona del riscaldamento. */
+        vuoto.textContent = piani.length ? t("floor.none") : t("floor.none_defined");
+        i.append(vuoto);
+
+        for (const p of piani) {
+          const o = document.createElement("option");
+          o.value = p.id;
+          /* Nome **e** id: il nome per riconoscerlo, l'id perche' e' quello
+             che finisce nel documento, e chi legge il JSON deve ritrovarcisi. */
+          o.textContent = `${p.nome} — ${p.id}`;
+          i.append(o);
+        }
+
+        /* Un valore che non e' fra i piani non si butta via in silenzio:
+           resta selezionabile e si dice che non esiste, se no correggere un
+           id significherebbe scoprire che il vecchio e' sparito. */
+        if (scelto && !piani.some(p => p.id === scelto)) {
+          const o = document.createElement("option");
+          o.value = scelto;
+          o.textContent = t("floor.unknown", { id: scelto });
+          i.append(o);
+        }
+        i.value = scelto == null ? "" : scelto;
+      };
+      riempi();
+      /* Si rifa all'apertura: i piani possono essere stati aggiunti o
+         rinominati dopo che questo campo e' stato disegnato. */
+      i.onmousedown = riempi;
+      i.onfocus = riempi;
+      i.onchange = () => {
+        scrivi(doc, percorso, i.value === "" ? undefined : i.value);
+        cambiato();
+      };
+    } else if (/^robot\.rooms\.\d+\.number$/.test(percorso)
+               && STANZE_ROBOT.length) {
+      /* Il numero del segmento, scelto dall'elenco che il robot ha dato.
+         Resta scrivibile: vedi il commento sopra listaStanze(). */
+      i = document.createElement("input");
+      i.type = "text";
+      i.setAttribute("list", listaStanze());
+      i.placeholder = t("page.example",
+        { value: STANZE_ROBOT[0].number + " (" + STANZE_ROBOT[0].name + ")" });
+      i.value = v == null ? "" : v;
+      i.oninput = () => {
+        const n = parseInt(i.value, 10);
+        scrivi(doc, percorso, Number.isFinite(n) ? n : undefined);
+        cambiato();
+      };
+    } else if (dominioDaSchema(s) !== null) {
+      /* Un campo che vuole un'entita: testo con la tendina dei suggerimenti,
+         limitata al dominio che lo schema accetta. */
+      i = document.createElement("input");
+      i.type = "text";
+      i.setAttribute("list", datalistEntita(dominioDaSchema(s)));
+      i.placeholder = t("page.example_entity", { domain: dominioDaSchema(s) || "light" });
+      i.value = v == null ? "" : v;
+      i.oninput = () => {
+        scrivi(doc, percorso, i.value === "" ? undefined : i.value);
+        cambiato();
+      };
+    } else if (s.examples) {
+      /* Testo con tendina, non tendina e basta: `examples` dello schema e
+         un'annotazione, non un vincolo, e il campo resta libero. Chi ha un
+         fuso che non e nell'elenco lo scrive; a tutti gli altri si risparmia
+         di indovinare come si chiama il proprio. */
+      i = document.createElement("input");
+      i.type = "text";
+      i.setAttribute("list", "sug-" + percorso.replace(/[^a-z0-9]/gi, "-"));
+      i.value = v == null ? "" : v;
+      const lista = document.createElement("datalist");
+      lista.id = i.getAttribute("list");
+      for (const opt of s.examples) {
+        const o = document.createElement("option");
+        o.value = opt;
+        lista.append(o);
+      }
+      i.oninput = () => {
+        scrivi(doc, percorso, i.value === "" ? undefined : i.value);
+        cambiato();
+      };
+      f.append(lista);
+    } else if (s.type === "integer" || s.type === "number") {
+      i = document.createElement("input");
+      i.type = "number";
+      if (s.minimum !== undefined) i.min = s.minimum;
+      if (s.maximum !== undefined) i.max = s.maximum;
+      if (s.type === "number") i.step = "0.1";
+      i.value = v == null ? "" : v;
+      i.oninput = () => {
+        scrivi(doc, percorso, i.value === "" ? undefined : Number(i.value));
+        cambiato();
+      };
+    } else {
+      i = document.createElement("input");
+      i.type = "text";
+      /* Gli identificatori di Home Assistant si leggono meglio a spaziatura
+         fissa, e si confrontano meglio con quello che c'e nell'altra
+         scheda del browser. */
+      if (s.pattern && s.pattern.indexOf("\\.") >= 0) i.className = "mono";
+      i.value = v == null ? "" : v;
+      i.oninput = () => {
+        scrivi(doc, percorso, i.value === "" ? undefined : i.value);
+
+        /* Il nome di un piano riempie l'id, **se l'id e' ancora vuoto**.
+           L'id e' una chiave interna che nessuno ha voglia di inventare, e
+           lasciarlo da compilare a mano significa chiedere di scegliere un
+           nome per una cosa che ha gia' un nome. Mai sovrascritto: chi se
+           l'e' scelto se lo tiene, e chi lo cambia lo cambia una volta
+           sola. */
+        const m = /^climate\.floors\.(\d+)\.name$/.exec(percorso);
+        if (m) {
+          const dove = `climate.floors.${m[1]}.id`;
+          if (!leggi(doc, dove)) {
+            const s = slugDaNome(i.value);
+            if (s) {
+              scrivi(doc, dove, s);
+              const campo = document.querySelector(
+                `.field[data-percorso="${dove}"] input`);
+              if (campo) campo.value = s;
+            }
+          }
+        }
+        cambiato();
+      };
+    }
+    i.dataset.percorso = percorso;
+
+    /* L'anteprima sta accanto alla tendina e non dentro le voci: dentro
+       vorrebbe dire un elenco di ventotto disegni tutti uguali di
+       dimensione, in cui il nome — che e quello che finisce nel documento —
+       diventa il dettaglio. Qui si sceglie per nome e si controlla per
+       figura. */
+    if (chiave === "icon" && s.enum) {
+      const box = el("div", "conicona");
+      const prev = el("div", "icoprev");
+      const mostra = () => {
+        const g = GLIFI[i.value];
+        prev.textContent = g || "?";
+        prev.classList.toggle("vuota", !g);
+        prev.title = g ? i.value : t("icon.missing", { name: i.value });
+      };
+      i.addEventListener("change", mostra);
+      box.append(i, prev);
+      f.append(box);
+      mostra();
+    } else if (!i.parentElement) {
+      /* Chi si e gia messo dentro un contenitore suo — la tavolozza col
+         suo campo di testo — non va aggiunto una seconda volta: comparirebbe
+         due volte, e la seconda senza quello che gli sta accanto. */
+      f.append(i);
+    }
+  }
+
+  const h = aiuto(percorso);
+  if (h) f.append(el("div", "hint", h));
+  f.append(el("div", "errmsg"));
+  f.dataset.percorso = percorso;
+  contenitore.append(f);
+}
+
+/* Due frecce per spostare una voce su e giu dentro il suo elenco.
+   L'ordine di questi elenchi non e un vezzo: comanda la barra delle
+   sezioni, e nelle luci decide chi si trova sotto il dito per primo. Finora
+   si poteva solo togliere e riaggiungere in fondo, che su otto luci vuol
+   dire rifarle tutte per spostarne una. */
+/* Quale riga di quale elenco e aperta adesso. Non e configurazione — non
+   va nel documento e non fa comparire «modifiche non salvate» — ma non e
+   nemmeno da dimenticare a ogni ridisegno: aggiungere una finestra dentro
+   un gruppo ridisegna la scheda, e il gruppo deve restare aperto. */
+const aperte = new Map();
+
+function frecce(righe, n, ridisegna) {
+  const box = el("div", "ord");
+  const su = el("button", "btn sm", "\u2191");
+  const giu = el("button", "btn sm", "\u2193");
+  su.title = t("list.up"); giu.title = t("list.down");
+  su.disabled = n === 0;
+  giu.disabled = n === righe.length - 1;
+  const scambia = (a, b) => {
+    const x = righe[a]; righe[a] = righe[b]; righe[b] = x;
+    cambiato(); ridisegna();
+  };
+  su.onclick = () => scambia(n, n - 1);
+  giu.onclick = () => scambia(n, n + 1);
+  box.append(su, giu);
+  return box;
+}
+
+/* --- un elenco di righe, e le righe che contengono altri elenchi --------
+ *
+ * Le righe semplici — luci, clima, accessi — restano come sono sempre
+ * state: una striscia con i campi in griglia, le frecce e «Togli».
+ *
+ * Una riga che contiene **altri elenchi** non puo stare in una striscia. Le
+ * programmazioni di questa casa sono sei gruppi con dentro quattordici
+ * finestre e venticinque automazioni: disegnate tutte aperte, come la
+ * pagina ha sempre fatto, fanno seimila pixel, e per arrivare al sesto
+ * gruppo si attraversa il quinto per intero.
+ *
+ * Percio quelle righe prendono un'**intestazione**: numero, nome, un
+ * riassunto di cosa c'e dentro, i tasti di ordine e la freccia che apre.
+ * Chiusa e alta cinquanta pixel. E chi si apre resta aperto finche non lo
+ * si chiude, anche se la pagina si ridisegna: l'indice della riga aperta
+ * sta qui e non nel documento, perche non e una scelta di configurazione ma
+ * di chi sta guardando adesso.
+ *
+ * Gli elenchi annidati li disegna **questa stessa funzione**, chiamando se
+ * stessa: cosi «Aggiungi», «Togli» e le frecce dentro un gruppo funzionano
+ * come quelli di fuori, perche sono quelli di fuori. */
+/* «1 finestre» si legge male, e questa riga la si legge di sfuggita. Le
+   parole sono quelle delle etichette degli elenchi annidati, cioe oggi due:
+   scriverle qui costa meno di una regola sui plurali italiani, che sbaglia
+   appena arriva un maschile — «calendari» non fa «calendarie». Senza
+   corrispondenza si tiene il plurale, che e sbagliato solo con uno. */
+/* The words are field.<list>.count, with its plural forms; a nested list
+   without one falls back to "{n} {label}", right except with one. */
+function riassuntoRiga(riga, si, percorso) {
+  /* Cosa c'e dentro, in tre parole. Si guarda lo schema e non i nomi:
+     qualunque elenco annidato si conta da solo, senza che questa funzione
+     debba sapere cosa sono le finestre o le automazioni. */
+  const pezzi = [];
+  for (const [k, sub] of Object.entries((si && si.properties) || {})) {
+    if (!sub || sub.type !== "array" || !Array.isArray(riga[k])) continue;
+    const n = riga[k].length;
+    if (!n) continue;
+    const c = `field.${campoDi(percorso)}.${k}.count`;
+    pezzi.push(TEXTS[c] ? tn(c, n)
+                        : t("list.nested", { n, what: etichetta(`${percorso}.${k}`, k).toLowerCase() }));
+  }
+  return pezzi.join(" · ");
+}
+
+/* Come si chiama una riga, per chi la guarda chiusa. In ordine: il nome che
+   le hanno dato, l'entita che comanda, il primo campo di testo che ha. Un
+   «3» e un indice, non un nome, e una riga chiusa che dice solo il proprio
+   numero non si riconosce fra le altre. */
+function nomeRiga(riga, si) {
+  if (typeof riga.name === "string" && riga.name) return riga.name;
+  if (typeof riga.entity === "string" && riga.entity) return riga.entity;
+  for (const [k, sub] of Object.entries((si && si.properties) || {})) {
+    const v = riga[k];
+    if (sub && sub.type === "string" && typeof v === "string" && v) return v;
+  }
+  return t("list.unnamed");
+}
+
+function righeArray(percorso, s, contenitore, dopoCambio) {
+  const elenco = leggi(doc, percorso);
+  const righe = Array.isArray(elenco) ? elenco : [];
+  const aggiungi = el("button", "btn sm", t("list.add"));
+
+  const si = s.items;
+  /* Vero quando gli elementi contengono a loro volta elenchi: e' l'unica
+     cosa che cambia la forma della riga. */
+  const annidata = !!(si && si.properties
+    && Object.values(si.properties).some(x => x && x.type === "array"));
+
+  const corpo = el("div");
+  /* Oltre maxItems il pannello rifiuterebbe il salvataggio: il pulsante si
+     spegne qui, dove si vede subito perche. Va richiamata a ogni ridisegno,
+     perche togliere una riga fa tornare posto. */
+  const quanteStanno = () => {
+    const pieno = s.maxItems !== undefined && righe.length >= s.maxItems;
+    aggiungi.disabled = pieno;
+    aggiungi.title = pieno ? t("list.max", { max: s.maxItems }) : "";
+  };
+
+  const ridisegna = () => {
+    quanteStanno();
+    corpo.textContent = "";
+    if (!righe.length) corpo.append(el("div", "vuoto", t("list.empty")));
+    righe.forEach((riga, n) => {
+      /* Nelle righe semplici resta nulla e non serve a nessuno; in quelle
+         che si aprono la riempie l'intestazione, piu giu. Dichiarata qui
+         perche gli ascoltatori la nominano prima che esista. */
+      let rinfresca = null;
+
+      const campi = el("div", "campi");
+      if (si && si.properties)
+        for (const k of Object.keys(si.properties))
+          campoSemplice(`${percorso}.${n}.${k}`, si.properties[k], campi);
+      /* Scrivendo il nome del gruppo, l'intestazione lo segue: e sopra il
+         campo che si sta compilando, e vederla ferma su «(senza nome)»
+         mentre si scrive fa credere che il campo non stia prendendo. */
+      campi.addEventListener("input", () => { if (rinfresca) rinfresca(); });
+
+      const togli = el("button", "btn sm danger del", t("list.remove"));
+      togli.onclick = () => {
+        righe.splice(n, 1);
+        if (aperte.get(percorso) === n) aperte.delete(percorso);
+        cambiato(); ridisegna();
+        if (dopoCambio) dopoCambio();
+      };
+
+      if (!annidata) {
+        const r = el("div", "riga");
+        r.append(el("div", "idx", String(n + 1)));
+        r.append(campi);
+        r.append(frecce(righe, n, ridisegna));
+        r.append(togli);
+        corpo.append(r);
+        return;
+      }
+
+      /* --- la riga che si apre ------------------------------------- */
+      const aperta = aperte.get(percorso) === n;
+      const g = el("div", "rg" + (aperta ? " aperta" : ""));
+
+      const testa = el("div", "rt");
+      testa.append(el("div", "idx", String(n + 1)));
+      const nm = el("div", "nm", nomeRiga(riga, si));
+      const sotto = el("span", "s", riassuntoRiga(riga, si, percorso));
+      nm.append(sotto);
+      /* Il riassunto conta cosa c'e negli elenchi dentro, e quelli si
+         ridisegnano da soli: senza questa, aggiungere una finestra la
+         faceva comparire nel suo elenco e lasciava scritto «1 finestra»
+         nell'intestazione. Si riscrive la sola riga invece di rifare la
+         scheda, perche rifarla toglierebbe il cursore dal campo che si sta
+         compilando. */
+      rinfresca = () => {
+        sotto.textContent = riassuntoRiga(riga, si, percorso);
+        nm.firstChild.textContent = nomeRiga(riga, si);
+      };
+      testa.append(nm);
+      testa.append(frecce(righe, n, ridisegna));
+      testa.append(togli);
+      const chev = el("button", "btn sm chev", aperta ? "\u2304" : "\u203a");
+      chev.title = aperta ? t("list.close") : t("list.open");
+      chev.onclick = () => {
+        if (aperta) aperte.delete(percorso); else aperte.set(percorso, n);
+        ridisegna();
+      };
+      testa.append(chev);
+      /* Si apre anche toccando l'intestazione, non solo la freccia: e' un
+         bersaglio da cinquanta pixel contro uno da trenta, e chi cerca di
+         aprire una riga punta al nome. I tasti dentro si fermano prima. */
+      testa.onclick = (ev) => { if (ev.target === testa || nm.contains(ev.target)) chev.onclick(); };
+      g.append(testa);
+
+      if (aperta) {
+        const rb = el("div", "rb");
+        rb.append(campi);
+        for (const [k, sub] of Object.entries(si.properties || {})) {
+          if (!sub || sub.type !== "array") continue;
+          const d = el("div", "dentro");
+          const dt = el("div", "dt");
+          dt.append(el("span", null, etichetta(`${percorso}.${k}`, k)));
+          const h = aiuto(`${percorso}.${k}`);
+          if (h) dt.append(el("span", "n", h));
+          d.append(dt);
+          if (sub.items && sub.items.type === "string")
+            elencoTesti(`${percorso}.${n}.${k}`, sub, d);
+          else
+            righeArray(`${percorso}.${n}.${k}`, sub, d, rinfresca);
+          rb.append(d);
+        }
+        g.append(rb);
+      }
+      corpo.append(g);
+    });
+  };
+  ridisegna();
+  contenitore.append(corpo);
+
+  aggiungi.onclick = () => {
+    if (!Array.isArray(leggi(doc, percorso))) scrivi(doc, percorso, righe);
+    righe.push({});
+    /* La riga appena aggiunta si apre da sola: e' vuota, e una riga vuota
+       chiusa dice «(senza nome)» e nient'altro — chi l'ha appena creata
+       dovrebbe aprirla comunque. */
+    if (annidata) aperte.set(percorso, righe.length - 1);
+    cambiato();
+    ridisegna();
+    if (dopoCambio) dopoCambio();
+  };
+  contenitore.append(aggiungi);
+}
+
+function elencoTesti(percorso, s, contenitore) {
+  const chiave = percorso.split(".").pop();
+  const attuali = Array.isArray(leggi(doc, percorso)) ? leggi(doc, percorso) : [];
+  const possibili = (s.items && s.items.enum) || [];
+
+  /* Due elenchi di stringhe molto diversi. Con un'enumerazione — `sezioni` —
+     le scelte sono quelle e basta: caselle. Senza — i server NTP — il valore
+     lo scrive chi configura: righe di testo che si aggiungono e si tolgono.
+     Trattarli allo stesso modo vorrebbe dire o impedire di scrivere un
+     server NTP, o inventare una sezione che non esiste. */
+  if (possibili.length) {
+    const f = el("div", "field");
+    f.append(el("label", null, etichetta(percorso, chiave)));
+    const corpoE = el("div");
+
+    /* Le scelte in cima **nell'ordine del documento**, con le frecce; le
+       altre sotto, come caselle da spuntare. Sono due cose diverse e prima
+       erano mescolate: le scelte hanno un ordine che conta — comanda la
+       barra — e le non scelte no. */
+    const ridisegnaE = () => {
+      corpoE.textContent = "";
+      const a = Array.isArray(leggi(doc, percorso)) ? leggi(doc, percorso) : [];
+
+      a.forEach((nome, n) => {
+        const riga = el("div", "riga");
+        riga.append(el("div", "idx", String(n + 1)));
+        const campi = el("div", "campi");
+        const et = el("label", "sw");
+        const i = document.createElement("input");
+        i.type = "checkbox";
+        i.checked = true;
+        i.onchange = () => { a.splice(n, 1); cambiato(); ridisegnaE(); };
+        et.append(i, el("span", null, voce(percorso, nome)));
+        campi.append(et);
+        riga.append(campi);
+        riga.append(frecce(a, n, ridisegnaE));
+        corpoE.append(riga);
+      });
+
+      const resto = possibili.filter(x => !a.includes(x));
+      for (const nome of resto) {
+        const riga = el("label", "sw");
+        const i = document.createElement("input");
+        i.type = "checkbox";
+        i.checked = false;
+        i.onchange = () => {
+          let b = leggi(doc, percorso);
+          if (!Array.isArray(b)) { b = []; scrivi(doc, percorso, b); }
+          b.push(nome);
+          cambiato();
+          ridisegnaE();
+        };
+        riga.append(i, el("span", null, voce(percorso, nome)));
+        corpoE.append(riga);
+      }
+    };
+    ridisegnaE();
+    f.append(corpoE);
+
+    const h = aiuto(percorso);
+    if (h) f.append(el("div", "hint", h));
+    contenitore.append(f);
+    return;
+  }
+
+  const righe = attuali;
+  const corpo = el("div");
+  const ridisegna = () => {
+    corpo.textContent = "";
+    if (!righe.length) corpo.append(el("div", "vuoto", t("list.empty")));
+    righe.forEach((v, n) => {
+      const riga = el("div", "riga");
+      riga.append(el("div", "idx", String(n + 1)));
+      const campi = el("div", "campi");
+      const i = document.createElement("input");
+      i.type = "text";
+      i.value = v == null ? "" : v;
+      i.oninput = () => { righe[n] = i.value; cambiato(); };
+      campi.append(i);
+      riga.append(campi);
+      riga.append(frecce(righe, n, ridisegna));
+      const togli = el("button", "btn sm danger del", t("list.remove"));
+      togli.onclick = () => { righe.splice(n, 1); cambiato(); ridisegna(); };
+      riga.append(togli);
+      corpo.append(riga);
+    });
+  };
+  ridisegna();
+  contenitore.append(corpo);
+
+  const aggiungi = el("button", "btn sm", t("list.add"));
+  aggiungi.onclick = () => {
+    if (!Array.isArray(leggi(doc, percorso))) scrivi(doc, percorso, righe);
+    righe.push("");
+    cambiato();
+    ridisegna();
+  };
+  contenitore.append(aggiungi);
+}
+
+function schedaOggetto(titolo, percorso, s, dove) {
+  const card = el("div", "card");
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", titolo));
+  const semplici = [], complessi = [];
+  for (const [k, sub] of Object.entries(s.properties || {}))
+    (sub.type === "array" || (sub.type === "object" && sub.properties)
+      ? complessi : semplici).push([k, sub]);
+
+  card.append(ch);
+  const cb = el("div", "cb");
+  const g = el("div", "griglia");
+  for (const [k, sub] of semplici) campoSemplice(`${percorso}.${k}`, sub, g);
+  if (semplici.length) cb.append(g);
+  card.append(cb);
+  dove.append(card);
+
+  /* Il riparo sta **qui dentro** e non solo attorno alla sezione intera.
+     Con la configurazione vera di questa casa la differenza si e vista
+     subito: `ospiti` era diventato una stringa e `private` un elenco con
+     dentro una parola, e un riparo messo solo un piano piu su avrebbe
+     buttato via anche il pezzo sano insieme a quello rotto. Ogni scheda
+     risponde di se: quella che non si disegna lascia il posto al motivo, le
+     altre restano modificabili. */
+  for (const [k, sub] of complessi) {
+    try { schedaComplessa(k, sub, percorso, dove); }
+    catch (e) { dove.append(schedaGuasta(`${percorso}.${k}`, e)); }
+  }
+}
+
+function schedaComplessa(k, sub, percorso, dove) {
+  {
+    const p = `${percorso}.${k}`;
+    if (sub.type === "array" && sub.items && sub.items.type === "string") {
+      const c2 = el("div", "card");
+      const h2 = el("div", "ch"); h2.append(el("div", "t", etichetta(p, k)));
+      const b2 = el("div", "cb");
+      elencoTesti(p, sub, b2);
+      c2.append(h2, b2); dove.append(c2);
+    } else if (sub.type === "array") {
+      const c2 = el("div", "card");
+      const h2 = el("div", "ch");
+      h2.append(el("div", "t", etichetta(p, k)));
+      const n = leggi(doc, p);
+      h2.append(el("div", "s", tn("list.count", Array.isArray(n) ? n.length : 0)));
+      const b2 = el("div", "cb");
+      righeArray(p, sub, b2);
+      c2.append(h2, b2); dove.append(c2);
+    } else {
+      schedaOggetto(etichetta(p, k), p, sub, dove);
+    }
+  }
+}
+
+function schedaSegreti(nomi, dove) {
+  for (const nome of nomi) {
+    const card = el("div", "card");
+    const ch = el("div", "ch");
+    ch.append(el("div", "t", tIf(`secret.${nome}.title`) || nome));
+    ch.append(el("div", "s", statoSegreti[nome] ? t("secret.set") : t("secret.not_set")));
+    const cb = el("div", "cb");
+    const f = el("div", "field");
+    f.append(el("label", null, t("secret.new")));
+    const i = document.createElement("input");
+    i.type = "password";
+    i.className = "mono";
+    i.placeholder = statoSegreti[nome] ? t("secret.kept") : t("secret.not_set");
+    f.append(i);
+    const h = tIf(`secret.${nome}.hint`);
+    if (h) f.append(el("div", "hint", h));
+    const azioni = el("div");
+    azioni.style.marginTop = "10px";
+    azioni.style.display = "flex";
+    azioni.style.gap = "10px";
+    const salva = el("button", "btn sm", t("secret.write"));
+    salva.onclick = async () => {
+      if (!i.value) return;
+      await inviaSegreti({ [nome]: i.value });
+      i.value = "";
+    };
+    azioni.append(salva);
+    if (statoSegreti[nome]) {
+      const togli = el("button", "btn sm danger", t("secret.clear"));
+      togli.onclick = () => inviaSegreti({ [nome]: "" });
+      azioni.append(togli);
+    }
+    f.append(azioni);
+    cb.append(f);
+    card.append(ch, cb);
+    dove.append(card);
+  }
+}
+
+/* --- stato e registro --------------------------------------------------- */
+async function schedaStato(dove) {
+  const card = el("div", "card");
+  const ch = el("div", "ch"); ch.append(el("div", "t", t("status.counters")));
+  const cb = el("div", "cb");
+  card.append(ch, cb); dove.append(card);
+
+  const cardLog = el("div", "card");
+  const ch2 = el("div", "ch"); ch2.append(el("div", "t", t("status.log")));
+  const cb2 = el("div", "cb");
+  cardLog.append(ch2, cb2); dove.append(cardLog);
+
+  try {
+    const s = await (await fetch("/api/status")).json();
+    const dl = el("dl", "stato");
+    for (const [k, v] of Object.entries(s)) {
+      if (typeof v === "object") continue;
+      dl.append(el("dt", null, tIf(`status.field.${k}`) || k.replace(/_/g, " ")),
+                el("dd", null, String(v)));
+    }
+    cb.append(dl);
+  } catch (e) { cb.append(el("div", "vuoto", t("status.counters_unreachable"))); }
+
+  try {
+    const l = await (await fetch("/api/log?n=50")).json();
+    const tab = el("table", "log");
+    for (const r of (l.lines || [])) {
+      /* The class stays the level as the panel says it: it is the style,
+         not a text. The message is the panel's, in English like its log. */
+      const tr = el("tr", r.level);
+      tr.append(el("td", "ora", r.time),
+                el("td", "liv", tIf(`log.level.${r.level}`) || r.level),
+                el("td", null, r.source), el("td", null, r.message));
+      tab.append(tr);
+    }
+    cb2.append((l.lines || []).length ? tab : el("div", "vuoto", t("status.log_empty")));
+  } catch (e) { cb2.append(el("div", "vuoto", t("status.log_unreachable"))); }
+
+  schedaFile(dove);
+  schedaAggiornamento(dove);
+  schedaRipristino(dove);
+}
+
+/* --- the configuration file -------------------------------------------------
+ *
+ * Export and Import were in the footer, next to Save, and on a phone they
+ * pushed it off the screen. They are used once in a while — a copy before
+ * an update, a new panel to prepare like the old one — and live here, with
+ * the other maintenance things. */
+function schedaFile(dove) {
+  const card = el("div", "card");
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", t("file.title")));
+  const cb = el("div", "cb");
+  cb.append(el("div", "hint", t("file.hint")));
+
+  const riga = el("div");
+  riga.style.display = "flex";
+  riga.style.gap = "10px";
+  riga.style.flexWrap = "wrap";
+  riga.style.marginTop = "12px";
+  const esporta = el("button", "btn", t("page.export"));
+  esporta.onclick = esportaFile;
+  const importa = el("button", "btn", t("page.import"));
+  importa.onclick = () => $("#file").click();
+  riga.append(esporta, importa);
+  cb.append(riga);
+
+  card.append(ch, cb);
+  dove.append(card);
+}
+
+/* --- aggiornamento del firmware -----------------------------------------
+ *
+ * Il file si manda **grezzo**, non dentro un multipart: il server del
+ * pannello e scritto a mano e un multipart vorrebbe dire insegnargli a
+ * riconoscere i confini fra le parti — codice in piu su un apparecchio che
+ * ne ha gia abbastanza, per trasportare una cosa sola. Il corpo e
+ * l'immagine, Content-Length dice quanto e lunga, e basta.
+ *
+ * La barra viene da upload.onprogress di XMLHttpRequest e non da fetch(),
+ * ed e l'unica ragione per cui qui c'e XHR invece di fetch: fetch non sa
+ * dire a che punto e la **salita**. Due megabyte su un Wi-Fi domestico sono
+ * una decina di secondi, e dieci secondi senza nessun segnale sono dieci
+ * secondi in cui si pensa che si sia bloccato. */
+function schedaAggiornamento(dove) {
+  const card = el("div", "card");
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", t("ota.title")));
+  const cb = el("div", "cb");
+
+  cb.append(el("div", "hint", t("ota.hint")));
+
+  const scegli = document.createElement("input");
+  scegli.type = "file";
+  scegli.accept = ".bin";
+  scegli.style.marginTop = "12px";
+
+  const b = el("button", "btn", t("ota.install"));
+  b.style.marginTop = "12px";
+  b.disabled = true;
+
+  /* La barra e una riga sola: non serve una libreria per dire "a che
+     punto siamo". */
+  const barra = el("div");
+  barra.style.cssText = "height:6px;border-radius:3px;background:#2a2f3a;" +
+                        "margin-top:12px;overflow:hidden;display:none";
+  const dentro = el("div");
+  dentro.style.cssText = "height:100%;width:0;background:var(--acc,#e6a33a);" +
+                         "transition:width .2s";
+  barra.append(dentro);
+
+  const stato = el("div", "hint");
+  stato.style.marginTop = "8px";
+
+  scegli.onchange = () => {
+    b.disabled = !scegli.files.length;
+    stato.textContent = scegli.files.length
+      ? `${scegli.files[0].name} — ${Math.round(scegli.files[0].size / 1024)} kB`
+      : "";
+  };
+
+  b.onclick = () => {
+    const file = scegli.files[0];
+    if (!file) return;
+    b.disabled = true;
+    scegli.disabled = true;
+    barra.style.display = "block";
+    stato.textContent = t("ota.sending");
+
+    const x = new XMLHttpRequest();
+    x.open("POST", "/api/ota");
+    x.setRequestHeader("Content-Type", "application/octet-stream");
+
+    x.upload.onprogress = (e) => {
+      if (!e.lengthComputable) return;
+      dentro.style.width = Math.round((e.loaded / e.total) * 100) + "%";
+    };
+
+    x.onload = () => {
+      let j = {};
+      try { j = JSON.parse(x.responseText); } catch (e) {}
+      if (x.status === 200) {
+        dentro.style.width = "100%";
+        stato.textContent = t("ota.done");
+      } else {
+        barra.style.display = "none";
+        b.disabled = false;
+        scegli.disabled = false;
+        /* Il motivo per intero: "aggiornamento fallito" manderebbe a
+           riprovare lo stesso file. */
+        stato.textContent = t("ota.failed", { reason: j.error || t("page.no_reason") });
+      }
+    };
+
+    x.onerror = () => {
+      barra.style.display = "none";
+      b.disabled = false;
+      scegli.disabled = false;
+      stato.textContent = t("ota.no_answer");
+    };
+
+    x.send(file);
+  };
+
+  cb.append(scegli, b, barra, stato);
+  card.append(ch, cb);
+  dove.append(card);
+}
+
+/* --- ripristino di fabbrica ---------------------------------------------
+ *
+ * In fondo alla pagina, da solo, dietro due gesti. Non e diffidenza verso
+ * chi lo preme: e che da qui non si vede il pannello. Chi lo tocca sul
+ * vetro ha l'apparecchio davanti e sa dove andare a rimetterlo in piedi;
+ * chi lo preme dal divano scopre dopo che deve alzarsi, e allora conviene
+ * che il secondo gesto glielo ricordi mentre e ancora in tempo. */
+function schedaRipristino(dove) {
+  const card = el("div", "card");
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", t("reset.title")));
+  ch.append(el("div", "s", t("reset.subtitle")));
+  const cb = el("div", "cb");
+
+  cb.append(el("div", "hint", t("reset.hint")));
+
+  const b = el("button", "btn danger", t("reset.button"));
+  b.style.marginTop = "12px";
+
+  const stato = el("div", "hint");
+  stato.style.marginTop = "8px";
+
+  /* Due gesti, e il secondo dice cosa succede: "Confermi?" da solo non
+     informa nessuno. Torna al primo da solo dopo dieci secondi, cosi un
+     pulsante armato non resta armato mentre si guarda altro. */
+  let armato = null;
+  b.onclick = async () => {
+    if (!armato) {
+      b.textContent = t("reset.confirm");
+      stato.textContent = t("reset.ten_seconds");
+      armato = setTimeout(() => {
+        armato = null;
+        b.textContent = t("reset.button");
+        stato.textContent = "";
+      }, 10000);
+      return;
+    }
+    clearTimeout(armato);
+    armato = null;
+    b.disabled = true;
+    b.textContent = t("reset.running");
+    stato.textContent = "";
+    try {
+      const r = await fetch("/api/reset", { method: "POST" });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) {
+        b.textContent = t("reset.done");
+        stato.textContent = t("reset.done_text");
+      } else {
+        b.disabled = false;
+        b.textContent = t("reset.button");
+        /* Il pannello dice **cosa** non e riuscito, e conviene ripeterlo:
+           un "non riuscito" senza motivo lascia chi legge a chiedersi se
+           qualcosa sia stato cancellato a meta. */
+        stato.textContent = t("reset.failed", { reason: j.error || t("page.no_reason") });
+      }
+    } catch (e) {
+      b.disabled = false;
+      b.textContent = t("reset.button");
+      stato.textContent = t("reset.no_answer");
+    }
+  };
+
+  cb.append(b, stato);
+  card.append(ch, cb);
+  dove.append(card);
+}
+
+/* --- translations --------------------------------------------------------
+ *
+ * Every text of the panel and of this page, in every language the firmware
+ * has. What is saved here is kept on the panel and takes the place of the
+ * built-in text (main/cfg/translations.c); «Export file» gives the whole
+ * language back as i18n/<code>.json, edits included, to put in the project.
+ *
+ * The checks are the build's and the panel's, repeated here so that they
+ * speak while the text is typed: the same placeholders as English — %d,
+ * %s for the panel, {name} for this page — and for the panel only the
+ * characters its fonts can draw. The panel checks again at save: this is
+ * for saying it early, not for trusting the browser.
+ *
+ * Unsaved edits live in TR.edits, one entry per text and plural form, and
+ * survive moving to another section: they are lost only by changing the
+ * language being edited, after a question, or by leaving the page. */
+const TR = {
+  lang: "",            /* the language being edited */
+  data: null,          /* /api/texts?edit=1 */
+  part: "panel",       /* "panel" or "web" */
+  show: "all",         /* "all", "edited", "stale" */
+  search: "",
+  edits: new Map(),    /* "part|key|form" -> text, or null: back to built-in */
+  errors: {},          /* same ids -> why not */
+  shown: 200,
+  message: "", messageClass: "",
+};
+/* gen_texts.py's PRINTF_RE and NAMED_RE, the same characters. */
+const PRINTF_RE = /%(?:%|[-+ #0]*(?:\d+|\*)?(?:\.(?:\d+|\*))?(?:hh|h|ll|l|z|j|t|L)?[diouxXeEfFgGaAcsp])/g;
+const NAMED_RE = /\{([a-z_][a-z0-9_]*)\}/g;
+const FORMS = ["one", "other"];
+const TR_BATCH = 30000;     /* bytes per POST, under the panel's 32 KB */
+
+const trId = (part, key, form) => `${part}|${key}|${form || ""}`;
+const trPick = (v, form) => (v == null ? undefined : form ? v[form] : v);
+/* English, the built-in text, what the panel has, what the box has. */
+const trEnglish = (e, f) => trPick(e.en !== undefined ? e.en : e.base, f);
+const trBase = (e, f) => trPick(e.base, f);
+function trSaved(e, f) {
+  const c = trPick(e.custom, f);
+  return typeof c === "string" ? c : trBase(e, f);
+}
+function trNow(part, key, e, f) {
+  const id = trId(part, key, f);
+  if (!TR.edits.has(id)) return trSaved(e, f);
+  const v = TR.edits.get(id);
+  return v === null ? trBase(e, f) : v;
+}
+
+function trDrawable(cp) {
+  return (TR.data.glyphs || []).some(([a, b]) => cp >= a && cp <= b);
+}
+
+/* Why `s` cannot stand for `en`, or null. */
+function trCheck(part, key, en, s) {
+  if (new TextEncoder().encode(s).length > 1024) return t("tr.check.long");
+  if (part === "web") {
+    const names = x => [...x.matchAll(NAMED_RE)].map(m => m[1]).sort();
+    const a = names(en), b = names(s);
+    return a.join(",") === b.join(",") ? null
+      : t("tr.check.named", { expected: a.length ? a.map(x => `{${x}}`).join(" ") : t("tr.none_expected") });
+  }
+  const a = en.match(PRINTF_RE) || [], b = s.match(PRINTF_RE) || [];
+  if (a.join("") !== b.join(""))
+    return t("tr.check.printf", { expected: a.length ? a.join(" ") : t("tr.none_expected") });
+  const bad = [...new Set([...s].filter(ch => !trDrawable(ch.codePointAt(0))))];
+  if (bad.length) return t("tr.check.glyph", { chars: bad.join(" ") });
+  if (key === "keyboard.letters"
+      && !(/^[a-z]{1,12}\|[a-z]{1,12}\|[a-z]{1,12}$/.test(s)
+           && new Set(s.replace(/\|/g, "")).size === 26))
+    return t("tr.check.keyboard");
+  return null;
+}
+
+async function trLoad() {
+  const r = await fetch(`/api/texts?lang=${encodeURIComponent(TR.lang)}&edit=1`);
+  if (!r.ok) throw new Error(String(r.status));
+  TR.data = await r.json();
+  TR.errors = {};
+}
+
+function trSay(message, cls) {
+  TR.message = message;
+  TR.messageClass = cls || "";
+  const m = document.getElementById("trMsg");
+  if (m) { m.textContent = message; m.className = "trmsg " + TR.messageClass; }
+}
+
+/* The unsaved count and the save button. Only the errors of edits block:
+   a saved edit that no longer passes shows its error, and is not in use
+   anyway until someone touches it. */
+function trStatus() {
+  const n = TR.edits.size;
+  const bad = Object.keys(TR.errors).filter(id => TR.edits.has(id)).length;
+  const s = document.getElementById("trSave");
+  if (s) s.disabled = !n || bad > 0;
+  const c = document.getElementById("trPending");
+  if (c) c.textContent = bad ? tn("tr.invalid", bad) : n ? tn("tr.unsaved", n) : "";
+}
+
+function trEntries() {
+  const d = (TR.data && TR.data[TR.part]) || {};
+  const q = TR.search.trim().toLowerCase();
+  const out = [];
+  for (const key of Object.keys(d).sort()) {
+    const e = d[key];
+    const forms = e.base && typeof e.base === "object" ? FORMS : [""];
+    const edited = e.custom !== undefined
+      || forms.some(f => TR.edits.has(trId(TR.part, key, f)));
+    if (TR.show === "edited" && !edited) continue;
+    if (TR.show === "stale" && !e.stale) continue;
+    if (q) {
+      const hay = [key, ...forms.flatMap(f =>
+        [trEnglish(e, f), trBase(e, f), trNow(TR.part, key, e, f)])].join("\n").toLowerCase();
+      if (!hay.includes(q)) continue;
+    }
+    out.push([key, e, forms]);
+  }
+  return out;
+}
+
+function trRow(key, e, forms) {
+  const part = TR.part;
+  const r = el("div", "trr");
+  const head = el("div", "trk");
+  head.append(el("span", null, key));
+  const tags = el("span");
+  head.append(tags);
+  const redoTags = () => {
+    tags.textContent = "";
+    const pending = forms.some(f => TR.edits.has(trId(part, key, f)));
+    if (e.stale) {
+      const s = el("span", "tag ko", t("tr.stale_tag"));
+      s.title = t("tr.stale");
+      tags.append(s);
+    }
+    if (pending || e.custom !== undefined)
+      tags.append(el("span", "tag", pending ? t("tr.unsaved_tag") : t("tr.edited")));
+  };
+  const back = el("button", "btn sm", t("tr.reset_one"));
+  back.onclick = () => {
+    for (const f of forms) {
+      const id = trId(part, key, f);
+      if (typeof trPick(e.custom, f) === "string") TR.edits.set(id, null);
+      else TR.edits.delete(id);
+    }
+    trDrawList();
+  };
+  back.hidden = e.custom === undefined && !forms.some(f => TR.edits.has(trId(part, key, f)));
+  head.append(back);
+  r.append(head);
+
+  for (const f of forms) {
+    if (f) r.append(el("div", "forma", t(`tr.form.${f}`)));
+    if (TR.lang !== "en") r.append(el("div", "tren", trEnglish(e, f)));
+    const i = document.createElement("textarea");
+    i.value = trNow(part, key, e, f);
+    i.lang = TR.lang;
+    const fit = () => {
+      i.rows = Math.min(10, Math.max(1, Math.ceil(i.value.length / 80)
+                                        + (i.value.match(/\n/g) || []).length));
+    };
+    fit();
+    const base = el("div", "base");
+    const m = el("div", "errmsg");
+    const verify = () => {
+      const id = trId(part, key, f);
+      const why = trCheck(part, key, trEnglish(e, f), i.value);
+      if (why) TR.errors[id] = why; else delete TR.errors[id];
+      i.classList.toggle("err", !!why);
+      m.textContent = why || "";
+      /* The built-in text under the box, when the box says something
+         else: what "back to the built-in text" would give. */
+      base.textContent = i.value !== trBase(e, f) ? t("tr.builtin", { text: trBase(e, f) }) : "";
+    };
+    i.oninput = () => {
+      const id = trId(part, key, f);
+      if (i.value === trSaved(e, f)) TR.edits.delete(id); else TR.edits.set(id, i.value);
+      back.hidden = e.custom === undefined && !forms.some(g => TR.edits.has(trId(part, key, g)));
+      fit(); verify(); redoTags(); trStatus();
+    };
+    verify();
+    r.append(i, base, m);
+  }
+  redoTags();
+  return r;
+}
+
+function trDrawList() {
+  const lb = document.getElementById("trList");
+  if (!lb) return;
+  lb.textContent = "";
+  const all = trEntries();
+  lb.append(el("div", "trcount",
+    t("tr.count", { shown: Math.min(TR.shown, all.length), total: all.length })));
+  if (!all.length) lb.append(el("div", "vuoto", t("tr.none_found")));
+  for (const [key, e, forms] of all.slice(0, TR.shown)) lb.append(trRow(key, e, forms));
+  if (all.length > TR.shown) {
+    const more = el("button", "btn sm", tn("tr.more", Math.min(200, all.length - TR.shown)));
+    more.style.marginTop = "12px";
+    more.onclick = () => { TR.shown += 200; trDrawList(); };
+    lb.append(more);
+  }
+  trStatus();
+}
+
+/* The edits as the panel wants them, cut into bodies it accepts. */
+function trBatches() {
+  const p = { panel: {}, web: {} };
+  for (const [id, v] of TR.edits) {
+    const [part, key, form] = id.split("|");
+    if (!form) p[part][key] = v;
+    else (p[part][key] = p[part][key] || {})[form] = v;
+  }
+  const enc = new TextEncoder(), out = [];
+  let cur = { panel: {}, web: {} }, size = 32;
+  for (const part of ["panel", "web"])
+    for (const [k, v] of Object.entries(p[part])) {
+      const n = enc.encode(JSON.stringify(k) + JSON.stringify(v)).length + 2;
+      if (size + n > TR_BATCH && size > 32) {
+        out.push(cur);
+        cur = { panel: {}, web: {} };
+        size = 32;
+      }
+      cur[part][k] = v;
+      size += n;
+    }
+  if (size > 32) out.push(cur);
+  return out;
+}
+
+/* After a save, the page's own texts may have changed: when they are the
+   ones being edited, the page is drawn again with them. */
+async function trAfterSave() {
+  try { await trLoad(); } catch (e) {}
+  if (TR.lang === LANG) {
+    try { await loadTexts(); } catch (e) {}
+    disegnaNav();
+    disegna();
+  } else {
+    trDrawList();
+  }
+}
+
+async function trSave() {
+  const batches = trBatches();
+  if (!batches.length) { trSay(t("tr.nothing")); return; }
+  const total = TR.edits.size;
+  const q = `?lang=${encodeURIComponent(TR.lang)}`;
+  for (let n = 0; n < batches.length; n++) {
+    trSay(t("tr.saving", { done: n + 1, total: batches.length }));
+    let r;
+    try {
+      r = await fetch("/api/texts" + q, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(batches[n]),
+      });
+    } catch (e) {
+      await trAfterSave();
+      trSay(t("tr.no_answer"), "ko");
+      return;
+    }
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      await trAfterSave();
+      trSay(r.status === 422
+        ? t("tr.rejected", { list: (j.fields || []).map(f => `${f.field}: ${f.reason}`).join("; ") })
+        : httpMessage(r.status), "ko");
+      return;
+    }
+    /* This body is saved: its edits are no longer edits. */
+    for (const part of ["panel", "web"])
+      for (const k of Object.keys(batches[n][part]))
+        for (const f of ["", ...FORMS]) TR.edits.delete(trId(part, k, f));
+  }
+  await trAfterSave();
+  trSay(tn("tr.saved", total), "ok");
+}
+
+async function trExport() {
+  try {
+    const r = await fetch(`/api/texts/export?lang=${encodeURIComponent(TR.lang)}`);
+    if (!r.ok) throw new Error(String(r.status));
+    const text = await r.text();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+    a.download = `${TR.lang}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    trSay(t("tr.exported", { file: `${TR.lang}.json` })
+          + (TR.edits.size ? " " + t("tr.exported_unsaved") : ""), "ok");
+  } catch (e) {
+    trSay(t("state.no_answer"), "ko");
+  }
+}
+
+function trSelect(label, options, value, onchange) {
+  const f = el("div", "field");
+  f.append(el("label", null, label));
+  const s = document.createElement("select");
+  for (const [v, text] of options) {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = text;
+    s.append(o);
+  }
+  s.value = value;
+  s.onchange = () => onchange(s);
+  f.append(s);
+  return f;
+}
+
+async function schedaTraduzioni(dove) {
+  if (!TR.lang) TR.lang = LANG;
+
+  const card = el("div", "card");
+  const cb = el("div", "cb");
+  const bar = el("div", "trbar");
+  bar.append(trSelect(t("tr.language"), LANGS.map(l => [l.code, l.name]), TR.lang, async (s) => {
+    if (TR.edits.size && !confirm(t("tr.discard"))) { s.value = TR.lang; return; }
+    TR.lang = s.value;
+    TR.edits.clear();
+    TR.data = null;
+    TR.shown = 200;
+    trSay("");
+    disegna();
+  }));
+  bar.append(trSelect(t("tr.part"),
+    [["panel", t("tr.part.panel")], ["web", t("tr.part.web")]], TR.part,
+    (s) => { TR.part = s.value; TR.shown = 200; trDrawList(); }));
+  bar.append(trSelect(t("tr.show"),
+    [["all", t("tr.show.all")], ["edited", t("tr.show.edited")], ["stale", t("tr.show.stale")]],
+    TR.show, (s) => { TR.show = s.value; TR.shown = 200; trDrawList(); }));
+  const fq = el("div", "field");
+  fq.append(el("label", null, t("tr.search")));
+  const q = document.createElement("input");
+  q.type = "text";
+  q.value = TR.search;
+  q.placeholder = t("tr.search_hint");
+  q.oninput = () => { TR.search = q.value; TR.shown = 200; trDrawList(); };
+  fq.append(q);
+  bar.append(fq);
+  cb.append(bar);
+
+  const act = el("div", "tract");
+  const save = el("button", "btn acc", t("tr.save"));
+  save.id = "trSave";
+  save.disabled = true;
+  save.onclick = trSave;
+  const exp = el("button", "btn", t("tr.export"));
+  exp.onclick = trExport;
+  const reset = el("button", "btn danger", t("tr.reset_all"));
+  /* Two gestures, like the factory reset, and for the same reason: from
+     here nothing shows how many texts it undoes. */
+  let armed = null;
+  reset.onclick = async () => {
+    if (!armed) {
+      reset.textContent = t("tr.reset_confirm");
+      armed = setTimeout(() => { armed = null; reset.textContent = t("tr.reset_all"); }, 10000);
+      return;
+    }
+    clearTimeout(armed);
+    armed = null;
+    reset.disabled = true;
+    try {
+      const r = await fetch(`/api/texts/reset?lang=${encodeURIComponent(TR.lang)}`, { method: "POST" });
+      if (!r.ok) throw new Error(String(r.status));
+      TR.edits.clear();
+      await trAfterSave();
+      trSay(t("tr.reset_done"), "ok");
+    } catch (e) {
+      reset.disabled = false;
+      reset.textContent = t("tr.reset_all");
+      trSay(t("state.no_answer"), "ko");
+    }
+  };
+  const pending = el("span", "quanti");
+  pending.id = "trPending";
+  act.append(save, exp, reset, pending);
+  cb.append(act);
+  const msg = el("div", "trmsg " + TR.messageClass, TR.message);
+  msg.id = "trMsg";
+  cb.append(msg);
+  card.append(cb);
+  dove.append(card);
+
+  const list = el("div", "card");
+  const lb = el("div", "cb");
+  lb.id = "trList";
+  list.append(lb);
+  dove.append(list);
+
+  if (!TR.data || TR.data.lang !== TR.lang) {
+    lb.append(el("div", "vuoto", t("state.loading")));
+    try { await trLoad(); }
+    catch (e) {
+      lb.textContent = "";
+      lb.append(el("div", "vuoto", t("state.no_answer")));
+      return;
+    }
+  }
+  trDrawList();
+}
+
+/* --- disegno complessivo ------------------------------------------------ */
+function disegnaNav() {
+  const nav = $("#nav");
+  nav.textContent = "";
+  let gruppo = null;
+  for (const s of SEZIONI) {
+    if (s.gruppo !== gruppo) {
+      gruppo = s.gruppo;
+      nav.append(el("div", "gl", t(`group.${gruppo}`)));
+    }
+    const b = el("button", s.id === sezioneCorrente ? "sel" : null, titoloSezione(s));
+    if (s.conta) {
+      const v = leggi(doc, s.conta);
+      b.append(el("span", "n", Array.isArray(v) ? String(v.length) : "0"));
+    }
+    b.onclick = () => {
+      sezioneCorrente = s.id;
+      history.replaceState(null, "", location.search + "#" + s.id);
+      disegna();
+    };
+    nav.append(b);
+  }
+}
+
+/* --- il contrasto, e come si guarda -------------------------------------
+ *
+ * La formula e quella delle WCAG, ed e la stessa che il firmware usa in
+ * main/ui/tema.c per decidere se sopra l'accento ci va testo scuro o
+ * chiaro: due posti che devono dare la stessa risposta, e per questo e
+ * scritta uguale.
+ *
+ * **Si avvisa, non si impedisce.** Un pannello e di chi ce l'ha in casa, e
+ * rifiutare una combinazione perche' a un algoritmo non piace vorrebbe dire
+ * decidere al posto suo. Ma un pannello a muro si legge da un metro e
+ * mezzo, e il contrasto sul monitor mentre si sceglie inganna: qui il
+ * numero c'e, e sotto le soglie lo dice.
+ */
+function coloreOra(nome) {
+  const s = (schema && schema.properties && schema.properties.appearance
+             && schema.properties.appearance.properties) || {};
+  const v = leggi(doc, "appearance." + nome);
+  return (v && /^#[0-9A-Fa-f]{6}$/.test(v)) ? v
+       : ((s[nome] && s[nome].default) || "#000000");
+}
+
+function luminanza(hex) {
+  const c = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16) / 255);
+  const v = c.map(x => x <= 0.03928 ? x / 12.92
+                                    : Math.pow((x + 0.055) / 1.055, 2.4));
+  return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+}
+
+function contrasto(a, b) {
+  const x = luminanza(a), y = luminanza(b);
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+
+/* Le coppie che decidono se il pannello si legge. Non tutte le
+   combinazioni possibili: quelle che stanno davvero una sopra l'altra. */
+/* The name of each pair is contrast.pair.<front>_on_<back>. */
+const COPPIE = [
+  ["text",       "background", 4.5],
+  ["text",       "cards",      4.5],
+  ["text_dim",   "cards",      4.5],
+  ["accent",     "background", 3.0],
+  ["positive",   "cards",      3.0],
+  ["negative",   "cards",      3.0],
+  ["lights_on",  "cards",      3.0],
+];
+
+function schedaContrasto(dove) {
+  const card = el("div", "card");
+  card.id = "cardContrasto";
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", t("contrast.title")));
+  ch.append(el("div", "s", t("contrast.subtitle")));
+  const cb = el("div", "cb");
+  cb.id = "corpoContrasto";
+  card.append(ch, cb);
+  dove.append(card);
+  aggiornaContrasto();
+}
+
+function aggiornaContrasto() {
+  const cb = document.getElementById("corpoContrasto");
+  if (!cb) return;                      /* non siamo in questa scheda */
+  cb.textContent = "";
+
+  const sfondo = coloreOra("background");
+  const schede = coloreOra("cards");
+  const bordi = coloreOra("borders");
+  const testo = coloreOra("text");
+  const debole = coloreOra("text_dim");
+  const accento = coloreOra("accent");
+
+  const tab = el("table", "contr");
+  for (const [davanti, dietro, soglia] of COPPIE) {
+    const f = coloreOra(davanti), d = coloreOra(dietro);
+    const r = contrasto(f, d);
+    const tr = document.createElement("tr");
+
+    const c1 = document.createElement("td");
+    c1.textContent = t(`contrast.pair.${davanti}_on_${dietro}`);
+
+    const c2 = document.createElement("td");
+    const campione = el("span", "campione", t("contrast.sample"));
+    campione.style.background = d;
+    campione.style.color = f;
+    c2.append(campione);
+
+    const c3 = document.createElement("td");
+    c3.textContent = r.toFixed(1) + ":1";
+    c3.className = r < soglia ? "male" : (r < soglia + 1.5 ? "cosi" : "bene");
+    if (r < soglia) c3.title = t("contrast.below", { ratio: soglia.toFixed(1) });
+
+    tr.append(c1, c2, c3);
+    tab.append(tr);
+  }
+  cb.append(tab);
+
+  const male = COPPIE.filter(([f, d, s]) =>
+      contrasto(coloreOra(f), coloreOra(d)) < s).length;
+  const nota = el("div", "hint", male ? tn("contrast.bad", male) : t("contrast.good"));
+  if (male) nota.style.color = "#c0392b";
+  cb.append(nota);
+
+  /* Il provino: la stessa roba che sta sul vetro, coi colori scelti. Un
+     campione di colore da solo non dice niente — quello che conta e come
+     stanno insieme. */
+  const prov = el("div", "provino");
+  prov.style.background = sfondo;
+  prov.style.border = "1px solid " + bordi;
+
+  const scheda = el("div", "scheda");
+  scheda.style.background = schede;
+  scheda.style.borderColor = bordi;
+  const t1 = el("div", null, t("contrast.room"));
+  t1.style.color = testo;
+  t1.style.fontWeight = "600";
+  const t2 = el("div", null, t("contrast.room_state"));
+  t2.style.color = debole;
+  t2.style.fontSize = "12px";
+  scheda.append(t1, t2);
+
+  const puls = el("div", "pulsante", t("contrast.button"));
+  puls.style.background = accento;
+  /* Come fa il firmware, e con la stessa regola: fra lo sfondo e il testo
+     vince quello che si stacca di piu dall'accento. Non una soglia sulla
+     luminanza — quella sceglieva la peggiore delle due su un accento di
+     mezzo tono. */
+  puls.style.color = contrasto(accento, sfondo) >= contrasto(accento, testo)
+                   ? sfondo : testo;
+
+  prov.append(scheda, puls);
+  cb.append(prov);
+}
+
+function disegna() {
+  disegnaNav();
+  const p = $("#pane");
+  p.textContent = "";
+  const s = SEZIONI.find(x => x.id === sezioneCorrente) || SEZIONI[0];
+  p.append(el("h2", null, titoloSezione(s)));
+  p.append(el("p", "lead", t(`section.${s.id}.lead`)));
+
+  if (s.speciale === "stato") { schedaStato(p); return; }
+  if (s.speciale === "traduzioni") { schedaTraduzioni(p); return; }
+
+  /* Ogni chiave dentro il suo riparo. Senza, bastava un intoppo sulla
+     prima per far sparire tutte quelle dopo **e** le schede dei segreti,
+     che vengono in fondo: restavano il titolo, il sommario e nient'altro.
+     Sembra una scelta di chi l'ha scritta, ed e un errore — che e il modo
+     peggiore di sbagliare. Una pagina di configurazione deve saper dire
+     "questo pezzo non l'ho disegnato, ed ecco perche". */
+  for (const chiave of (s.chiavi || [])) {
+    const sub = sottoschema(chiave);
+    if (!sub) continue;                 /* lo schema non la conosce: si salta */
+    try { disegnaChiave(chiave, sub, p); }
+    catch (e) { p.append(schedaGuasta(chiave, e)); }
+  }
+
+  if (s.contrasto) {
+    try { schedaContrasto(p); }
+    catch (e) { p.append(schedaGuasta("contrasto", e)); }
+  }
+
+  if (s.segreti) {
+    try { schedaSegreti(s.segreti, p); }
+    catch (e) { p.append(schedaGuasta("segreti", e)); }
+  }
+  mostraErrori();
+}
+
+/* Il riquadro che prende il posto di una scheda che non si e potuta
+   disegnare. Porta il messaggio vero: e l'unica cosa che permette di
+   capire, stando qui, cosa c'e di storto nella configurazione. */
+function schedaGuasta(chiave, e) {
+  const card = el("div", "card");
+  const ch = el("div", "ch");
+  ch.append(el("div", "t", etichetta(chiave, chiave.split(".").pop())));
+  ch.append(el("div", "s", t("broken.subtitle")));
+  const cb = el("div", "cb");
+  const m = el("div", "hint",
+    t("broken.text", { error: e && e.message ? e.message : String(e) }));
+  m.style.color = "var(--ko, #e5484d)";
+  cb.append(m);
+  cb.append(el("div", "hint", t("broken.rest")));
+
+  /* Quando si sa **quale** ramo e rotto, si puo offrire di rifarlo. E una
+     cancellazione, quindi la si dice per intero e la si fa premere: il
+     valore che c'e adesso non lo capiamo, ma e comunque roba di chi
+     configura, e non sta a questa pagina decidere di buttarla. */
+  if (e && e.ramo) {
+    const b = el("button", "btn sm danger", t("broken.empty", { branch: e.ramo }));
+    b.style.marginTop = "10px";
+    b.onclick = () => {
+      const dentro = e.ramo.split(".");
+      const ultimo = dentro.pop();
+      let o = doc;
+      for (const k of dentro) o = o[k];
+      o[ultimo] = {};
+      cambiato();
+      disegna();
+    };
+    cb.append(b);
+    cb.append(el("div", "hint", t("broken.empty_hint")));
+  }
+  card.append(ch, cb);
+  return card;
+}
+
+function disegnaChiave(chiave, sub, p) {
+    if (sub.type === "array" && sub.items && sub.items.type === "object") {
+      const card = el("div", "card");
+      const ch = el("div", "ch");
+      ch.append(el("div", "t", etichetta(chiave, chiave)));
+      const v = leggi(doc, chiave);
+      ch.append(el("div", "s", tn("list.count", Array.isArray(v) ? v.length : 0)));
+      const cb = el("div", "cb");
+      righeArray(chiave, sub, cb);
+      card.append(ch, cb); p.append(card);
+    } else if (sub.type === "array") {
+      const card = el("div", "card");
+      const ch = el("div", "ch"); ch.append(el("div", "t", etichetta(chiave, chiave)));
+      const cb = el("div", "cb");
+      elencoTesti(chiave, sub, cb);
+      card.append(ch, cb); p.append(card);
+    } else if (sub.type === "object") {
+      schedaOggetto(etichetta(chiave, chiave), chiave, sub, p);
+    } else {
+      const card = el("div", "card");
+      const cb = el("div", "cb");
+      campoSemplice(chiave, sub, cb);
+      card.append(cb); p.append(card);
+    }
+}
+
+function mostraErrori() {
+  const errori = { ...validaTutto(), ...erroriDalPannello };
+  for (const f of document.querySelectorAll(".field[data-percorso]")) {
+    const p = f.dataset.percorso;
+    const i = f.querySelector("input,select");
+    const m = f.querySelector(".errmsg");
+    if (i) i.classList.remove("err");
+    if (m) { m.textContent = ""; m.style.color = ""; }
+    if (errori[p]) {
+      if (i) i.classList.add("err");
+      if (m) m.textContent = errori[p];
+    } else if (avvisiDalPannello[p] && m) {
+      m.textContent = avvisiDalPannello[p];
+      m.style.color = "var(--warn)";
+    }
+  }
+  return errori;
+}
+
+/* --- dire *quali* campi, non quanti --------------------------------------
+ *
+ * «2 campi non validi» e' un numero senza indirizzo: il pulsante «Salva»
+ * resta spento e non c'e' modo di sapere dove guardare, perche' la riga
+ * rossa sta dentro una scheda che magari e' chiusa e che non si ha nessun
+ * motivo di aprire. E' successo davvero, e ha fatto sembrare rotto il
+ * pulsante invece che sbagliato un campo — in una sezione che chi guardava
+ * non aveva nemmeno aperto.
+ *
+ * Adesso si scrive **la scheda e il campo**: «Lavatrice e asciugatrice →
+ * Watt a pieno carico (riga 1)». Oltre tre si tronca con «e altri N», che
+ * e' l'unico caso in cui un numero serve piu' di un nome. */
+function schedaDi(percorso) {
+  const radice = percorso.split(".")[0];
+  for (const s of SEZIONI)
+    if ((s.chiavi || []).includes(radice)) return titoloSezione(s);
+  return radice;
+}
+
+function doveSta(percorso) {
+  const pezzi = percorso.split(".");
+  const chiave = pezzi[pezzi.length - 1];
+  /* L'indice della riga, se il campo sta dentro un elenco: senza, davanti a
+     dodici zone di clima si sa quale campo ma non quale riga. Si mostra a
+     partire da uno, come la colonna dei numeri accanto alle righe. */
+  const riga = pezzi.length >= 2 && /^\d+$/.test(pezzi[pezzi.length - 2])
+             ? " " + t("where.row", { n: Number(pezzi[pezzi.length - 2]) + 1 }) : "";
+
+  /* Il gruppo che contiene la riga, quando gli elenchi sono annidati.
+     «Programmazioni → Accensione (riga 2)» con sei gruppi non basta: la
+     riga 2 di quale? Si nomina il gruppo se ce l'ha un nome, se no il suo
+     numero — che e' comunque piu' di niente. L'ultimo indice e' della riga
+     e non si ripete. */
+  const dentro = [];
+  for (let n = 0; n < pezzi.length - 2; n++) {
+    if (!/^\d+$/.test(pezzi[n])) continue;
+    const o = leggi(doc, pezzi.slice(0, n + 1).join("."));
+    dentro.push(o && typeof o.name === "string" && o.name
+                ? o.name : `${etichetta(pezzi.slice(0, n).join("."), pezzi[n - 1])} ${Number(pezzi[n]) + 1}`);
+  }
+  const strada = dentro.length ? dentro.join(" → ") + " → " : "";
+  return `${schedaDi(percorso)} → ${strada}${etichetta(percorso, chiave)}${riga}`;
+}
+
+function elencoErrori(errori) {
+  const p = Object.keys(errori);
+  const primi = p.slice(0, 3).map(doveSta);
+  return primi.join("; ") + (p.length > 3 ? "; " + tn("where.more", p.length - 3) : "");
+}
+
+/* --- modifiche non salvate ---------------------------------------------- */
+function quanteModifiche() {
+  try {
+    const a = JSON.parse(originale), b = doc;
+    let n = 0;
+    const confronta = (x, y, base) => {
+      const chiavi = new Set([...Object.keys(x || {}), ...Object.keys(y || {})]);
+      for (const k of chiavi) {
+        const vx = x ? x[k] : undefined, vy = y ? y[k] : undefined;
+        if (vx && vy && typeof vx === "object" && typeof vy === "object")
+          confronta(vx, vy, `${base}.${k}`);
+        else if (JSON.stringify(vx) !== JSON.stringify(vy)) n++;
+      }
+    };
+    confronta(a, b, "");
+    return n;
+  } catch (e) { return 0; }
+}
+
+/* --- importare un documento intero --------------------------------------
+ *
+ * Una configurazione di casa e qualche centinaio di campi: comporla a mano
+ * nella pagina, la prima volta, e un pomeriggio. Il file c'e gia — si scrive
+ * a fianco del progetto, si esporta da un altro pannello, si tiene in un
+ * backup — e serviva solo il modo di consegnarlo.
+ *
+ * L'esportazione esisteva da sempre e l'importazione no, che e il genere di
+ * asimmetria che nessuno nota finche non tocca a lui rimettere dentro quello
+ * che aveva tirato fuori.
+ *
+ * **Non salva.** Il file diventa il documento in modifica, la pagina lo
+ * rilegge e lo mostra campo per campo, e a quel punto si vede cosa e stato
+ * accettato — e cosa il pannello contesta — prima di premere Salva. Un
+ * pulsante che scrivesse dritto in flash toglierebbe l'unico momento in cui
+ * ci si accorge di aver preso il file sbagliato. */
+function importa(testo) {
+  const st = $("#stato");
+  let nuovo;
+  try {
+    nuovo = JSON.parse(testo);
+  } catch (e) {
+    st.className = "stato ko";
+    st.textContent = t("state.not_json", { error: e.message });
+    return;
+  }
+  if (typeof nuovo !== "object" || nuovo === null || Array.isArray(nuovo)) {
+    st.className = "stato ko";
+    st.textContent = t("state.not_config");
+    return;
+  }
+
+  doc = raddrizza(schema, nuovo);
+  disegna();
+  cambiato();
+
+  /* Se cambiato() ha gia scritto un errore non gli si passa sopra: sapere
+     che il file e entrato conta meno che sapere che ha dei campi da
+     sistemare. */
+  if (!st.classList.contains("ko")) {
+    st.className = "stato";
+    st.textContent = t("state.imported");
+  }
+}
+
+function cambiato() {
+  erroriDalPannello = {};
+  avvisiDalPannello = {};
+  const errori = mostraErrori();
+  const n = quanteModifiche();
+  const quanti = Object.keys(errori).length;
+  const st = $("#stato");
+  $("#annulla").disabled = n === 0;
+  $("#salva").disabled = n === 0 || quanti > 0;
+  if (quanti) {
+    st.className = "stato ko";
+    st.textContent = tn("state.invalid", quanti, { list: elencoErrori(errori) });
+  } else if (n) {
+    st.className = "stato mod";
+    st.textContent = tn("state.unsaved", n);
+  } else {
+    st.className = "stato";
+    st.textContent = t("state.none");
+  }
+}
+
+/* --- dialogo col pannello ----------------------------------------------- */
+/* --- the new Wi-Fi network, tried with a safety net -----------------------
+ *
+ * The panel tries a new network thirty seconds after the last change and,
+ * if it does not connect within a minute, goes back to the previous one.
+ * The page says so: after a save, so that whoever just changed the password
+ * knows the page may soon stop answering, and on opening, so that whoever
+ * comes back after a failed trial knows the panel put things back. */
+function mostraReteNuova(st) {
+  const stato = st && st.network_trial;
+  $("#barra-rete").hidden = !stato;
+  $("#testo-rete").textContent = stato
+    ? t(`network_trial.${stato}`, { s: st.network_trial_in_s || 0 }) : "";
+}
+
+async function guardaReteNuova() {
+  try { mostraReteNuova(await (await fetch("/api/status")).json()); } catch (e) {}
+}
+
+async function inviaSegreti(coppie) {
+  const st = $("#stato");
+  try {
+    const r = await fetch("/api/secrets", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify(coppie),
+    });
+    const esito = await r.json();
+    Object.assign(statoSegreti, esito);
+    st.className = "stato ok";
+    st.textContent = t("secret.updated");
+    disegna();
+    /* A second of margin: /api/status answers at most once a second per
+       caller, and the page may just have asked. */
+    setTimeout(guardaReteNuova, 1100);
+  } catch (e) {
+    st.className = "stato ko";
+    st.textContent = t("state.no_answer");
+  }
+}
+
+async function salva() {
+  const st = $("#stato");
+  st.className = "stato";
+  st.textContent = t("state.sending");
+  let r;
+  try {
+    /* §2.1: si manda il documento intero, non le differenze. */
+    r = await fetch("/api/config", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify(doc),
+    });
+  } catch (e) {
+    st.className = "stato ko";
+    st.textContent = t("state.not_saved");
+    return;
+  }
+
+  if (r.ok) {
+    originale = JSON.stringify(doc);
+    erroriDalPannello = {};
+    cambiato();
+    $("#stato").className = "stato ok";
+    $("#stato").textContent = t("state.saved");
+    setTimeout(guardaReteNuova, 1100);
+    return;
+  }
+
+  if (r.status === 422) {
+    const esito = await r.json();
+    erroriDalPannello = {};
+    for (const c of (esito.fields || []))
+      erroriDalPannello[c.field.split("/").join(".")] = c.reason;
+    /* Gli avvisi non sono rifiuti: si mostrano, non bloccano. */
+    avvisiDalPannello = {};
+    for (const c of (esito.warnings || []))
+      avvisiDalPannello[c.field.split("/").join(".")] = c.reason;
+    mostraErrori();
+    st.className = "stato ko";
+    const n = (esito.fields || []).length;
+    st.textContent = tn("state.rejected", n);
+    return;
+  }
+
+  st.className = "stato ko";
+  st.textContent = httpMessage(r.status);
+}
+
+/* What an unexpected status means. A 404 from a page that answered a
+   moment ago is the configuration window having closed: said so, instead
+   of a number. */
+function httpMessage(status) {
+  return status === 404 ? t("state.window_closed") : t("state.http", { status });
+}
+
+/* --- here there was the unlock countdown -----------------------------------
+ *
+ * A yellow band said "closes in 14:57", and the number was made up: it
+ * started from fifteen minutes at every load of the page, whatever the
+ * panel knew, and with the configuration kept always open it never closed
+ * at all. A countdown that restarts at every reload is a false one, and on
+ * a phone it took three lines.
+ *
+ * When the window really closes it is said when it matters: at the save,
+ * which comes back 404 — see httpMessage(). */
+
+/* Lo schema usa $ref per non ripetere la forma di una rete condivisibile —
+   ospiti e private sono la stessa cosa — ma questa pagina guarda `type` e
+   `properties` per decidere che campo disegnare, e un $ref non ne ha
+   nessuno dei due. Finiva fra i campi semplici, cioe fra i campi di testo:
+   la rete ospiti compariva come una casella vuota che non configurava
+   niente, ed e il motivo per cui il nome della rete ospiti non si poteva
+   cambiare da nessuna parte.
+
+   Si srotola una volta sola, appena arrivato. Le definizioni di questo
+   schema non si richiamano fra loro, quindi srotolarle finisce. */
+function srotola(nodo, radice) {
+  if (Array.isArray(nodo)) return nodo.map(x => srotola(x, radice));
+  if (!nodo || typeof nodo !== "object") return nodo;
+
+  if (typeof nodo.$ref === "string") {
+    const pezzi = nodo.$ref.replace(/^#\//, "").split("/");
+    let d = radice;
+    for (const k of pezzi) d = d && d[k];
+    if (!d) return nodo;
+    /* Quello che stava accanto al $ref vince: e li per precisare. */
+    const { $ref, ...resto } = nodo;
+    return srotola({ ...d, ...resto }, radice);
+  }
+
+  const fuori = {};
+  for (const [k, v] of Object.entries(nodo)) fuori[k] = srotola(v, radice);
+  return fuori;
+}
+
+/* --- the header ------------------------------------------------------------
+ * Name and connection, from /api/status. Kept, so that changing language
+ * redraws it without asking the panel again. Version, revision and profile
+ * are no longer here: they are in «Status and log» and on the panel in
+ * Settings › Information, and at the top of every page they took two lines
+ * on a phone. */
+let panelStatus = null;
+
+function drawHeader() {
+  const st = panelStatus;
+  /* The panel's name, or the project's: a proper name, not a text. */
+  $("#nome-pannello").textContent = (st && st.panel) || "Foyer Panel";
+  if (!st) return;
+  const pill = $("#stato-ha");
+  pill.className = st.ha_state === "connected" ? "pill ok" : "pill";
+  /* "Home Assistant" is a name and stays in the HTML, hidden on a phone;
+     only the state is a text. */
+  $("#stato-ha-testo").textContent =
+    st.ha_state ? (tIf("ha.state." + st.ha_state) || st.ha_state) : "—";
+}
+
+/* --- avvio -------------------------------------------------------------- */
+async function avvia() {
+  $("#stato").textContent = t("state.loading");
+  try {
+    await loadTexts();
+    const [s, c] = await Promise.all([
+      fetch("/api/schema").then(r => r.json()),
+      fetch("/api/config").then(r => r.json()),
+    ]);
+    schema = srotola(s, s);
+    doc = raddrizza(schema, c);
+    /* `originale` si prende **dopo** aver raddrizzato: se no il confronto
+       con l'originale conterebbe la conversione come una modifica, e il
+       pulsante «Salva» si accenderebbe da solo su una pagina appena
+       aperta. */
+    originale = JSON.stringify(doc);
+  } catch (e) {
+    $("#stato").className = "stato ko";
+    $("#stato").textContent = t("state.unreachable");
+    return;
+  }
+
+  try { statoSegreti = await (await fetch("/api/secrets")).json(); } catch (e) {}
+
+  /* Non si aspetta: la pagina si disegna subito e le tendine si riempiono
+     quando l'elenco arriva. Aspettarlo vorrebbe dire una pagina bianca per
+     il giro sul WebSocket, in cambio di un suggerimento. */
+  caricaEntita(false);
+
+  try {
+    panelStatus = await (await fetch("/api/status")).json();
+    mostraReteNuova(panelStatus);
+
+    /* La porta tenuta aperta si dice qui, in alto e in giallo: chi apre
+       questa pagina senza aver toccato niente sul vetro deve capire subito
+       **perche** ci e riuscito, se no la barriera sembra non esserci mai
+       stata. */
+    /* Qui c'era una fascia rossa fissa sulla deroga «configurazione sempre
+       aperta». Tolta su richiesta: e' una decisione presa e dichiarata, e
+       una fascia che non si puo' chiudere smette di essere un avviso e
+       diventa arredamento — si impara a non vederla, e con lei si impara a
+       non vedere quel posto della pagina.
+       Il pannello continua a dirlo dove serve: la riga nelle impostazioni a
+       bordo e l'avviso nel registro a ogni avvio (12-sicurezza.md §3). */
+    drawHeader();
+  } catch (e) {}
+
+  disegna();
+  cambiato();
+}
+
+$("#salva").onclick = salva;
+
+/* Another language for the page: the texts again, and everything drawn
+   again with them. The document being edited is not touched. */
+$("#lingua-pagina").onchange = async () => {
+  chosenLang = $("#lingua-pagina").value;
+  history.replaceState(null, "", "?lang=" + encodeURIComponent(chosenLang) + location.hash);
+  try { await loadTexts(); } catch (e) { return; }
+  disegna();
+  cambiato();
+};
+caricaStanzeRobot();
+
+/* --- esportare il documento --------------------------------------------
+ *
+ * L'importazione c'era e l'esportazione no: si poteva leggere /api/config
+ * con uno strumento da riga di comando, che non e un modo di chiedere a
+ * qualcuno di farsi una copia della propria configurazione.
+ *
+ * Si esporta **quello che si vede**, modifiche comprese, e non quello che
+ * il pannello ha in flash: chi esporta dopo aver corretto dei campi si
+ * aspetta di ritrovarseli corretti, e un file che tornasse indietro alla
+ * versione salvata sarebbe una sorpresa scoperta il giorno del ripristino.
+ *
+ * I segreti non ci sono e non e una dimenticanza: il pannello non li
+ * restituisce a nessuno, quindi il file esce senza. 03-config-contratto.md
+ * §1 — un token dentro un file che si copia e un token perso. */
+function esportaFile() {
+  const testo = JSON.stringify(doc, null, 2);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([testo], { type: "application/json" }));
+  a.download = "config.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  const st = $("#stato");
+  st.className = "stato";
+  st.textContent = t("state.exported");
+}
+
+$("#file").onchange = () => {
+  const f = $("#file").files[0];
+  if (!f) return;
+  const lettore = new FileReader();
+  lettore.onload = () => importa(lettore.result);
+  lettore.readAsText(f);
+  /* Azzerato, se no ricaricare **lo stesso** file non scatena onchange e
+     sembra che il pulsante si sia rotto. */
+  $("#file").value = "";
+};
+$("#annulla").onclick = () => {
+  doc = JSON.parse(originale);
+  erroriDalPannello = {};
+  disegna();
+  cambiato();
+};
+
+avvia();
+</script>
+</body>
+</html>

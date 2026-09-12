@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Sezione Interruttori · barra e schermata · sei proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1560px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:15px;font-weight:600;margin:38px 0 4px;color:#e6e9ee;border-top:1px solid #262a31;padding-top:24px}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 18px;max-width:96ch;line-height:1.65}
+p.sub b{color:#e6e9ee}
+p.sub code,td code{font-size:11.5px;background:#1e242d;padding:1px 4px;border-radius:3px}
+.riga{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.colw{flex:none;width:496px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+/* la barra da sola, piu grande: e li che si decide */
+.striscia{position:relative;background:#000;border:9px solid #24272d;border-radius:16px;overflow:hidden;width:496px;height:186px}
+.stage2{transform:scale(.6);transform-origin:top left;position:relative;width:800px;height:300px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:13px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap .si{color:#4fc39a}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+table.mis{border-collapse:collapse;font-size:12.5px;margin:6px 0 16px}
+table.mis th,table.mis td{border:1px solid #262a31;padding:5px 10px;text-align:left;color:#9aa1ad}
+table.mis th{color:#e6e9ee;font-weight:600;background:#1a1e24}
+
+/* ── lo schermo ───────────────────────────────────────────────────── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;--ink:#1a1206;
+  --r:16px;--pad:18px;--gap:14px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+.head{height:72px;flex:none;padding:0 var(--pad);display:flex;align-items:baseline;gap:14px}
+.head .t{font-size:30px;font-weight:600}
+.head .s{font-size:14px;color:var(--dim)}
+.head .p{margin-left:auto;font-size:14px;color:var(--dim)}
+.body{flex:1;padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+
+/* barra in basso */
+.nav{height:112px;flex:none;border-top:1px solid var(--line);display:grid;align-items:center}
+.nav .v{text-align:center;font:500 11px/1.4 Inter,sans-serif;letter-spacing:.06em;color:var(--dim);
+  height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nav .v.on{color:var(--acc);background:#241d0e}
+.nav .v .ic{font-size:22px;line-height:1}
+.nav.n8{grid-template-columns:repeat(8,1fr)}
+.nav.n10{grid-template-columns:repeat(10,1fr)}
+.nav.n6{grid-template-columns:repeat(6,1fr)}
+.nav.solo .v{font-size:0;gap:0}
+.nav.solo .v .ic{font-size:30px}
+
+/* rail a sinistra (proposta C della barra) */
+.conrail{flex:1;display:flex;overflow:hidden}
+.rail{width:96px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;padding:10px 0;gap:2px}
+.rail .v{width:84px;height:62px;border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;color:var(--dim);
+  font:500 10px/1.2 Inter,sans-serif;letter-spacing:.04em}
+.rail .v.on{color:var(--acc);background:#241d0e}
+.rail .v .ic{font-size:20px}
+.rail .sp{flex:1}
+
+/* foglio «Altro» (proposta A della barra) */
+.velo{position:absolute;inset:0;background:#000a;display:flex;align-items:flex-end}
+.foglio{width:100%;background:var(--card);border-radius:20px 20px 0 0;padding:20px 18px 26px;
+  border-top:1px solid var(--line)}
+.foglio .ti{font-size:13px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+.foglio .g{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.foglio .b{background:var(--card2);border-radius:14px;height:96px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:7px;font-size:12px;color:var(--txt)}
+.foglio .b .ic{font-size:26px;color:var(--dim)}
+
+/* ── sezione Interruttori — le tre forme ──────────────────────────── */
+/* A: piastrelle come le Luci */
+.gA{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:1;grid-auto-rows:1fr}
+.tA{background:var(--card);border-radius:var(--r);padding:16px;display:flex;flex-direction:column}
+.tA .nm{font-size:21px;font-weight:500}
+.tA .ic{flex:1;display:flex;align-items:center;justify-content:center;font-size:38px}
+.tA .st{font-size:13px;color:var(--dim)}
+.tA.off{opacity:.45}
+.tA.on .ic{color:var(--acc)}
+
+/* B: elenco con interruttore */
+.gB{display:flex;flex-direction:column;gap:10px;flex:1}
+.rB{background:var(--card);border-radius:14px;padding:0 16px;height:76px;display:flex;
+  align-items:center;gap:14px}
+.rB .ic{font-size:24px;width:30px;text-align:center;color:var(--dim)}
+.rB.on .ic{color:var(--acc)}
+.rB .nm{font-size:19px;flex:1}
+.rB .st{font-size:13px;color:var(--dim)}
+.rB .sw{width:64px;height:34px;border-radius:99px;background:var(--off);flex:none;position:relative}
+.rB.on .sw{background:var(--acc)}
+.rB .sw i{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#0d1014}
+.rB.on .sw i{left:33px}
+.rB.off{opacity:.5}
+
+/* C: piastrelle che si riempiono */
+.gC{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:1;grid-auto-rows:1fr}
+.tC{border-radius:var(--r);padding:18px;display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--card);border:1px solid var(--line)}
+.tC .ic{font-size:40px;color:var(--dim)}
+.tC .nm{font-size:22px;font-weight:500}
+.tC .st{font-size:13px;color:var(--dim);margin-top:2px}
+.tC.on{background:var(--acc);border-color:var(--acc);color:var(--ink)}
+.tC.on .ic,.tC.on .st{color:#5a4110}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">Sezione <b>Interruttori</b> — tre proposte per la barra, tre per la schermata (<code>p4-800x1280</code>)</h1>
+<p class="sub">
+La sezione tiene gli interruttori che non appartengono a nessun elenco già implementato: uno <code>switch.*</code> o una
+<code>light.*</code>, un nome, un'icona scelta fra quelle già compilate. Configurabile dalla pagina web come le altre.
+</p>
+
+<h2 class="tt2">Parte 1 — la barra in basso</h2>
+<p class="sub">
+Il vincolo è misurato, non stimato. La barra è larga <b>800 px</b> e alta <b>112</b>; le voci si dividono la larghezza in
+parti uguali (<code>09-profili.md</code> §6: è una misura derivata, non imposta).
+</p>
+<table class="mis">
+<tr><th>Destinazioni</th><th>Larghezza per voce</th><th>Come sta</th></tr>
+<tr><td>8 — HOME + 7 sezioni, <b>è la barra di oggi</b></td><td>100 px</td><td>«Telecamere» ci sta appena</td></tr>
+<tr><td>9 — con «Interruttori»</td><td>88 px</td><td>«Telecamere» va a capo o si tronca</td></tr>
+<tr><td>10 — con tutte le otto sezioni dello schema</td><td>80 px</td><td>l'etichetta non si legge più</td></tr>
+</table>
+<p class="sub" style="margin-top:-6px">
+Il minimo di tocco (44 px) non è in pericolo nemmeno a dieci: <b>quello che si rompe è la parola</b>, non il dito.
+Le tre proposte partono da qui e scelgono cosa sacrificare.
+</p>
+
+<div class="riga">
+
+<!-- ═══ BARRA A ═══ -->
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen" style="height:300px">
+  <div class="body" style="justify-content:flex-end;padding-bottom:0">
+    <div style="height:150px;background:var(--card);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px">↑ contenuto della schermata</div>
+  </div>
+  <div class="nav n6">
+    <div class="v on"><span class="ic">⌂</span>HOME</div>
+    <div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v"><span class="ic">⏻</span>Interrutt.</div>
+    <div class="v"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div>
+    <div class="v"><span class="ic">⋯</span>Altro</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>A · Sei voci, e «Altro»</h3>
+La barra tiene <b>cinque destinazioni più HOME</b>, sempre le stesse, a <b>133 px</b> l'una — più larghe di oggi.
+L'ultima voce apre un foglio dal basso con tutto il resto.
+<ul>
+<li class="si"><b>Le voci non si stringono mai</b>, qualunque numero di sezioni si attivi. È l'unica proposta che regge anche una nona e una decima sezione.</li>
+<li class="si">Quali cinque stiano in barra lo decide <b>l'ordine di <code>sezioni</code></b> in configurazione, che già oggi comanda l'ordine: nessuna impostazione nuova.</li>
+<li class="no">Le sezioni oltre la quinta costano <b>un tocco in più</b>, per sempre. Su un pannello a muro dove si passa davanti e si tocca, è il costo vero.</li>
+<li class="no">Un foglio modale è un pezzo di interfaccia nuovo: si apre, si chiude, e va deciso cosa fa il tocco fuori.</li>
+</ul>
+</div>
+</div>
+
+<!-- ═══ BARRA B ═══ -->
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen" style="height:300px">
+  <div class="body" style="justify-content:flex-end;padding-bottom:0">
+    <div style="height:150px;background:var(--card);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px">↑ contenuto della schermata</div>
+  </div>
+  <div class="nav n10 solo">
+    <div class="v on"><span class="ic">⌂</span>HOME</div>
+    <div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v"><span class="ic">⏻</span>Int.</div>
+    <div class="v"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div>
+    <div class="v"><span class="ic">▢</span>Telec.</div>
+    <div class="v"><span class="ic">⌸</span>Accessi</div>
+    <div class="v"><span class="ic">▤</span>Agenda</div>
+    <div class="v"><span class="ic">≋</span>Wi-Fi</div>
+    <div class="v"><span class="ic">⌾</span>Robot</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>B · Tutte le voci, senza etichette</h3>
+Sopra le sette destinazioni la barra <b>lascia cadere le parole</b> e ingrandisce le icone da 22 a 30 px. Dieci voci da
+80 px, tutte visibili, tutte a un tocco.
+<ul>
+<li class="si"><b>Nessun tocco in più, nessun gesto nuovo.</b> È la sola proposta che non cambia il modo di navigare.</li>
+<li class="si">Costa poche righe: la barra sa già quante voci ha, e la soglia è un numero in <code>profili.json</code>.</li>
+<li class="no"><b>Dieci icone senza nome sono un rebus</b> finché non le si impara. «Accessi» e «Agenda» non hanno un'icona che si spieghi da sola, e la sezione nuova nemmeno.</li>
+<li class="no">Il passaggio è brusco: si attiva l'ottava sezione e tutte le etichette spariscono insieme.</li>
+</ul>
+</div>
+</div>
+
+<!-- ═══ BARRA C ═══ -->
+<div class="colw">
+<div class="striscia"><div class="stage2"><div class="screen" style="height:300px">
+  <div class="conrail">
+    <div class="rail">
+      <div class="v on"><span class="ic">⌂</span>HOME</div>
+      <div class="v"><span class="ic">◍</span>Luci</div>
+      <div class="v"><span class="ic">⏻</span>Interr.</div>
+      <div class="v"><span class="ic">🌡</span>Clima</div>
+      <div class="v"><span class="ic">⚡</span>Energia</div>
+    </div>
+    <div style="flex:1;padding:14px">
+      <div style="height:100%;background:var(--card);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px">contenuto — 704 px di larghezza</div>
+    </div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>C · Il rail a sinistra, anche in verticale</h3>
+La barra in basso sparisce e torna il <b>rail verticale</b> che il profilo orizzontale ha già. Le voci si impilano: dieci
+ci stanno senza stringersi, con icona <i>e</i> nome.
+<ul>
+<li class="si"><b>Scala per costruzione.</b> In colonna lo spazio per una voce in più c'è sempre; in riga no.</li>
+<li class="si">Il codice esiste già — <code>nav_rail()</code> serve il profilo orizzontale — e le due orientazioni smetterebbero di avere due navigazioni diverse.</li>
+<li class="no"><b>Costa larghezza, che in verticale è la dimensione scarsa</b>: il contenuto passa da 800 a 704 px. Le schede della home e le due colonne del clima sono state misurate su 800.</li>
+<li class="no">Il pollice, su un pannello a muro, sta più comodo in basso che a sinistra — e chi è mancino peggio ancora.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2 class="tt2">Parte 2 — la schermata</h2>
+<p class="sub">
+Otto interruttori d'esempio. Tutte e tre le proposte usano le icone <b>già compilate</b> nel firmware: sceglierne una
+fuori elenco vorrebbe dire rigenerare i font, quindi la pagina web offrirà <b>una tendina, non un campo libero</b>.
+</p>
+
+<div class="riga">
+
+<!-- ═══ SEZIONE A ═══ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Interruttori</div><div class="s">3 accesi</div><div class="p">1 / 1</div></div>
+  <div class="body">
+    <div class="gA">
+      <div class="tA on"><div class="nm">Presa TV</div><div class="ic">⏻</div><div class="st">acceso</div></div>
+      <div class="tA off"><div class="nm">Ventilatore</div><div class="ic">✿</div><div class="st">spento</div></div>
+      <div class="tA on"><div class="nm">Irrigazione</div><div class="ic">≈</div><div class="st">accesa</div></div>
+      <div class="tA off"><div class="nm">Stufetta bagno</div><div class="ic">♨</div><div class="st">spento</div></div>
+      <div class="tA on"><div class="nm">Luce portico</div><div class="ic">◍</div><div class="st">accese</div></div>
+      <div class="tA off"><div class="nm">Albero di Natale</div><div class="ic">✦</div><div class="st">spento</div></div>
+      <div class="tA off"><div class="nm">Congelatore</div><div class="ic">❄</div><div class="st">spento</div></div>
+      <div class="tA off"><div class="nm">Presa rack</div><div class="ic">▤</div><div class="st">spenta</div></div>
+    </div>
+  </div>
+  <div class="nav n8">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v on"><span class="ic">⏻</span>Interr.</div><div class="v"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">▢</span>Telec.</div>
+    <div class="v"><span class="ic">⌸</span>Accessi</div><div class="v"><span class="ic">≋</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>A · Piastrelle, come le Luci</h3>
+La stessa grammatica della sezione Luci: nome in alto a sinistra, icona al centro, stato in basso, scheda attenuata da
+spenta. Otto per pagina.
+<ul>
+<li class="si"><b>Non si impara niente di nuovo.</b> Chi sa usare le Luci sa già usare questa, e le due sezioni si somigliano perché fanno la stessa cosa.</li>
+<li class="si">Bersaglio enorme: <b>tutta la scheda</b> è il pulsante.</li>
+<li class="no">Molto spazio per poca informazione: un interruttore è acceso o spento, e qui ha la stessa area di una luce che ha anche la percentuale.</li>
+<li class="no">Oltre otto si pagina, e per otto interruttori la paginazione è un tocco per arrivare a roba che ci sarebbe stata.</li>
+</ul>
+</div>
+</div>
+
+<!-- ═══ SEZIONE B ═══ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Interruttori</div><div class="s">3 accesi</div></div>
+  <div class="body">
+    <div class="gB">
+      <div class="rB on"><span class="ic">⏻</span><span class="nm">Presa TV</span><span class="st">acceso</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">✿</span><span class="nm">Ventilatore</span><span class="st">spento</span><span class="sw"><i></i></span></div>
+      <div class="rB on"><span class="ic">≈</span><span class="nm">Irrigazione</span><span class="st">accesa</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">♨</span><span class="nm">Deumidificatore</span><span class="st">spento</span><span class="sw"><i></i></span></div>
+      <div class="rB on"><span class="ic">◍</span><span class="nm">Luce portico</span><span class="st">accese</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">✦</span><span class="nm">Albero di Natale</span><span class="st">spento</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">❄</span><span class="nm">Congelatore</span><span class="st">spento</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">▤</span><span class="nm">Presa rack rete</span><span class="st">spenta</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">☀</span><span class="nm">Faretti giardino</span><span class="st">spenti</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">⌾</span><span class="nm">Presa laboratorio</span><span class="st">spenta</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">▦</span><span class="nm">Irrigazione orto</span><span class="st">spenta</span><span class="sw"><i></i></span></div>
+      <div class="rB off"><span class="ic">⌛</span><span class="nm">Presa stampante 3D</span><span class="st">spenta</span><span class="sw"><i></i></span></div>
+    </div>
+  </div>
+  <div class="nav n8">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v on"><span class="ic">⏻</span>Interr.</div><div class="v"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">▢</span>Telec.</div>
+    <div class="v"><span class="ic">⌸</span>Accessi</div><div class="v"><span class="ic">≋</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>B · Elenco con interruttore</h3>
+Righe alte 76 px: icona, nome, stato a parole, e a destra <b>l'interruttore vero</b>, quello già usato nel dettaglio del
+clima e nelle impostazioni. <b>Dodici</b> per pagina.
+<ul>
+<li class="si"><b>Ci stanno tutti senza paginare</b>, ed è la proposta che regge la crescita: dodici in una pagina, e i nomi lunghi non spostano niente.</li>
+<li class="si">L'interruttore <b>dice cosa succede al tocco</b> prima che lo tocchi. Una piastrella no: va capito che è premibile.</li>
+<li class="si">Lo stato è scritto <i>e</i> disegnato: si legge da vicino e si vede da lontano.</li>
+<li class="no">Da tre metri dodici righe si assomigliano. Non è una schermata che si guarda, è una che si usa.</li>
+<li class="no">Il bersaglio è l'interruttore (64×34) o la riga intera? Va deciso — e se è la riga, l'interruttore diventa un disegno che sembra premibile e non lo è.</li>
+</ul>
+</div>
+</div>
+
+<!-- ═══ SEZIONE C ═══ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Interruttori</div><div class="s">3 accesi</div><div class="p">1 / 2</div></div>
+  <div class="body">
+    <div class="gC">
+      <div class="tC on"><div class="ic">⏻</div><div><div class="nm">Presa TV</div><div class="st">acceso</div></div></div>
+      <div class="tC"><div class="ic">✿</div><div><div class="nm">Ventilatore</div><div class="st">spento</div></div></div>
+      <div class="tC on"><div class="ic">≈</div><div><div class="nm">Irrigazione</div><div class="st">accesa</div></div></div>
+      <div class="tC"><div class="ic">♨</div><div><div class="nm">Stufetta bagno</div><div class="st">spento</div></div></div>
+      <div class="tC on"><div class="ic">◍</div><div><div class="nm">Luce portico</div><div class="st">accese</div></div></div>
+      <div class="tC"><div class="ic">✦</div><div><div class="nm">Albero Natale</div><div class="st">spento</div></div></div>
+    </div>
+  </div>
+  <div class="nav n8">
+    <div class="v"><span class="ic">⌂</span>HOME</div><div class="v"><span class="ic">◍</span>Luci</div>
+    <div class="v on"><span class="ic">⏻</span>Interr.</div><div class="v"><span class="ic">🌡</span>Clima</div>
+    <div class="v"><span class="ic">⚡</span>Energia</div><div class="v"><span class="ic">▢</span>Telec.</div>
+    <div class="v"><span class="ic">⌸</span>Accessi</div><div class="v"><span class="ic">≋</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+<h3>C · Piastrelle che si riempiono</h3>
+Sei piastrelle grandi. Quella accesa <b>si riempie del colore d'accento</b> e inverte il testo, invece di limitarsi a
+colorare l'icona.
+<ul>
+<li class="si"><b>Si legge dalla porta.</b> Quanti e quali sono accesi si vede senza leggere una parola — è l'unica delle tre che risponde a distanza.</li>
+<li class="si">Lo stato non è affidato a una sfumatura di opacità, che su un pannello inclinato o di sera si perde.</li>
+<li class="no">Sei per pagina: con otto interruttori si pagina già, e la seconda pagina è mezza vuota.</li>
+<li class="no">Tanto colore acceso in una schermata: <b>tre piastrelle ambra riempiono mezzo vetro</b>, e di notte in corridoio è molta luce.</li>
+<li class="no">Rompe la grammatica delle altre sezioni, dove l'accento colora l'elemento attivo e non il fondo della scheda.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="cap" style="max-width:96ch;margin-top:26px;border-top:1px solid #262a31;padding-top:20px">
+<h3>Tre cose da decidere insieme al disegno</h3>
+<ul>
+<li><b>L'icona si sceglie da una tendina, non si scrive.</b> I caratteri-icona sono bitmap compilati alla costruzione
+del firmware (85 nomi distinti oggi): un nome fuori elenco non darebbe un errore, darebbe un <b>rettangolo vuoto</b> sul vetro.
+La pagina web offrirà i nomi che esistono, con l'icona disegnata accanto.</li>
+<li><b>Il dominio dell'entità decide il comando, non la configurazione.</b> Una <code>light.*</code> si accende con
+<code>light.turn_on</code>, uno <code>switch.*</code> con <code>switch.turn_on</code>: il pannello lo ricava dal
+prefisso, come fa già per le luci. Chi configura scrive l'entità e basta.</li>
+<li><b>Un interruttore che non risponde non si finge spento.</b> `unavailable` e `unknown` sono la stessa cosa per il
+pannello — non si può comandare e non si può mostrare — e la voce lo dice invece di disegnare uno stato che non
+conosce. Vale in tutte e tre le forme.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>

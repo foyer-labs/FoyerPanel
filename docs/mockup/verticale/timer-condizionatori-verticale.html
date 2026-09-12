@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Countdown del timer nelle schede · due proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1500px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+h2.tt2{font-size:14px;font-weight:600;margin:34px 0 10px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 20px;max-width:92ch;line-height:1.6}
+.riga{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:14px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap .si{color:#4fc39a}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+code{font-size:11.5px;background:#1e242d;padding:1px 4px;border-radius:3px}
+
+/* ── lo schermo, 800x1280 ─────────────────────────────────────────── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;
+  --r:16px;--pad:18px;--gap:14px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+
+.head{height:72px;flex:none;padding:0 var(--pad);display:flex;align-items:center;gap:14px}
+.head .t{font-size:30px;font-weight:600}
+.head .s{font-size:14px;color:var(--dim)}
+.head .ora{margin-left:auto;font-size:20px;color:var(--dim)}
+.body{flex:1;padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+
+.tab{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);flex:none}
+.tab div{height:48px;border-radius:var(--r);background:var(--card);display:flex;align-items:center;
+  justify-content:center;gap:10px;font-size:19px;color:var(--txt)}
+.tab div.on{background:var(--acc);color:#1a1206;font-weight:600}
+.ext{height:44px;flex:none;border-radius:var(--r);background:var(--card);display:flex;align-items:center;
+  justify-content:center;gap:10px;font-size:19px}
+
+.grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:var(--gap)}
+.u{background:var(--card);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:9px;
+  border:1px solid transparent;overflow:hidden}
+.u.cool{border-color:var(--cool)} .u.heat{border-color:var(--acc)}
+.u.spento{opacity:.45}
+.u .nm{font-size:19px;font-weight:500}
+.past{align-self:flex-start;background:var(--card2);border-radius:10px;padding:4px 10px;display:flex;
+  align-items:center;gap:7px;font-size:13px}
+.past.c{color:var(--cool)} .past.h{color:var(--acc)} .past.a{color:var(--txt)} .past.o{color:var(--dim)}
+.temp{font-size:42px;font-weight:300;line-height:1.05}
+.temp.c{color:var(--cool)} .temp.h{color:var(--acc)} .temp.n{color:var(--txt)} .temp.o{color:var(--dim)}
+.set{display:flex;align-items:center;justify-content:space-between}
+.set b{width:48px;height:40px;border-radius:10px;background:var(--card2);display:flex;align-items:center;
+  justify-content:center;font-weight:400;font-size:20px;color:var(--txt)}
+.set span{font-size:19px}
+.st{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
+.st i{font-style:normal;width:16px;text-align:center;opacity:.85}
+.st em{margin-left:auto;font-style:normal;color:var(--txt)}
+.sp{flex:1}
+.cmd{height:44px;border-radius:10px;border:1px solid var(--line);display:flex;align-items:center;
+  justify-content:center;gap:10px;font-size:14px}
+
+.nav{height:112px;flex:none;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);align-items:center}
+.nav div{text-align:center;font:500 11px/1.5 Inter,sans-serif;letter-spacing:.08em;color:var(--dim)}
+.nav div.on{color:var(--acc);background:#241d0e;height:100%;display:flex;flex-direction:column;justify-content:center}
+.nav .ic{display:block;font-size:20px;margin-bottom:5px}
+
+/* ── A: la barra sotto la riga ─────────────────────────────────────── */
+.barA{height:6px;border-radius:3px;background:var(--off);overflow:hidden;margin-top:-2px}
+.barA i{display:block;height:100%;border-radius:3px;background:var(--acc)}
+.barA.c i{background:var(--cool)}
+.fino{font-size:12px;color:var(--dim);margin-top:-3px}
+
+/* ── B: il riquadro nello spazio vuoto ─────────────────────────────── */
+.tbox{background:var(--card2);border-radius:12px;padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px}
+.tbox .tr{display:flex;align-items:baseline}
+.tbox .lb{font:500 11px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.tbox .alle{margin-left:auto;font-size:12px;color:var(--dim)}
+.tbox .num{font-size:30px;font-weight:300;line-height:1}
+.tbox .num.c{color:var(--cool)} .tbox .num.h{color:var(--acc)}
+.barB{height:10px;border-radius:5px;background:var(--off);overflow:hidden}
+.barB i{display:block;height:100%;border-radius:5px;background:var(--acc)}
+.barB.c i{background:var(--cool)}
+.attenuato{opacity:.45}
+.avviso{font-size:12px;color:var(--warn)}
+
+/* ── il campionario dei casi ───────────────────────────────────────── */
+.casi{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px}
+.caso{width:300px}
+.caso .et{font-size:12px;color:#9aa1ad;margin-bottom:7px}
+.mini{background:#0d1014;border-radius:14px;padding:14px;border:1px solid #1e242d;
+  --card:#151a21;--card2:#11161c;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;color:#e8ecf2}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="tt">Countdown del timer nelle schede dei condizionatori — due proposte per <code>p4-800x1280</code></h1>
+<p class="sub">
+Le due proposte occupano lo <b>stesso spazio vuoto</b>, quello fra le righe di stato e «Tutti i comandi», e si distinguono
+per quanto inchiostro ci mettono. Le schede riproducono la schermata vera: <b>Salotto</b> e <b>Camera padronale</b>
+hanno un timer che corre, <b>Mansarda</b> è spento e <b>Camera bambini</b> non ha nessun timer in corso — così si vede anche
+cosa succede alle schede che <i>non</i> hanno niente da mostrare, che è metà della decisione.
+I minuti sono d'esempio.
+</p>
+
+<div class="riga">
+
+<!-- ════════════════════ A ════════════════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Clima</div><div class="s">3 unità accese</div><div class="ora">18:42</div></div>
+  <div class="body">
+    <div class="tab"><div>♨ Riscaldamento</div><div class="on">❄ Condizionatori</div></div>
+    <div class="ext">☀ Esterno 30,4°</div>
+
+    <div class="grid">
+      <!-- Salotto: timer che corre -->
+      <div class="u cool">
+        <div class="nm">Salotto</div>
+        <div class="past c">❄ Freddo</div>
+        <div class="temp c">30,0°</div>
+        <div class="set"><b>−</b><span>28°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Media</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Oscillante</em></div>
+        <div class="st"><i>⏱</i>Spegni al timer<em>1h07</em></div>
+        <div class="barA c"><i style="width:74%"></i></div>
+        <div class="fino">fino alle 20:12</div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Mansarda: spenta -->
+      <div class="u spento">
+        <div class="nm">Mansarda</div>
+        <div class="past o">⏻ Spento</div>
+        <div class="temp o">23,2°</div>
+        <div class="set"><b>−</b><span>24°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Auto</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Centro</em></div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Camera bambini: accesa, nessun timer -->
+      <div class="u">
+        <div class="nm">Camera bambini</div>
+        <div class="past a">⟳ Auto</div>
+        <div class="temp n">24,6°</div>
+        <div class="set"><b>−</b><span>25°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Bassa</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Medio-alto</em></div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Camera padronale: timer che corre -->
+      <div class="u heat">
+        <div class="nm">Camera padronale</div>
+        <div class="past h">♨ Caldo</div>
+        <div class="temp h">21,9°</div>
+        <div class="set"><b>−</b><span>23°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Medio-alta</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Basso</em></div>
+        <div class="st"><i>⏱</i>Spegni al timer<em>0h42</em></div>
+        <div class="barA"><i style="width:35%"></i></div>
+        <div class="fino">fino alle 19:24</div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div><span class="ic">⌂</span>HOME</div><div><span class="ic">◍</span>Luci</div>
+    <div class="on"><span class="ic">🌡</span>Clima</div><div><span class="ic">⚡</span>Energia</div>
+    <div><span class="ic">▢</span>Telecamere</div><div><span class="ic">⌸</span>Accessi</div>
+  </div>
+</div></div></div>
+
+<div class="cap">
+<h3>A · La barra sotto la riga</h3>
+La riga «Spegni al timer · 1h07» <b>resta esattamente com'è oggi</b>, e sotto le si aggiunge una barra sottile
+(6 px) più una riga smorzata con l'ora di fine. Il countdown continua a leggersi come <i>uno dei tre stati</i>
+dell'unità, insieme a ventilazione e deflettore.
+<ul>
+<li><b>Poco inchiostro.</b> Tre elementi in più solo sulle schede che hanno un timer; le altre due restano identiche a oggi.</li>
+<li><b>Ordine di lettura invariato.</b> Chi guarda la scheda scorre le righe di stato e trova il timer dov'era.</li>
+<li>La barra si tinge del <b>colore della modalità</b> — azzurro in raffrescamento, ambra in riscaldamento — così appartiene alla scheda e non sembra un elemento estraneo.</li>
+<li class="no">Da un metro e mezzo il numero resta piccolo: <code>FT_S</code>, come le altre righe di stato. Se il tempo residuo è la cosa che si vuole vedere entrando in stanza, questa proposta non la mette in evidenza.</li>
+<li class="no">Lo spazio vuoto resta in gran parte vuoto: si guadagnano 20 px su 110.</li>
+</ul>
+</div>
+</div>
+
+<!-- ════════════════════ B ════════════════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head"><div class="t">Clima</div><div class="s">3 unità accese</div><div class="ora">18:42</div></div>
+  <div class="body">
+    <div class="tab"><div>♨ Riscaldamento</div><div class="on">❄ Condizionatori</div></div>
+    <div class="ext">☀ Esterno 30,4°</div>
+
+    <div class="grid">
+      <!-- Salotto -->
+      <div class="u cool">
+        <div class="nm">Salotto</div>
+        <div class="past c">❄ Freddo</div>
+        <div class="temp c">30,0°</div>
+        <div class="set"><b>−</b><span>28°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Media</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Oscillante</em></div>
+        <div class="sp"></div>
+        <div class="tbox">
+          <div class="tr"><span class="lb">⏱ Si spegne fra</span><span class="alle">alle 20:12</span></div>
+          <div class="num c">1h07</div>
+          <div class="barB c"><i style="width:74%"></i></div>
+        </div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Mansarda -->
+      <div class="u spento">
+        <div class="nm">Mansarda</div>
+        <div class="past o">⏻ Spento</div>
+        <div class="temp o">23,2°</div>
+        <div class="set"><b>−</b><span>24°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Auto</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Centro</em></div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Camera bambini -->
+      <div class="u">
+        <div class="nm">Camera bambini</div>
+        <div class="past a">⟳ Auto</div>
+        <div class="temp n">24,6°</div>
+        <div class="set"><b>−</b><span>25°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Bassa</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Medio-alto</em></div>
+        <div class="sp"></div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+
+      <!-- Camera padronale -->
+      <div class="u heat">
+        <div class="nm">Camera padronale</div>
+        <div class="past h">♨ Caldo</div>
+        <div class="temp h">21,9°</div>
+        <div class="set"><b>−</b><span>23°</span><b>+</b></div>
+        <div class="st"><i>✿</i>Ventilazione<em>Medio-alta</em></div>
+        <div class="st"><i>⇅</i>Deflettore<em>Basso</em></div>
+        <div class="sp"></div>
+        <div class="tbox">
+          <div class="tr"><span class="lb">⏱ Si spegne fra</span><span class="alle">alle 19:24</span></div>
+          <div class="num h">0h42</div>
+          <div class="barB"><i style="width:35%"></i></div>
+        </div>
+        <div class="cmd">≡ Tutti i comandi</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div><span class="ic">⌂</span>HOME</div><div><span class="ic">◍</span>Luci</div>
+    <div class="on"><span class="ic">🌡</span>Clima</div><div><span class="ic">⚡</span>Energia</div>
+    <div><span class="ic">▢</span>Telecamere</div><div><span class="ic">⌸</span>Accessi</div>
+  </div>
+</div></div></div>
+
+<div class="cap">
+<h3>B · Il riquadro nello spazio vuoto</h3>
+La riga di stato del timer <b>sparisce</b> e al suo posto, in fondo alla scheda e appoggiato al pulsante,
+compare un riquadro dedicato: etichetta, ora di fine a destra, tempo residuo grande e barra spessa (10 px).
+Lo spazio vuoto viene usato tutto, e il timer smette di essere «uno dei tre stati» per diventare la cosa
+che la scheda annuncia quando c'è.
+<ul>
+<li><b>Si legge dal divano.</b> Il residuo è <code>FT_L</code> nel colore della modalità: è il secondo numero della scheda dopo la temperatura, ed è quello che si va a cercare.</li>
+<li><b>Il riquadro compare e sparisce insieme al timer</b>, e la scheda senza timer resta identica a oggi. Nessun posto vuoto che chiede «cosa ci andrebbe qui».</li>
+<li><b>Poggia sul pulsante</b>: quando c'è, il pulsante «Tutti i comandi» sale di 90 px. È l'unico movimento della scheda, e succede solo quando parte o finisce un timer.</li>
+<li class="no">Costa più codice: un blocco nuovo invece di tre elementi in coda a una riga esistente.</li>
+<li class="no">Due schede su quattro con il riquadro e due senza rendono la griglia meno regolare di com'è oggi.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2 class="tt2">I due casi che non si vedono nella schermata sopra</h2>
+<p class="sub" style="margin-bottom:14px">
+Vanno decisi insieme al disegno, perché sono quelli in cui una barra può <b>mentire</b>. Sotto, come li tratterebbero
+le due proposte — a sinistra <b>A</b>, a destra <b>B</b>.
+</p>
+
+<div class="casi">
+
+<div class="caso">
+<div class="et"><b>Il timer corre ma l'automazione è disattivata.</b> Allo scadere non succede nulla: i minuti scorrono e il condizionatore resta acceso.</div>
+<div class="mini">
+  <div style="display:flex;gap:10px;font-size:13px;color:#8a95a6;align-items:center">
+    <i style="font-style:normal;width:16px;text-align:center">⏱</i>Spegni al timer
+    <em style="margin-left:auto;font-style:normal;color:#e8ecf2">senza effetto</em>
+  </div>
+  <div class="barA attenuato" style="margin-top:7px"><i style="width:74%"></i></div>
+  <div class="fino attenuato">fino alle 20:12</div>
+</div>
+</div>
+
+<div class="caso">
+<div class="et">&nbsp;</div>
+<div class="mini">
+  <div class="tbox attenuato">
+    <div class="tr"><span class="lb">⏱ Si spegne fra</span><span class="alle">alle 20:12</span></div>
+    <div class="num" style="color:#e8ecf2">1h07</div>
+    <div class="barB"><i style="width:74%"></i></div>
+  </div>
+  <div class="avviso" style="margin-top:8px">allo scadere non succederà nulla</div>
+</div>
+</div>
+
+<div class="caso">
+<div class="et"><b>Il timer è stato avviato altrove con un'altra durata.</b> Il pannello conosce l'ora di fine, ma la frazione ha bisogno anche della durata totale.</div>
+<div class="mini">
+  <div style="display:flex;gap:10px;font-size:13px;color:#8a95a6;align-items:center">
+    <i style="font-style:normal;width:16px;text-align:center">⏱</i>Spegni al timer
+    <em style="margin-left:auto;font-style:normal;color:#e8ecf2">2h48</em>
+  </div>
+  <div class="barA" style="margin-top:7px"><i style="width:93%"></i></div>
+  <div class="fino">fino alle 21:30</div>
+</div>
+</div>
+
+<div class="caso">
+<div class="et">&nbsp;</div>
+<div class="mini">
+  <div class="tbox">
+    <div class="tr"><span class="lb">⏱ Si spegne fra</span><span class="alle">alle 21:30</span></div>
+    <div class="num" style="color:#e8ecf2">2h48</div>
+    <div class="barB"><i style="width:93%"></i></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="cap" style="max-width:92ch;margin-top:22px">
+<h3>Una cosa da decidere in tutti e due i casi: <b>rispetto a cosa si riempie la barra</b></h3>
+Una barra dice sempre «tanto su quanto», e il «quanto» qui <b>non</b> può essere <code>durata_predefinita</code> della
+configurazione. Quello è il valore che il pannello usa quando <i>avvia lui</i> un timer; un timer avviato da Home
+Assistant o dall'app può avere tutt'altra durata, e una barra che dividesse per 1:30 un timer da 3 ore
+<span class="no">si riempirebbe oltre il fondo</span> — cioè mentirebbe, che è peggio di non esserci.
+<ul>
+<li class="si">Il denominatore giusto è l'attributo <code>duration</code> <b>del timer</b>, che Home Assistant manda insieme allo stato e che è la durata di <i>quel</i> conteggio.</li>
+<li>Senza <code>duration</code> — o con un valore che non si sa leggere — <b>la barra non si disegna</b> e resta il numero: una barra che non sa rispetto a cosa riempirsi mentirebbe con l'aria di misurare. È la stessa regola già scritta per la barra dell'assorbimento di lavatrice e asciugatrice.</li>
+<li>La barra <b>cala</b> da piena a vuota, non cresce: mostra quanto resta, che è quello che dice anche il numero accanto. Una barra che cresce racconterebbe quanto è passato, cioè un'altra cosa.</li>
+<li>Scende <b>al minuto</b>, come il numero: il pannello ricarica al cambio di minuto (<code>01-specifica-ui.md §3.2</code>), e un'animazione al secondo costerebbe un ridisegno al secondo per un pixel di differenza.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>

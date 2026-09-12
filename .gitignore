@@ -1,0 +1,88 @@
+# --- prodotti della compilazione ---
+build/
+build-*/
+*.bin
+
+# --- ESP-IDF ---
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+# sdkconfig.defaults NON va ignorato: fa parte del progetto
+
+# --- generati a ogni build, non versionati ---
+versione.h
+
+# Il font variabile Material Symbols pesa 15 MB e serve solo a rigenerare
+# l'istanza a peso 300, che invece e versionata e pesa 20 kB.
+# tools/genera_icone.py dice da dove riscaricarlo.
+tools/font/MaterialSymbolsRounded.ttf
+
+# --- ambiente ---
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+.venv/
+
+# --- Fase 2 ---
+# dati di prova del simulatore e archivio locale
+dati/
+
+# --- Fase 5: prodotti della compilazione ESP-IDF ---
+firmware/build/
+# idf.py lanciato senza -B — per esempio per creare la chiave di firma —
+# lascia qui il proprio registro: contiene percorsi della macchina, e nomi
+# di file che non riguardano nessun altro.
+firmware/log/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/managed_components/
+firmware/dependencies.lock
+
+# --- lo scaricato non sta nel repository ---
+setup/
+*.exe
+
+# La cartella di compilazione del p4: e un prodotto.
+firmware/build-p4/
+firmware/sdkconfig.p4
+firmware/sdkconfig.p4.old
+
+# Le cartelle di appoggio delle prove. Le crea e le riscrive il codice —
+# archivio_posix.c fa mkdir da solo — quindi non sono dati da versionare:
+# sono prodotti, come build/. Tenerle tracciate voleva dire un albero
+# sporco dopo ogni `ctest`, e un `git checkout` da digitare per ripulirlo.
+# Quel comando, su un albero con lavoro non committato, e' un'arma: qui e'
+# gia costato un file intero.
+#
+# Un modello e non un elenco: ogni prova nuova se ne crea una sua, e con un
+# elenco la prima che qualcuno dimentica di aggiungere finisce nel commit
+# successivo. Oggi le prove le creano dentro build/; la regola resta per
+# chi lancia una prova a mano dalla radice.
+prova_dati*/
+
+# La chiave con cui si firmano le immagini del firmware. Non si versiona: e
+# la sola cosa che distingue un aggiornamento nostro da uno di chiunque
+# altro, e un repository e il posto dove le chiavi private non stanno.
+# Come rifarla, e cosa comporta perderla, in docs/05-architettura-firmware.md.
+firmware/chiave_firma.pem
+
+# Il bersaglio di collaudo del ritorno indietro (11-collaudo.md, fase 5):
+# un firmware che non si conferma mai. Si costruisce a parte apposta per
+# non lasciarlo per sbaglio in build/ e installarlo credendolo buono.
+firmware/build-collaudo/
+firmware/sdkconfig.collaudo
+firmware/sdkconfig.collaudo.p4
+firmware/sdkconfig.collaudo.p4.old
+
+# Il pacchetto del costruttore della scheda p4 (JC8012P4A1C_I_W_Y): schemi,
+# datasheet, demo, strumenti di programmazione. Ottocento megabyte, e non e
+# roba nostra: si scarica da pan.jczn1688.com, il link sta nel manuale del
+# display. Quello che ci serviva davvero — il driver del vetro capacitivo —
+# e stato copiato in firmware/components, dove e versionato.
+DriverDisplay/
+
+# La configurazione preparata per un pannello vero: porta dentro SSID e
+# nomi di casa, e nel repository ci vanno i segnaposto.
+programmazioni-da-importare.json

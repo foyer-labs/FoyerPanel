@@ -1,0 +1,722 @@
+{
+  "schema": 11,
+  "system": {
+    "panel_name": "Hallway",
+    "profile": "p4-800x1280",
+    "language": "en",
+    "network": {
+      "ssid": "Foyer-Home",
+      "hidden": false
+    },
+    "timezone": "Europe/Rome",
+    "ntp": [
+      "0.pool.ntp.org",
+      "1.pool.ntp.org"
+    ]
+  },
+  "display": {
+    "brightness_active": 85,
+    "brightness_standby": 12,
+    "standby_after_s": 120,
+    "off_after_s": 600,
+    "off_when_nobody_home": false,
+    "return_home_after_s": 60,
+    "long_press_ms": 1500,
+    "night_off": {
+      "enabled": true,
+      "from": "23:30",
+      "to": "06:30"
+    }
+  },
+  "home": {
+    "indoor_temperature": true,
+    "robot": true
+  },
+  "standby": {
+    "indoor_temperature": {
+      "entity": "climate.soggiorno",
+      "attribute": "current_temperature",
+      "label": "living room"
+    },
+    "climate": "climate.soggiorno"
+  },
+  "home_assistant": {
+    "host": "homeassistant.local",
+    "port": 8123,
+    "tls": false,
+    "ws_path": "/api/websocket",
+    "retry_s": 15
+  },
+  "access": [
+    {
+      "id": "pedonale",
+      "name": "Pedestrian gate",
+      "type": "pulse",
+      "entity": "switch.cancello_pedonale",
+      "icon": "fence",
+      "confirm": false,
+      "pulse_ms": 600,
+      "state_sensor": null
+    },
+    {
+      "id": "carraio",
+      "name": "Driveway gate",
+      "type": "pulse",
+      "entity": "switch.cancello_carraio",
+      "icon": "gate",
+      "confirm": true,
+      "pulse_ms": 600,
+      "state_sensor": null
+    },
+    {
+      "id": "garage",
+      "name": "Garage door",
+      "type": "pulse",
+      "entity": "switch.porta_garage",
+      "icon": "home",
+      "confirm": true,
+      "pulse_ms": 600,
+      "state_sensor": "binary_sensor.porta_garage_aperta"
+    },
+    {
+      "id": "giardino",
+      "name": "Garden lights",
+      "type": "switch",
+      "entity": "light.luci_giardino",
+      "icon": "bulb",
+      "confirm": false,
+      "pulse_ms": null,
+      "state_sensor": null
+    }
+  ],
+  "schedules": [
+    {
+      "name": "Doorbell",
+      "icon": "door_front",
+      "entity": "switch.campanello",
+      "windows": [
+        {
+          "on_time": "input_datetime.campanello_on",
+          "off_time": "input_datetime.campanello_off"
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.campanello_on_programmato",
+          "name": "On as scheduled"
+        },
+        {
+          "entity": "automation.campanello_off_programmato",
+          "name": "Off as scheduled"
+        },
+        {
+          "entity": "automation.campanello_on_rientro",
+          "name": "On when someone comes home"
+        },
+        {
+          "entity": "automation.campanello_off_casa_vuota",
+          "name": "Off when the house is empty"
+        }
+      ]
+    },
+    {
+      "name": "Bathroom heater",
+      "icon": "heat_pump",
+      "entity": "switch.stufetta_bagno",
+      "windows": [
+        {
+          "on_time": "input_datetime.stufetta_on_1",
+          "off_time": "input_datetime.stufetta_off_1"
+        },
+        {
+          "on_time": "input_datetime.stufetta_on_2",
+          "off_time": "input_datetime.stufetta_off_2"
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.stufetta_on_programmata",
+          "name": "On as scheduled"
+        },
+        {
+          "entity": "automation.stufetta_off_programmata",
+          "name": "Off as scheduled"
+        }
+      ]
+    },
+    {
+      "name": "Garden lights",
+      "icon": "lightbulb",
+      "entity": "light.luci_giardino",
+      "windows": [
+        {
+          "on_time": "input_datetime.giardino_on_1",
+          "off_time": "input_datetime.giardino_off_1"
+        },
+        {
+          "on_time": "input_datetime.giardino_on_2",
+          "off_time": "input_datetime.giardino_off_2"
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.giardino_on_programmato",
+          "name": "On as scheduled"
+        },
+        {
+          "entity": "automation.giardino_on_tramonto",
+          "name": "On at sunset"
+        },
+        {
+          "entity": "automation.giardino_off_programmato",
+          "name": "Off as scheduled"
+        },
+        {
+          "entity": "automation.giardino_off_alba",
+          "name": "Off at dawn"
+        },
+        {
+          "entity": "automation.giardino_on_cancello",
+          "name": "When the gate opens"
+        },
+        {
+          "entity": "automation.giardino_on_rientro_sera",
+          "name": "Coming home in the evening"
+        }
+      ]
+    },
+    {
+      "name": "Sprinklers",
+      "icon": "grass",
+      "entity": "switch.irrigazione",
+      "power": "sensor.irrigazione_potenza",
+      "windows": [
+        {
+          "on_time": "input_datetime.irrigazione_on_1",
+          "off_time": "input_datetime.irrigazione_off_1"
+        },
+        {
+          "on_time": "input_datetime.irrigazione_on_2",
+          "off_time": "input_datetime.irrigazione_off_2"
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.irrigazione_on_programmata",
+          "name": "On as scheduled"
+        },
+        {
+          "entity": "automation.irrigazione_off_programmata",
+          "name": "Off as scheduled"
+        }
+      ]
+    },
+    {
+      "name": "Christmas tree",
+      "icon": "outlet",
+      "entity": "light.albero_di_natale",
+      "windows": [
+        {
+          "on_time": "input_datetime.albero_on",
+          "off_time": "input_datetime.albero_off"
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.albero_on_programmato",
+          "name": "On as scheduled"
+        },
+        {
+          "entity": "automation.albero_off_programmato",
+          "name": "Off as scheduled"
+        }
+      ]
+    },
+    {
+      "name": "Corridor night light",
+      "icon": "lightbulb",
+      "entity": "light.corridoio_notte",
+      "windows": [
+        {
+          "on_time": "input_datetime.corridoio_notte_dalle",
+          "off_time": "input_datetime.corridoio_notte_alle",
+          "validity": true
+        }
+      ],
+      "automations": [
+        {
+          "entity": "automation.corridoio_notte_on_movimento",
+          "name": "On with motion"
+        },
+        {
+          "entity": "automation.corridoio_notte_off_fine_movimento",
+          "name": "Off when motion stops"
+        }
+      ]
+    }
+  ],
+  "lights": {
+    "scenes": [],
+    "zones": [
+      {
+        "name": "Living room",
+        "entity": "light.soggiorno",
+        "dimmable": false
+      },
+      {
+        "name": "Dining room",
+        "entity": "light.sala_da_pranzo",
+        "dimmable": false
+      },
+      {
+        "name": "Sofa LED strip",
+        "entity": "light.striscia_led_divano",
+        "dimmable": true
+      },
+      {
+        "name": "Kids' room",
+        "entity": "light.camera_bambini",
+        "dimmable": false
+      },
+      {
+        "name": "Night corridor",
+        "entity": "light.corridoio",
+        "dimmable": false
+      },
+      {
+        "name": "Garden lights",
+        "entity": "light.luci_giardino",
+        "dimmable": false
+      },
+      {
+        "name": "Kitchen",
+        "entity": "light.cucina",
+        "dimmable": false
+      },
+      {
+        "name": "Kitchen island",
+        "entity": "light.isola_cucina",
+        "dimmable": false
+      },
+      {
+        "name": "Entrance",
+        "entity": "light.ingresso",
+        "dimmable": false
+      },
+      {
+        "name": "Master bedroom",
+        "entity": "light.camera_padronale",
+        "dimmable": false
+      },
+      {
+        "name": "Bedside lamp",
+        "entity": "light.abat_jour",
+        "dimmable": false
+      },
+      {
+        "name": "Stairs",
+        "entity": "light.scale",
+        "dimmable": false
+      },
+      {
+        "name": "Storeroom",
+        "entity": "light.ripostiglio",
+        "dimmable": false
+      }
+    ]
+  },
+  "climate": {
+    "heating_limits": {
+      "step": 0.5,
+      "min": 15.0,
+      "max": 26.0
+    },
+    "ac_limits": {
+      "step": 1.0,
+      "min": 16.0,
+      "max": 30.0
+    },
+    "heating": [
+      {
+        "name": "Living room",
+        "climate": "climate.soggiorno",
+        "floor": "terra"
+      },
+      {
+        "name": "Kitchen",
+        "climate": "climate.cucina",
+        "floor": "terra"
+      },
+      {
+        "name": "Guest room",
+        "climate": "climate.camera_ospiti",
+        "floor": "terra"
+      },
+      {
+        "name": "Kids' room",
+        "climate": "climate.camera_bambini",
+        "floor": "terra"
+      },
+      {
+        "name": "Study",
+        "climate": "climate.studio",
+        "floor": "terra"
+      },
+      {
+        "name": "Guest bathroom",
+        "climate": "climate.bagno_servizio",
+        "floor": "terra"
+      },
+      {
+        "name": "Laundry",
+        "climate": "climate.lavanderia",
+        "floor": "terra"
+      },
+      {
+        "name": "Master bedroom",
+        "climate": "climate.camera_padronale",
+        "floor": "primo"
+      },
+      {
+        "name": "Walk-in closet",
+        "climate": "climate.cabina_armadio",
+        "floor": "primo"
+      },
+      {
+        "name": "Main bathroom",
+        "climate": "climate.bagno_grande",
+        "floor": "primo"
+      },
+      {
+        "name": "Ground floor thermostat",
+        "climate": "climate.termostato_piano_terra",
+        "floor": "terra"
+      },
+      {
+        "name": "First floor thermostat",
+        "climate": "climate.termostato_primo_piano",
+        "floor": "primo"
+      }
+    ],
+    "air_conditioners": [
+      {
+        "id": "soggiorno",
+        "name": "Living room",
+        "climate": "climate.condizionatore_soggiorno",
+        "timer": "timer.condizionatore_soggiorno",
+        "timer_automation": "automation.condizionatore_soggiorno_fine_timer",
+        "default_duration": "1:30",
+        "extras": {
+          "quiet": "switch.condizionatore_soggiorno_quiet",
+          "panel_light": "switch.condizionatore_soggiorno_panel_light",
+          "fresh_air": "switch.condizionatore_soggiorno_fresh_air",
+          "xfan": "switch.condizionatore_soggiorno_xfan"
+        }
+      },
+      {
+        "id": "mansarda",
+        "name": "Attic",
+        "climate": "climate.condizionatore_mansarda",
+        "timer": "timer.condizionatore_mansarda",
+        "timer_automation": "automation.condizionatore_mansarda_fine_timer",
+        "default_duration": "1:30",
+        "extras": {
+          "quiet": "switch.condizionatore_mansarda_quiet",
+          "panel_light": "switch.condizionatore_mansarda_panel_light",
+          "fresh_air": "switch.condizionatore_mansarda_fresh_air",
+          "xfan": "switch.condizionatore_mansarda_xfan"
+        }
+      },
+      {
+        "id": "camera_bambini",
+        "name": "Kids' room",
+        "climate": "climate.condizionatore_camera_bambini",
+        "timer": "timer.condizionatore_camera_bambini",
+        "timer_automation": "automation.condizionatore_camera_bambini_fine_timer",
+        "default_duration": "1:30",
+        "extras": {
+          "quiet": "switch.condizionatore_camera_bambini_quiet",
+          "panel_light": "switch.condizionatore_camera_bambini_panel_light",
+          "fresh_air": "switch.condizionatore_camera_bambini_fresh_air",
+          "xfan": "switch.condizionatore_camera_bambini_xfan"
+        }
+      },
+      {
+        "id": "camera_padronale",
+        "name": "Master bedroom",
+        "climate": "climate.condizionatore_camera_padronale",
+        "timer": "timer.condizionatore_camera_padronale",
+        "timer_automation": "automation.condizionatore_camera_padronale_fine_timer",
+        "default_duration": "1:30",
+        "extras": {
+          "quiet": "switch.condizionatore_camera_padronale_quiet",
+          "panel_light": "switch.condizionatore_camera_padronale_panel_light",
+          "fresh_air": "switch.condizionatore_camera_padronale_fresh_air",
+          "xfan": "switch.condizionatore_camera_padronale_xfan"
+        },
+        "intermittent": {
+          "enabled": "input_boolean.condizionatore_camera_padronale_intermittente",
+          "minutes_on": "input_number.condizionatore_camera_padronale_minuti_acceso",
+          "minutes_off": "input_number.condizionatore_camera_padronale_minuti_spento"
+        }
+      }
+    ],
+    "floors": [
+      {
+        "id": "terra",
+        "name": "Ground floor",
+        "switch": "switch.riscaldamento_piano_terra"
+      },
+      {
+        "id": "primo",
+        "name": "First floor",
+        "switch": "switch.riscaldamento_primo_piano"
+      }
+    ],
+    "panel_floor": "terra"
+  },
+  "energy": {
+    "aggregate_sensor": "sensor.panel_energy",
+    "attributes": {
+      "battery_pct": "battery_pct",
+      "battery_w": "battery_w",
+      "grid_w": "grid_w",
+      "today_kwh": "today_kwh",
+      "house_w": "house_w"
+    },
+    "strings": [
+      {
+        "name": "String 1",
+        "voltage": "sensor.inverter_pv_1_voltage",
+        "current": "sensor.inverter_pv_1_current",
+        "power": null
+      },
+      {
+        "name": "String 2",
+        "voltage": "sensor.inverter_pv_2_voltage",
+        "current": "sensor.inverter_pv_2_current",
+        "power": null
+      }
+    ],
+    "signs": {
+      "grid_positive": "import",
+      "battery_positive": "charge"
+    },
+    "devices": [
+      {
+        "name": "Heat pump",
+        "entity": "sensor.pompa_calore_potenza"
+      },
+      {
+        "name": "Oven",
+        "entity": "sensor.forno_potenza"
+      },
+      {
+        "name": "Dishwasher",
+        "entity": "sensor.lavastoviglie_potenza"
+      },
+      {
+        "name": "Fridge",
+        "entity": "sensor.frigorifero_potenza"
+      },
+      {
+        "name": "Washer",
+        "entity": "sensor.lavatrice_potenza"
+      },
+      {
+        "name": "Dryer",
+        "entity": "sensor.asciugatrice_potenza"
+      }
+    ],
+    "today": {
+      "produced": "sensor.pv_energy_today",
+      "consumed": "sensor.house_consumption_today",
+      "imported": "sensor.grid_import_today",
+      "exported": "sensor.grid_export_today"
+    }
+  },
+  "calendar": {
+    "enabled": true,
+    "sensor": "sensor.panel_calendar",
+    "days": 7,
+    "home_max_events": 3,
+    "calendars": []
+  },
+  "robot": {
+    "name": "Dusty",
+    "entity": "vacuum.robot",
+    "battery": "sensor.robot_batteria",
+    "no_selection": "whole_house",
+    "rooms_command": "app_segment_clean",
+    "rooms_format": "list",
+    "repeats": 1,
+    "rooms": [
+      {
+        "number": 1,
+        "name": "Living room",
+        "col": 1,
+        "row": 1,
+        "width": 3,
+        "height": 2
+      },
+      {
+        "number": 2,
+        "name": "Kitchen",
+        "col": 4,
+        "row": 1,
+        "width": 3,
+        "height": 1
+      },
+      {
+        "number": 3,
+        "name": "Entrance",
+        "col": 4,
+        "row": 2,
+        "width": 1,
+        "height": 1
+      },
+      {
+        "number": 4,
+        "name": "Corridor",
+        "col": 5,
+        "row": 2,
+        "width": 2,
+        "height": 1
+      },
+      {
+        "number": 5,
+        "name": "Guest room",
+        "col": 1,
+        "row": 3,
+        "width": 3,
+        "height": 2
+      },
+      {
+        "number": 6,
+        "name": "Study",
+        "col": 4,
+        "row": 3,
+        "width": 2,
+        "height": 2
+      },
+      {
+        "number": 7,
+        "name": "Bathroom",
+        "col": 6,
+        "row": 3,
+        "width": 1,
+        "height": 2
+      }
+    ],
+    "alerts": [
+      {
+        "entity": "sensor.robot_errore_base"
+      },
+      {
+        "entity": "binary_sensor.robot_panno",
+        "text": "The mop is not attached",
+        "when": "off"
+      }
+    ],
+    "maintenance": [
+      {
+        "entity": "sensor.robot_spazzola_principale_residuo",
+        "name": "Main brush",
+        "threshold": 10
+      },
+      {
+        "entity": "sensor.robot_filtro_residuo",
+        "name": "Filter",
+        "threshold": 10
+      }
+    ]
+  },
+  "appliances": [
+    {
+      "name": "Washer",
+      "cycle": "input_boolean.lavatrice_ciclo_attivo",
+      "power": "sensor.lavatrice_potenza",
+      "max_power": 2200
+    },
+    {
+      "name": "Dryer",
+      "cycle": "input_boolean.asciugatrice_ciclo_attivo",
+      "power": "sensor.asciugatrice_potenza",
+      "max_power": 2700
+    }
+  ],
+  "presence": {
+    "sensor": "sensor.panel_presence"
+  },
+  "house_state": {
+    "openings_sensor": "sensor.panel_openings"
+  },
+  "weather": {
+    "entity": "weather.casa",
+    "local_temperature_sensor": "sensor.temperatura_esterna"
+  },
+  "wifi_sharing": {
+    "return_home_after_s": 120,
+    "networks": [
+      {
+        "enabled": true,
+        "display_name": "Guest Wi-Fi",
+        "ssid": "Foyer-Guests",
+        "security": "WPA",
+        "hidden": false,
+        "show_password": true
+      },
+      {
+        "enabled": false,
+        "display_name": "Private network",
+        "ssid": "Foyer-Home",
+        "security": "WPA",
+        "hidden": false,
+        "show_password": false
+      }
+    ]
+  },
+  "sections": [
+    "lights",
+    "switches",
+    "climate",
+    "energy",
+    "access",
+    "schedules",
+    "wifi",
+    "robot"
+  ],
+  "diagnostics": {
+    "status_endpoint": true
+  },
+  "switches": [
+    {
+      "name": "TV socket",
+      "entity": "switch.presa_tv",
+      "icon": "tv",
+      "power": "sensor.presa_tv_potenza"
+    },
+    {
+      "name": "Dehumidifier",
+      "entity": "switch.deumidificatore",
+      "icon": "water_drop",
+      "power": "sensor.deumidificatore_potenza"
+    },
+    {
+      "name": "Sprinklers",
+      "entity": "switch.pompa_irrigazione",
+      "icon": "grass",
+      "power": "sensor.pompa_irrigazione_potenza"
+    },
+    {
+      "name": "Freezer",
+      "entity": "switch.congelatore",
+      "icon": "ac_unit"
+    },
+    {
+      "name": "Porch light",
+      "entity": "switch.luce_portico",
+      "icon": "lightbulb"
+    }
+  ]
+}

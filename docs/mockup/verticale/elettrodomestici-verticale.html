@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foyer Panel · Lavatrice e asciugatrice in home · tre proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:#15171b;color:#d8dce3;font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{max-width:1500px;margin:0 auto;padding:20px 16px 70px}
+h1.tt{font-size:16px;font-weight:600;margin:0 0 3px;color:#e6e9ee}
+p.sub{font-size:12.5px;color:#8b929e;margin:0 0 20px;max-width:92ch;line-height:1.6}
+.riga{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}
+.col{flex:none;width:352px}
+.frame{position:relative;background:#000;border:11px solid #24272d;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden;width:352px;height:563px}
+.stage{transform:scale(.44);transform-origin:top left;position:relative;width:800px;height:1280px}
+.cap{font-size:12.5px;color:#9aa1ad;line-height:1.65;margin-top:14px}
+.cap h3{font:600 13.5px/1.4 Inter,sans-serif;color:#e6e9ee;margin:0 0 7px}
+.cap b{color:#e6e9ee;font-weight:600}
+.cap .no{color:#e2664f}
+.cap ul{margin:7px 0 0;padding-left:17px}
+.cap li{margin-bottom:4px}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+  --bg:#0d1014;--card:#151a21;--line:#1e242d;--txt:#e8ecf2;--dim:#8a95a6;
+  --acc:#f0a835;--ok:#4fc39a;--cool:#57b6e0;--warn:#e2664f;--off:#232b35;
+  --r:16px;--pad:18px;--gap:14px;--bar:112px;
+  background:var(--bg);color:var(--txt);font-size:16px}
+
+.head{height:116px;flex:none;padding:0 var(--pad);display:flex;align-items:center;gap:20px;flex:none}
+.head .ora{font-size:52px;font-weight:300;line-height:1}
+.head .data{font-size:13px;color:var(--dim);margin-top:5px}
+.head .t{font-size:30px;font-weight:300}
+.head .lb2{font-size:12px;color:var(--dim)}
+.body{flex:1;padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap);overflow:hidden}
+.card{background:var(--card);border-radius:var(--r);padding:var(--pad);border:1px solid var(--line)}
+.lb{font:500 12px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.sm{font-size:14px;color:var(--dim)}
+.due{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.nav{height:var(--bar);flex:none;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(7,1fr);align-items:center}
+.nav div{text-align:center;font:500 10px/1.5 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.nav div.on{color:var(--acc);background:#241d0e;height:100%;display:flex;flex-direction:column;justify-content:center}
+.nav .ic{display:block;font-size:20px;margin-bottom:4px}
+.cmd{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.cmd .card{padding:14px 10px;text-align:center}
+.btn{background:var(--acc);color:#1a1206;border-radius:10px;padding:10px 0;font-weight:600;font-size:19px;margin-top:10px}
+.cam{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.cam .card{height:96px;padding:0;position:relative;background:#0b0e12}
+.cam span{position:absolute;left:8px;bottom:8px;font-size:12px;background:#0009;padding:2px 6px;border-radius:4px}
+
+/* --- il blocco nuovo, nelle tre forme --- */
+.el-riga{display:flex;align-items:center;gap:var(--gap)}
+.el-riga .ico{font-size:26px;width:32px;text-align:center}
+.el-riga .nm{font-size:19px;flex:1}
+.el-riga .st{font-size:13px;color:var(--dim)}
+.el-riga .w{font-size:20px;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--acc);color:var(--acc);
+  border-radius:99px;padding:9px 16px;font-size:17px}
+.barra{height:6px;border-radius:3px;background:var(--off);overflow:hidden;margin-top:9px}
+.barra i{display:block;height:100%;background:var(--acc);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="shell">
+<h1 class="tt">Lavatrice e asciugatrice in home — tre proposte per <code>p4-800x1280</code></h1>
+<p class="sub">
+Il blocco si innesta fra le due schede e la striscia dei comandi, dove sta la riga del robot.
+Dati d'esempio: lavatrice con un ciclo in corso a 1 850 W, asciugatrice ferma.
+Le entità sono <code>input_boolean.*_ciclo_attivo</code> per lo stato e <code>sensor.*_potenza</code>
+per l'assorbimento, tutte configurabili dalla pagina — con la consueta spunta per mostrare o
+nascondere il blocco.
+</p>
+
+<div class="riga">
+
+<!-- ═══════════ A ═══════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head">
+    <div><div class="ora">19:19</div><div class="data">lunedì 31 agosto</div></div>
+    <div style="margin-left:auto;text-align:center"><div class="t">20,8°</div><div class="lb2">chiesti 21,0°</div></div>
+    <div style="width:56px"></div>
+  </div>
+  <div class="body">
+    <div class="card" style="flex:none">
+      <div class="lb">Energia adesso</div>
+      <div style="font-size:44px;font-weight:300;color:var(--ok);margin-top:8px">3,42</div>
+      <div class="sm">kW dal fotovoltaico</div>
+    </div>
+    <div class="due" style="flex:1;min-height:0">
+      <div class="card"><div class="lb">In casa</div></div>
+      <div class="card"><div class="lb">Aperture e luci</div></div>
+    </div>
+
+    <!-- il blocco -->
+    <div class="card" style="flex:none">
+      <div class="el-riga">
+        <span class="ico" style="color:var(--acc)">🌀</span>
+        <div class="nm">Lavatrice<div class="st">ciclo in corso</div></div>
+        <span class="w" style="color:var(--acc)">1 850 W</span>
+      </div>
+    </div>
+    <div class="card" style="flex:none">
+      <div class="el-riga">
+        <span class="ico" style="color:var(--dim)">🔥</span>
+        <div class="nm" style="color:var(--dim)">Asciugatrice<div class="st">ferma</div></div>
+        <span class="w" style="color:var(--dim)">0 W</span>
+      </div>
+    </div>
+
+    <div class="cmd" style="flex:none">
+      <div class="card"><div class="sm">Pedonale</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Cancello</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Garage</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Luci giardino</div><div class="btn" style="background:var(--off)">&nbsp;</div></div>
+    </div>
+    <div class="cam" style="flex:none">
+      <div class="card"><span>Ingresso</span></div><div class="card"><span>Porta</span></div>
+      <div class="card"><span>Box</span></div><div class="card"><span>Strada</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="on"><span class="ic">🏠</span>Home</div><div><span class="ic">💡</span>Luci</div>
+    <div><span class="ic">🌡</span>Clima</div><div><span class="ic">⚡</span>Energia</div>
+    <div><span class="ic">🎥</span>Cam</div><div><span class="ic">🚪</span>Accessi</div>
+    <div><span class="ic">📶</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>A · Due righe, come il robot</h3>
+  Ogni elettrodomestico ha la sua riga a tutta larghezza: icona, nome, stato sotto il nome,
+  assorbimento a destra. È esattamente la forma della riga del robot.
+  <ul>
+    <li>Massima leggibilità: nome e stato non si contendono lo spazio.</li>
+    <li>Coerente con quello che c'è già — nessuna forma nuova da imparare.</li>
+    <li class="no">Costa <b>due righe</b> anche quando entrambi sono fermi, cioè quasi sempre.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ═══════════ B ═══════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head">
+    <div><div class="ora">19:19</div><div class="data">lunedì 31 agosto</div></div>
+    <div style="margin-left:auto;text-align:center"><div class="t">20,8°</div><div class="lb2">chiesti 21,0°</div></div>
+    <div style="width:56px"></div>
+  </div>
+  <div class="body">
+    <div class="card" style="flex:none">
+      <div class="lb">Energia adesso</div>
+      <div style="font-size:44px;font-weight:300;color:var(--ok);margin-top:8px">3,42</div>
+      <div class="sm">kW dal fotovoltaico</div>
+    </div>
+    <div class="due" style="flex:1;min-height:0">
+      <div class="card"><div class="lb">In casa</div></div>
+      <div class="card"><div class="lb">Aperture e luci</div></div>
+    </div>
+
+    <!-- il blocco -->
+    <div class="card" style="flex:none;display:flex;gap:var(--gap);align-items:stretch">
+      <div style="flex:1;display:flex;align-items:center;gap:12px">
+        <span class="ico" style="font-size:26px;color:var(--acc)">🌀</span>
+        <div style="flex:1">
+          <div style="font-size:18px">Lavatrice</div>
+          <div class="st" style="font-size:13px;color:var(--acc)">in lavaggio</div>
+          <div class="barra"><i style="width:62%"></i></div>
+        </div>
+        <span style="font-size:19px;color:var(--acc)">1 850 W</span>
+      </div>
+      <div style="width:1px;background:var(--line)"></div>
+      <div style="flex:1;display:flex;align-items:center;gap:12px;opacity:.55">
+        <span class="ico" style="font-size:26px">🔥</span>
+        <div style="flex:1">
+          <div style="font-size:18px">Asciugatrice</div>
+          <div class="st" style="font-size:13px">ferma</div>
+        </div>
+        <span style="font-size:19px">0 W</span>
+      </div>
+    </div>
+
+    <div class="cmd" style="flex:none">
+      <div class="card"><div class="sm">Pedonale</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Cancello</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Garage</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Luci giardino</div><div class="btn" style="background:var(--off)">&nbsp;</div></div>
+    </div>
+    <div class="cam" style="flex:none">
+      <div class="card"><span>Ingresso</span></div><div class="card"><span>Porta</span></div>
+      <div class="card"><span>Box</span></div><div class="card"><span>Strada</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="on"><span class="ic">🏠</span>Home</div><div><span class="ic">💡</span>Luci</div>
+    <div><span class="ic">🌡</span>Clima</div><div><span class="ic">⚡</span>Energia</div>
+    <div><span class="ic">🎥</span>Cam</div><div><span class="ic">🚪</span>Accessi</div>
+    <div><span class="ic">📶</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>B · Una scheda in due metà</h3>
+  Sono una coppia e si leggono come una coppia: una scheda sola, divisa da un filo.
+  Chi lavora è a piena luce, chi è fermo è attenuato. La barra sotto il nome
+  è l'assorbimento rispetto al massimo dell'apparecchio.
+  <ul>
+    <li>Metà dello spazio di <b>A</b>, e il colpo d'occhio dice subito chi sta lavorando.</li>
+    <li>L'attenuazione fa il lavoro che in <b>A</b> fanno due righe di testo.</li>
+    <li class="no">Con nomi lunghi le due metà si stringono; «Asciugatrice» è già al limite.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ═══════════ C ═══════════ -->
+<div class="col">
+<div class="frame"><div class="stage"><div class="screen">
+  <div class="head">
+    <div><div class="ora">19:19</div><div class="data">lunedì 31 agosto</div></div>
+    <div style="margin-left:auto;text-align:center"><div class="t">20,8°</div><div class="lb2">chiesti 21,0°</div></div>
+    <div style="width:56px"></div>
+  </div>
+  <div class="body">
+    <div class="card" style="flex:none">
+      <div class="lb">Energia adesso</div>
+      <div style="font-size:44px;font-weight:300;color:var(--ok);margin-top:8px">3,42</div>
+      <div class="sm">kW dal fotovoltaico</div>
+    </div>
+    <div class="due" style="flex:1;min-height:0">
+      <div class="card"><div class="lb">In casa</div></div>
+      <div class="card"><div class="lb">Aperture e luci</div></div>
+    </div>
+
+    <!-- il blocco: solo chi sta lavorando -->
+    <div style="flex:none;display:flex;gap:12px;align-items:center">
+      <span class="pill"><span style="font-size:20px">🌀</span> Lavatrice · 1 850 W</span>
+    </div>
+
+    <div class="cmd" style="flex:none">
+      <div class="card"><div class="sm">Pedonale</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Cancello</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Garage</div><div class="btn">Apri</div></div>
+      <div class="card"><div class="sm">Luci giardino</div><div class="btn" style="background:var(--off)">&nbsp;</div></div>
+    </div>
+    <div class="cam" style="flex:none">
+      <div class="card"><span>Ingresso</span></div><div class="card"><span>Porta</span></div>
+      <div class="card"><span>Box</span></div><div class="card"><span>Strada</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="on"><span class="ic">🏠</span>Home</div><div><span class="ic">💡</span>Luci</div>
+    <div><span class="ic">🌡</span>Clima</div><div><span class="ic">⚡</span>Energia</div>
+    <div><span class="ic">🎥</span>Cam</div><div><span class="ic">🚪</span>Accessi</div>
+    <div><span class="ic">📶</span>Wi-Fi</div>
+  </div>
+</div></div></div>
+<div class="cap">
+  <h3>C · Solo quando serve</h3>
+  Una pastiglia per ogni apparecchio <b>che sta lavorando</b>, e basta. Fermi non si
+  disegnano affatto: con la lavastoviglie spenta e l'asciugatrice ferma il blocco
+  <b>non c'è</b>, e quello spazio torna alle schede sopra.
+  <ul>
+    <li>Costo zero nel caso normale, che è «nessuno dei due sta lavorando».</li>
+    <li>Quando compare, salta all'occhio: è l'unica cosa in ambra su quella riga.</li>
+    <li class="no">Non si può sapere «l'asciugatrice è ferma» guardando la home — si sa solo che
+      non sta lavorando, che è la stessa cosa detta meglio, ma niente potenza a riposo.</li>
+    <li class="no">La home cambia altezza quando parte un ciclo: le schede sopra si
+      restringono di una riga.</li>
+  </ul>
+</div>
+</div>
+
+</div>
+</div>
+</body>
+</html>
