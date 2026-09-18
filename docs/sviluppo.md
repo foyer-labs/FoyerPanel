@@ -261,14 +261,29 @@ riflashandoli da USB. Vale la pena tenerne una copia.
 ctest --test-dir build --output-on-failure
 ```
 
-Dodici prove: le quattro tabelle di profilo controllate insieme; ogni
-profilo compilato **da solo**, come sul pannello, per accorgersi subito se
-un campo esiste solo nel ramo del simulatore; tre verifiche sulla regola
-del progetto — nessun numero di layout fuori da `profile.h`, `profile.h`
-allineato a `profili.json`, `profili.json` allineato ai mockup; due prove
-delle temporizzazioni, che fanno scorrere il tempo e controllano ritorno
-alla home, standby, spegnimento e risveglio; e due prove dell'heap, che
-navigano tutte le schermate e controllano che la memoria non cresca.
+Trentaquattro prove, nessuna delle quali ha bisogno di hardware:
+
+- **i profili**: le tabelle controllate insieme, e ogni profilo compilato
+  **da solo**, come sul pannello, per accorgersi subito se un campo esiste
+  solo nel ramo del simulatore;
+- **la regola del progetto**: nessun numero di layout fuori da
+  `profile.h`, `profile.h` allineato a `profili.json`, `profili.json`
+  allineato ai mockup;
+- **i documenti contro il codice**: le sezioni citate dal codice esistono,
+  ogni chiave che il codice legge sta nello schema, ogni chiave dello
+  schema compare nella pagina, ogni testo che la pagina chiede esiste in
+  tutte le lingue;
+- **la configurazione**: validazione uguale a quella di
+  `tools/verifica_config.py`, migrazione dallo schema 10, primo avvio,
+  struttura ricavata da `config.json`;
+- **quello che si muove**: Home Assistant contro `tools/finto_ha.py`, il
+  server web, i segreti, la coda dei tocchi, le temporizzazioni con
+  l'orologio mandato avanti, e l'heap dopo aver navigato tutte le
+  schermate.
+
+Le stesse prove girano a ogni push su GitHub, in
+`.github/workflows/build.yml`: il firmware no, perché vuole ESP-IDF e una
+chiave di firma, e una chiave non sta in un runner.
 
 ### Confronto con i mockup
 
