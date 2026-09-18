@@ -4,3 +4,21 @@
 *.ttf binary
 *.bin binary
 *.stl binary
+
+# --- cosa conta come codice di questo progetto, per le statistiche di GitHub
+# I font e le icone sono **generati** da tools/genera_font.py e
+# genera_icone.py: sono due megabyte di tabelle che nessuno scrive a mano, e
+# contati come sorgenti fanno sembrare il progetto il triplo di quello che e.
+main/ui/fonts/* linguist-generated=true
+main/ui/icons/icons.c linguist-generated=true
+main/i18n/texts_gen.* linguist-generated=true
+main/web/pagina.h linguist-generated=true
+main/profile.h linguist-generated=true
+
+# Codice di altri, copiato nel repository perche il costruttore lo distribuisce
+# cosi e non sta in nessun registro: si compila, ma non e nostro.
+firmware/components/* linguist-vendored=true
+
+# I mockup sono documentazione: sono il disegno da cui il codice e stato
+# scritto, non una parte del prodotto.
+docs/mockup/* linguist-documentation=true

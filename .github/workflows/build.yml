@@ -1,0 +1,41 @@
+# The simulator, built and tested on every push: it compiles the same ui/
+# code the panel runs, so a build that fails here fails on the wall too.
+#
+# The firmware is not built here: it needs ESP-IDF and a signing key, and a
+# key is the one thing that does not belong in a CI runner.
+name: build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    name: simulator and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The version string comes from `git describe`: without the tags
+          # every build would call itself 0.0+dev.
+          fetch-depth: 0
+
+      - name: Install the build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config libsdl2-dev \
+            python3 python3-jsonschema
+
+      - name: Configure
+        run: cmake -B build -G Ninja
+
+      - name: Build
+        run: cmake --build build
+
+      # No display is needed: the tests draw into memory, and the captures
+      # write BMP files without opening a window.
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
